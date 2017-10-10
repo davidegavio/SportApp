@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "297927293159",
+    "firebase_url": "https://sportapp-e7d90.firebaseio.com",
+    "project_id": "sportapp-e7d90",
+    "storage_bucket": "sportapp-e7d90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297927293159:android:a5e61532b3b76776",
+        "android_client_info": {
+          "package_name": "it.uniupo.sportapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297927293159-2o272u1bqo08kfm65vnhep97peurdb30.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.uniupo.sportapp",
+            "certificate_hash": "44bba85189506f135b8ab9aba6acb8b2ded7e500"
+          }
+        },
+        {
+          "client_id": "297927293159-l64cudn3sjl32nc9qoameaooj6vc2drf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOyvQBoohgKBhdqWc2feLfB0orv1D3ZzI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297927293159-l64cudn3sjl32nc9qoameaooj6vc2drf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
