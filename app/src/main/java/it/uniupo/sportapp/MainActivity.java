@@ -13,15 +13,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
+    private static final int RC_SIGN_IN = 100;
     private static final String TAG = "Log info";
     //Firebase authenticator
     private FirebaseAuth mAuth;
@@ -52,14 +57,27 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.i(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
-                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    Log.i(TAG, "onAuthStateChanged:signed_out");
                 }
                 // ...
             }
         };
+
+
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.drawable.teams96)
+                .setAvailableProviders(
+                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                        ))
+                .setTosUrl(GOOGLE_TOS_URL)
+                .setIsSmartLockEnabled(true, true)
+                .setAllowNewEmailAccounts(true)
+                .build(), RC_SIGN_IN);
+
     }
 
     @Override
