@@ -8,11 +8,13 @@ public class Player {
 
     private String playerName;
     private String playerDescription;
+    private String playerMail;
     private boolean isGoalkeeper;
 
-    public Player(String playerName, String playerDescription, boolean isGoalkeeper) {
+    public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper) {
         this.playerName = playerName;
         this.playerDescription = playerDescription;
+        this.playerMail = playerMail;
         this.isGoalkeeper = isGoalkeeper;
     }
 
@@ -41,5 +43,13 @@ public class Player {
 
     public void setGoalkeeper(boolean goalkeeper) {
         isGoalkeeper = goalkeeper;
+    }
+
+    public String getPlayerMail() {
+        return playerMail;
+    }
+
+    public void setPlayerMail(String playerMail) {
+        this.playerMail = playerMail;
     }
 }

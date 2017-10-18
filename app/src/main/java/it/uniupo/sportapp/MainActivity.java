@@ -22,6 +22,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 
+import it.uniupo.sportapp.models.Player;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     //Firebase authenticator listener
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private Player currentPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,8 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    currentPlayer = new Player(user.getDisplayName(), "Player", user.getEmail() ,false);
+                    Log.i(TAG, "Name: "+currentPlayer.getPlayerName()+" "+"Description: "+currentPlayer.getPlayerDescription()+" "+"Email: "+currentPlayer.getPlayerMail());
                     Log.i(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
@@ -66,17 +71,10 @@ public class MainActivity extends AppCompatActivity
             }
         };
 
+        signIn();
 
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
-                .setLogo(R.drawable.teams96)
-                .setAvailableProviders(
-                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-                        ))
-                .setTosUrl(GOOGLE_TOS_URL)
-                .setIsSmartLockEnabled(true, true)
-                .setAllowNewEmailAccounts(true)
-                .build(), RC_SIGN_IN);
+
+
 
     }
 
@@ -120,51 +118,44 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_about:
                 Log.i(TAG, "About pressed");
                 break;
+            case R.id.nav_logout:
+                signOut();
+                break;
         }
         assert drawer != null;
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void createAccount(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
+    private void signIn() {
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.drawable.teams96)
+                .setTheme(R.style.GreyTheme)
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+                .setTosUrl(GOOGLE_TOS_URL)
+                .setIsSmartLockEnabled(false, true)
+                .setAllowNewEmailAccounts(true)
+                .build(), RC_SIGN_IN);
+        currentPlayer.setPlayerName(getCurrentUser().getDisplayName());
+        currentPlayer.setPlayerMail(getCurrentUser().getEmail());
+        currentPlayer.setPlayerDescription("Player 1");
     }
 
-    private void signIn(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(MainActivity.this, R.string.auth_failed,
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
+    private void signOut(){
+        FirebaseAuth.getInstance().signOut();
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.drawable.teams96)
+                .setTheme(R.style.GreyTheme)
+                .setAvailableProviders(
+                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
+                        ))
+                .setTosUrl(GOOGLE_TOS_URL)
+                .setIsSmartLockEnabled(false, true)
+                .setAllowNewEmailAccounts(true)
+                .build(), RC_SIGN_IN);
     }
 
     private FirebaseUser getCurrentUser() {
