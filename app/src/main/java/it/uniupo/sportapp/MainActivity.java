@@ -1,6 +1,9 @@
 package it.uniupo.sportapp;
 
-import android.net.Uri;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,17 +14,20 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
+import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.models.Player;
 
 public class MainActivity extends AppCompatActivity
@@ -30,11 +36,17 @@ public class MainActivity extends AppCompatActivity
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
     private static final String TAG = "Log info";
+    private static final String USERS_TABLE = "users" ;
     //Firebase authenticator
     private FirebaseAuth mAuth;
     //Firebase authenticator listener
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private Player currentPlayer;
+    private Player loggedPlayer;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+    private ProfileFragment profileFragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,26 +69,23 @@ public class MainActivity extends AppCompatActivity
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                if (getCurrentFirebaseUser() != null) {
                     // User is signed in
-                    currentPlayer = new Player(user.getDisplayName(), "Player", user.getEmail() ,false);
-                    Log.i(TAG, "Name: "+currentPlayer.getPlayerName()+" "+"Description: "+currentPlayer.getPlayerDescription()+" "+"Email: "+currentPlayer.getPlayerMail());
-                    Log.i(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "Player3", getCurrentFirebaseUser().getEmail() ,false);
+                    writeNewUserIfNeeded();
+                    Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + getCurrentFirebaseUser().getUid());
                 } else {
                     // User is signed out
-                    Log.i(TAG, "onAuthStateChanged:signed_out");
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
 
         signIn();
-
-
-
-
     }
+
+
 
     @Override
     public void onStart() {
@@ -85,13 +94,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -101,7 +109,6 @@ public class MainActivity extends AppCompatActivity
         } else
             drawer.openDrawer(GravityCompat.START);
     }
-
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -127,51 +134,61 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     private void signIn() {
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
-                .setLogo(R.drawable.teams96)
-                .setTheme(R.style.GreyTheme)
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-                .setTosUrl(GOOGLE_TOS_URL)
-                .setIsSmartLockEnabled(false, true)
-                .setAllowNewEmailAccounts(true)
-                .build(), RC_SIGN_IN);
-        currentPlayer.setPlayerName(getCurrentUser().getDisplayName());
-        currentPlayer.setPlayerMail(getCurrentUser().getEmail());
-        currentPlayer.setPlayerDescription("Player 1");
+        showSignInDialog();
     }
 
     private void signOut(){
         FirebaseAuth.getInstance().signOut();
+        showSignInDialog();
+    }
+
+    private FirebaseUser getCurrentFirebaseUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    public Player getLoggedPlayer(){
+        return loggedPlayer;
+    }
+
+    private void writeNewUserIfNeeded() {
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
+
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists()) {
+                    ref.child(getCurrentFirebaseUser().getUid()).setValue(getLoggedPlayer());
+                    Log.d(TAG, "Player doesn't exist yet.");
+                }
+                else Log.d(TAG, "Player already exists.");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void addFragment(Fragment fragment) {
+        // Fragment Manager
+        fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.your_placeholder, fragment);
+        fragmentTransaction.commit();
+    }
+
+    public void showSignInDialog(){
         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setLogo(R.drawable.teams96)
                 .setTheme(R.style.GreyTheme)
-                .setAvailableProviders(
-                        Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()
-                        ))
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
                 .setTosUrl(GOOGLE_TOS_URL)
                 .setIsSmartLockEnabled(false, true)
                 .setAllowNewEmailAccounts(true)
                 .build(), RC_SIGN_IN);
-    }
-
-    private FirebaseUser getCurrentUser() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            // Name, email address, and profile photo Url
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Uri photoUrl = user.getPhotoUrl();
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            String uid = user.getUid();
-        }
-        return user;
     }
 
 }
