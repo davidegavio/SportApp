@@ -19,4 +19,6 @@
     <string name="profile_name_title">Name</string>
     <string name="profile_descrption_title">Description</string>
     <string name="profile_email_title">E-mail</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="delete_profile">Delete profile</string>
 </resources>

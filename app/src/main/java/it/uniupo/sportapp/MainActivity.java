@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity
                 bundle.putString("name", loggedPlayer.getPlayerName());
                 bundle.putString("description", loggedPlayer.getPlayerDescription());
                 bundle.putString("email", loggedPlayer.getPlayerMail());
+                bundle.putString("uid", getCurrentFirebaseUser().getUid());
                 profileFragment.setArguments(bundle);
                 addFragment(profileFragment);
             }
