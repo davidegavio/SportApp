@@ -16,7 +16,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,26 +43,15 @@ public class MainActivity extends AppCompatActivity
     private Player loggedPlayer;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private ProfileFragment profileFragment;
+    //private ProfileFragment profileFragment;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
+        initViews();
         //Firebase stuff
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -81,11 +69,25 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         };
-
         signIn();
+
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == RC_SIGN_IN){
+            if(resultCode == RESULT_OK){
+                initViews();
+                ProfileFragment profileFragment = new ProfileFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("name", loggedPlayer.getPlayerName());
+                bundle.putString("description", loggedPlayer.getPlayerDescription());
+                bundle.putString("email", loggedPlayer.getPlayerMail());
+                profileFragment.setArguments(bundle);
+                addFragment(profileFragment);
+            }
+        }
+    }
 
     @Override
     public void onStart() {
@@ -147,10 +149,6 @@ public class MainActivity extends AppCompatActivity
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public Player getLoggedPlayer(){
-        return loggedPlayer;
-    }
-
     private void writeNewUserIfNeeded() {
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
 
@@ -158,7 +156,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists()) {
-                    ref.child(getCurrentFirebaseUser().getUid()).setValue(getLoggedPlayer());
+                    ref.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }
                 else Log.d(TAG, "Player already exists.");
@@ -189,6 +187,21 @@ public class MainActivity extends AppCompatActivity
                 .setIsSmartLockEnabled(false, true)
                 .setAllowNewEmailAccounts(true)
                 .build(), RC_SIGN_IN);
+    }
+
+    private void initViews(){
+        setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
 }
