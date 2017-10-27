@@ -24,39 +24,119 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
-import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.models.Player;
 
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link ProfileFragment.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link ProfileFragment#newInstance} factory method to
+ * create an instance of this fragment.
+ */
 public class ProfileFragment extends Fragment {
-
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
     TextView nameTv, descriptionTv, emailTv;
     String uid;
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
 
-    public ProfileFragment() {}
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
 
+    private OnFragmentInteractionListener mListener;
+
+    public ProfileFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment ProfileFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ProfileFragment newInstance(String param1, String param2) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.profile_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        nameTv = view.findViewById(R.id.name_tv);
+        descriptionTv = view.findViewById(R.id.description_tv);
+        emailTv = view.findViewById(R.id.email_tv);
+        fillFields(MainActivity.getLoggedPlayer());
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onDeleteUser() {
+        if (mListener != null) {
+            mListener.onFragmentInteraction();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction();
     }
 
     @Override
@@ -92,20 +172,7 @@ public class ProfileFragment extends Fragment {
                 return true;
 
             case R.id.delete_profile:
-                final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                firebaseUser.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        DatabaseReference mDatabase;
-                        mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("users").child(firebaseUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                showSignInDialog();
-                            }
-                        });
-                    }
-                });
+                    onDeleteUser();
                 return true;
 
             default: return super.onOptionsItemSelected(item);
@@ -113,27 +180,9 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        nameTv = view.findViewById(R.id.name_tv);
-        descriptionTv = view.findViewById(R.id.description_tv);
-        emailTv = view.findViewById(R.id.email_tv);
-        fillFields(MainActivity.getLoggedPlayer());
-    }
-
-    private void fillFields(Player player){
-        nameTv.setText(player.getPlayerName());
-        descriptionTv.setText(player.getPlayerDescription());
-        emailTv.setText(player.getPlayerMail());
-        uid = getArguments().getString("uid");
-    }
-
-    private void editLoggedUser(String eName, String eDescription, String eEmail){
-        if(!eName.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerName(eName);
-        if(!eDescription.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerDescription(eDescription);
-        if(!eEmail.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerMail(eEmail);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.profile_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void showSignInDialog(){
@@ -148,5 +197,19 @@ public class ProfileFragment extends Fragment {
                 .build(), RC_SIGN_IN);
     }
 
+    private void editLoggedUser(String eName, String eDescription, String eEmail){
+        if(!eName.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerName(eName);
+        if(!eDescription.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerDescription(eDescription);
+        if(!eEmail.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerMail(eEmail);
+    }
 
+    private void fillFields(Player player){
+        nameTv.setText(player.getPlayerName());
+        descriptionTv.setText(player.getPlayerDescription());
+        emailTv.setText(player.getPlayerMail());
+        uid = getArguments().getString("uid");
+    }
 }

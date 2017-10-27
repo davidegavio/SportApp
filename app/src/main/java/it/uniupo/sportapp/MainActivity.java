@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,7 +31,7 @@ import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.models.Player;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
 
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
@@ -43,7 +44,8 @@ public class MainActivity extends AppCompatActivity
     private static Player loggedPlayer;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    //private ProfileFragment profileFragment;
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
+
 
 
 
@@ -59,7 +61,6 @@ public class MainActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (getCurrentFirebaseUser() != null) {
                     // User is signed in
-                    writeNewUserIfNeeded();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + getCurrentFirebaseUser().getUid());
                 } else {
                     // User is signed out
@@ -76,14 +77,7 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
                 initViews();
-                ProfileFragment profileFragment = new ProfileFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", loggedPlayer.getPlayerName());
-                bundle.putString("description", loggedPlayer.getPlayerDescription());
-                bundle.putString("email", loggedPlayer.getPlayerMail());
-                bundle.putString("uid", getCurrentFirebaseUser().getUid());
-                profileFragment.setArguments(bundle);
-                addFragment(profileFragment);
+                writeNewUserIfNeeded();
             }
         }
     }
@@ -149,8 +143,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void writeNewUserIfNeeded() {
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
-
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -162,6 +154,14 @@ public class MainActivity extends AppCompatActivity
                 else {
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
                 }
+                ProfileFragment profileFragment = new ProfileFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("name", loggedPlayer.getPlayerName());
+                bundle.putString("description", loggedPlayer.getPlayerDescription());
+                bundle.putString("email", loggedPlayer.getPlayerMail());
+                bundle.putString("uid", getCurrentFirebaseUser().getUid());
+                profileFragment.setArguments(bundle);
+                addFragment(profileFragment);
                 Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
             }
 
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     public void addFragment(Fragment fragment) {
         // Fragment Manager
@@ -211,4 +212,15 @@ public class MainActivity extends AppCompatActivity
                 .build(), RC_SIGN_IN);
     }
 
+    @Override
+    public void onFragmentInteraction() {
+        ref.child(getCurrentFirebaseUser().getUid()).removeValue();
+        getCurrentFirebaseUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                //ref.removeEventListener(ValueEventListener);
+                showSignInDialog();
+            }
+        });
+    }
 }
