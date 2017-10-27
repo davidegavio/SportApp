@@ -16,17 +16,27 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Arrays;
+import java.util.Map;
+
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.models.Player;
 
 public class ProfileFragment extends Fragment {
 
     TextView nameTv, descriptionTv, emailTv;
     String uid;
+    private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
+    private static final int RC_SIGN_IN = 100;
 
     public ProfileFragment() {}
 
@@ -67,14 +77,11 @@ public class ProfileFragment extends Fragment {
                                 EditText editName = editview.findViewById(R.id.name_dialog);
                                 EditText editDescription = editview.findViewById(R.id.description_dialog);
                                 EditText editEmail = editview.findViewById(R.id.email_dialog);
-                                nameTv.setText(editName.getText());
-                                descriptionTv.setText(editDescription.getText());
-                                emailTv.setText(editEmail.getText());
+                                editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
+                                fillFields(MainActivity.getLoggedPlayer());
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(uid).child("name").setValue(nameTv.getText());
-                                mDatabase.child("users").child(uid).child("description").setValue(descriptionTv.getText());
-                                //mDatabase.child("users").child(uid).child());
+                                mDatabase.child("users").child(uid).setValue(MainActivity.getLoggedPlayer());
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -85,6 +92,20 @@ public class ProfileFragment extends Fragment {
                 return true;
 
             case R.id.delete_profile:
+                final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                firebaseUser.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        DatabaseReference mDatabase;
+                        mDatabase = FirebaseDatabase.getInstance().getReference();
+                        mDatabase.child("users").child(firebaseUser.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                showSignInDialog();
+                            }
+                        });
+                    }
+                });
                 return true;
 
             default: return super.onOptionsItemSelected(item);
@@ -96,10 +117,35 @@ public class ProfileFragment extends Fragment {
         nameTv = view.findViewById(R.id.name_tv);
         descriptionTv = view.findViewById(R.id.description_tv);
         emailTv = view.findViewById(R.id.email_tv);
-        nameTv.setText(getArguments().getString("name"));
-        descriptionTv.setText(getArguments().getString("description"));
-        emailTv.setText(getArguments().getString("email"));
+        fillFields(MainActivity.getLoggedPlayer());
+    }
+
+    private void fillFields(Player player){
+        nameTv.setText(player.getPlayerName());
+        descriptionTv.setText(player.getPlayerDescription());
+        emailTv.setText(player.getPlayerMail());
         uid = getArguments().getString("uid");
+    }
+
+    private void editLoggedUser(String eName, String eDescription, String eEmail){
+        if(!eName.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerName(eName);
+        if(!eDescription.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerDescription(eDescription);
+        if(!eEmail.equals(""))
+            MainActivity.getLoggedPlayer().setPlayerMail(eEmail);
+    }
+
+    public void showSignInDialog(){
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.drawable.teams96)
+                .setTheme(R.style.GreyTheme)
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+                .setTosUrl(GOOGLE_TOS_URL)
+                .setIsSmartLockEnabled(false, true)
+                .setAllowNewEmailAccounts(true)
+                .build(), RC_SIGN_IN);
     }
 
 

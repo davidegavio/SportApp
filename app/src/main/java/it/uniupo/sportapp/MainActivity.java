@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     //Firebase authenticator listener
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private Player loggedPlayer;
+    private static Player loggedPlayer;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     //private ProfileFragment profileFragment;
@@ -59,9 +59,7 @@ public class MainActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (getCurrentFirebaseUser() != null) {
                     // User is signed in
-                    loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "Player3", getCurrentFirebaseUser().getEmail() ,false);
                     writeNewUserIfNeeded();
-                    Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + getCurrentFirebaseUser().getUid());
                 } else {
                     // User is signed out
@@ -157,10 +155,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists()) {
+                    loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "", getCurrentFirebaseUser().getEmail(), false);
                     ref.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }
-                else Log.d(TAG, "Player already exists.");
+                else {
+                    loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
+                }
+                Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
             }
 
             @Override
@@ -178,18 +180,6 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-    public void showSignInDialog(){
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
-                .setLogo(R.drawable.teams96)
-                .setTheme(R.style.GreyTheme)
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-                .setTosUrl(GOOGLE_TOS_URL)
-                .setIsSmartLockEnabled(false, true)
-                .setAllowNewEmailAccounts(true)
-                .build(), RC_SIGN_IN);
-    }
-
     private void initViews(){
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -203,6 +193,22 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    public static Player getLoggedPlayer(){
+        return loggedPlayer;
+    }
+
+    public void showSignInDialog(){
+        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                .setLogo(R.drawable.teams96)
+                .setTheme(R.style.GreyTheme)
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+                .setTosUrl(GOOGLE_TOS_URL)
+                .setIsSmartLockEnabled(false, true)
+                .setAllowNewEmailAccounts(true)
+                .build(), RC_SIGN_IN);
     }
 
 }
