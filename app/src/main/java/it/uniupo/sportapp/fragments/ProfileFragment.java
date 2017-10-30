@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -22,6 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
@@ -44,6 +46,7 @@ public class ProfileFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     TextView nameTv, descriptionTv, emailTv;
     String uid;
+    ImageView profileIv;
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
 
@@ -97,6 +100,7 @@ public class ProfileFragment extends Fragment {
         nameTv = view.findViewById(R.id.name_tv);
         descriptionTv = view.findViewById(R.id.description_tv);
         emailTv = view.findViewById(R.id.email_tv);
+        profileIv = view.findViewById(R.id.profile_image);
         fillFields(MainActivity.getLoggedPlayer());
     }
 
@@ -143,38 +147,12 @@ public class ProfileFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.edit_profile:
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                // Get the layout inflater
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                // Inflate and set the layout for the dialog
-                // Pass null as the parent view because its going in the dialog layout
-                final View editview = inflater.inflate(R.layout.edit_dialog, null);
-                builder.setView(editview)
-                        // Add action buttons
-                        .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EditText editName = editview.findViewById(R.id.name_dialog);
-                                EditText editDescription = editview.findViewById(R.id.description_dialog);
-                                EditText editEmail = editview.findViewById(R.id.email_dialog);
-                                editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
-                                fillFields(MainActivity.getLoggedPlayer());
-                                DatabaseReference mDatabase;
-                                mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(uid).setValue(MainActivity.getLoggedPlayer());
-                            }
-                        })
-                        .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        }).create().show();
+                showEditDialog();
                 return true;
 
             case R.id.delete_profile:
                     onDeleteUser();
                 return true;
-
             default: return super.onOptionsItemSelected(item);
         }
     }
@@ -208,8 +186,42 @@ public class ProfileFragment extends Fragment {
 
     private void fillFields(Player player){
         nameTv.setText(player.getPlayerName());
-        descriptionTv.setText(player.getPlayerDescription());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        if(player.getPlayerDescription().equals("")){
+            descriptionTv.setText("Empty description, fill it with the edit button in the menu");
+        }
+        else descriptionTv.setText(player.getPlayerDescription());
         emailTv.setText(player.getPlayerMail());
         uid = getArguments().getString("uid");
+        Picasso.with(getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileIv);
+    }
+    
+    private void showEditDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        final View editview = inflater.inflate(R.layout.edit_dialog, null);
+        builder.setView(editview)
+                // Add action buttons
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        EditText editName = editview.findViewById(R.id.name_dialog);
+                        EditText editDescription = editview.findViewById(R.id.description_dialog);
+                        EditText editEmail = editview.findViewById(R.id.email_dialog);
+                        editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
+                        fillFields(MainActivity.getLoggedPlayer());
+                        DatabaseReference mDatabase;
+                        mDatabase = FirebaseDatabase.getInstance().getReference();
+                        mDatabase.child("users").child(uid).setValue(MainActivity.getLoggedPlayer());
+                    }
+                })
+                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
     }
 }

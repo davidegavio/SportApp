@@ -16,7 +16,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
+    private boolean isAuthenticated = false;
 
 
 
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
                 initViews();
+                isAuthenticated = true;
                 writeNewUserIfNeeded();
             }
         }
@@ -146,23 +150,25 @@ public class MainActivity extends AppCompatActivity
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists()) {
+
+                if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated) {
                     loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "", getCurrentFirebaseUser().getEmail(), false);
                     ref.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }
-                else {
+                else if(dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated){
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
+                    ProfileFragment profileFragment = new ProfileFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", loggedPlayer.getPlayerName());
+                    bundle.putString("description", loggedPlayer.getPlayerDescription());
+                    bundle.putString("email", loggedPlayer.getPlayerMail());
+                    bundle.putString("uid", getCurrentFirebaseUser().getUid());
+                    profileFragment.setArguments(bundle);
+                    addFragment(profileFragment);
+                    Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
-                ProfileFragment profileFragment = new ProfileFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("name", loggedPlayer.getPlayerName());
-                bundle.putString("description", loggedPlayer.getPlayerDescription());
-                bundle.putString("email", loggedPlayer.getPlayerMail());
-                bundle.putString("uid", getCurrentFirebaseUser().getUid());
-                profileFragment.setArguments(bundle);
-                addFragment(profileFragment);
-                Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
+
             }
 
             @Override
@@ -214,12 +220,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction() {
+        isAuthenticated = false;
         ref.child(getCurrentFirebaseUser().getUid()).removeValue();
-        getCurrentFirebaseUser().delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+        getCurrentFirebaseUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onSuccess(Void aVoid) {
-                //ref.removeEventListener(ValueEventListener);
-                showSignInDialog();
+            public void onComplete(@NonNull Task<Void> task) {
+                signIn();
             }
         });
     }

@@ -10,6 +10,7 @@
         android:contentDescription="@string/app_name" />
     <EditText
         android:id="@+id/name_dialog"
+        android:inputType="textCapWords"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -19,7 +20,7 @@
 
     <EditText
         android:id="@+id/description_dialog"
-        android:inputType="textPassword"
+        android:inputType="textCapSentences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
