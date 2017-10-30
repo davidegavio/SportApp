@@ -19,6 +19,10 @@
             android:layout_height="120dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:src="@mipmap/ic_launcher"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/secondaryColor"
+            android:background="@color/primaryLightColor"
             />
 
         <LinearLayout
@@ -26,17 +30,31 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@id/profile_image">
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/teams24"/>
 
             <Button
+                android:id="@+id/seasons_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawableStart="@drawable/teams24"/>
+                android:drawableStart="@drawable/teams24"
+                android:text="Your seasons"
+                style="?android:attr/borderlessButtonStyle"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/black"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"/>
+
+            <Button
+                android:id="@+id/new_season_btn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/teams24"
+                android:text="Create new season"
+                style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>
 
     </RelativeLayout>

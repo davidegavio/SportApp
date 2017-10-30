@@ -17,7 +17,6 @@ import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +37,8 @@ public class MainActivity extends AppCompatActivity
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
     private static final String TAG = "Log info";
-    private static final String USERS_TABLE = "users" ;
+    private static final String USERS_TABLE = "users";
+    private static final String SEASONS_TABLE = "seasons";
     //Firebase authenticator
     private FirebaseAuth mAuth;
     //Firebase authenticator listener
@@ -46,7 +46,8 @@ public class MainActivity extends AppCompatActivity
     private static Player loggedPlayer;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
+    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
+    DatabaseReference seasonRef = FirebaseDatabase.getInstance().getReference(SEASONS_TABLE);
     private boolean isAuthenticated = false;
 
 
@@ -138,7 +139,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void signOut(){
+        Log.d(TAG, getCurrentFirebaseUser().getEmail());
+        isAuthenticated = false;
         FirebaseAuth.getInstance().signOut();
+        mAuth.removeAuthStateListener(mAuthListener);
+        mAuth = FirebaseAuth.getInstance();
         showSignInDialog();
     }
 
@@ -147,13 +152,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void writeNewUserIfNeeded() {
-        ref.addValueEventListener(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated) {
                     loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "", getCurrentFirebaseUser().getEmail(), false);
-                    ref.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
+                    userRef.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }
                 else if(dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated){
@@ -207,6 +212,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showSignInDialog(){
+        mAuth.addAuthStateListener(mAuthListener);
         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setLogo(R.drawable.teams96)
                 .setTheme(R.style.GreyTheme)
@@ -221,7 +227,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction() {
         isAuthenticated = false;
-        ref.child(getCurrentFirebaseUser().getUid()).removeValue();
+        userRef.child(getCurrentFirebaseUser().getUid()).removeValue();
         getCurrentFirebaseUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

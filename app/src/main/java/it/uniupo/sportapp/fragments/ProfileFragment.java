@@ -7,12 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,11 +27,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Season;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +46,7 @@ import it.uniupo.sportapp.models.Player;
  * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,6 +54,7 @@ public class ProfileFragment extends Fragment {
     TextView nameTv, descriptionTv, emailTv;
     String uid;
     ImageView profileIv;
+    Button seasonButton, newSeasonButton;
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
 
@@ -101,6 +109,10 @@ public class ProfileFragment extends Fragment {
         descriptionTv = view.findViewById(R.id.description_tv);
         emailTv = view.findViewById(R.id.email_tv);
         profileIv = view.findViewById(R.id.profile_image);
+        seasonButton = view.findViewById(R.id.seasons_btn);
+        seasonButton.setOnClickListener(this);
+        newSeasonButton = view.findViewById(R.id.new_season_btn);
+        newSeasonButton.setOnClickListener(this);
         fillFields(MainActivity.getLoggedPlayer());
     }
 
@@ -110,6 +122,8 @@ public class ProfileFragment extends Fragment {
             mListener.onFragmentInteraction();
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -126,6 +140,46 @@ public class ProfileFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.seasons_btn:
+                break;
+            case R.id.new_season_btn:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                final View editview = inflater.inflate(R.layout.create_season_dialog, null);
+                builder.setView(editview)
+                        // Add action buttons
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
+                                Log.d(TAG, String.valueOf(newSeasonName.getText()));
+                                Season newSeason = new Season(String.valueOf(newSeasonName.getText()), MainActivity.getLoggedPlayer());
+                                Calendar c = Calendar.getInstance();
+                                System.out.println("Current time => " + c.getTime());
+                                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                                String formattedDate = df.format(c.getTime());
+                                newSeason.setSeasonBeginningDate(formattedDate);
+                                DatabaseReference mDatabase;
+                                mDatabase = FirebaseDatabase.getInstance().getReference();
+                                mDatabase.child("seasons").child(mDatabase.push().getKey()).setValue(newSeason);
+                                ((MainActivity)getActivity()).addFragment(new SeasonDetailFragment());
+                            }
+                        })
+                        .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        }).create().show();
+                break;
+        }
     }
 
     /**
@@ -193,7 +247,9 @@ public class ProfileFragment extends Fragment {
         else descriptionTv.setText(player.getPlayerDescription());
         emailTv.setText(player.getPlayerMail());
         uid = getArguments().getString("uid");
-        Picasso.with(getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileIv);
+        Log.d(TAG, "Url "+FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
+        if(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()!=null)
+            Picasso.with(getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileIv);
     }
     
     private void showEditDialog(){

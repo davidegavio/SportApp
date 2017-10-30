@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="match_parent"
@@ -9,13 +9,15 @@
         android:scaleType="center"
         android:background="@color/primaryColor"
         android:contentDescription="@string/app_name" />
+
     <EditText
-        android:id="@+id/name_dialog"
+        android:id="@+id/season_name_dialog"
+        android:inputType="textCapSentences"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:hint="Edit your description" />
+        android:hint="Set the season name" />
 
 </LinearLayout>
