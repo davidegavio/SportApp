@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import it.uniupo.sportapp.R;
-import it.uniupo.sportapp.adapters.SeasonAdapter;
+import it.uniupo.sportapp.adapters.SeasonDetailAdapter;
 import it.uniupo.sportapp.models.Season;
 
 /**
@@ -38,8 +38,7 @@ public class SeasonListFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private SeasonAdapter mAdapter;
-    private ArrayList<Season> seasonArrayList;
+    private SeasonDetailAdapter mAdapter;
 
     public SeasonListFragment() {
         // Required empty public constructor
@@ -85,7 +84,7 @@ public class SeasonListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         
-        mAdapter = new SeasonAdapter(seasonArrayList);
+        //mAdapter = new SeasonDetailAdapter(seasonArrayList);
         mRecyclerView.setAdapter(mAdapter);
     }
 

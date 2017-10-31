@@ -15,6 +15,9 @@ public class Season {
     private Player seasonAdmin;
     private Player seasonPlayers;
 
+    public Season() {
+    }
+
     public Season(String seasonName, Player seasonAdmin) {
         this.seasonName = seasonName;
         this.seasonAdmin = seasonAdmin;

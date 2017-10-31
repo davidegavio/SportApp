@@ -1,0 +1,57 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:scaleType="center"
+        android:background="@color/primaryColor"
+        android:contentDescription="@string/app_name" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="null"
+            android:text="Select date" />
+
+        <Button
+            android:id="@+id/btn_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="null"
+            android:text="Select time"
+            android:layout_below="@id/btn_date"
+            />
+
+        <TextView
+            android:id="@+id/date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|end"
+            android:layout_toEndOf="@+id/btn_date"
+            android:layout_above="@+id/btn_time"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="16dp"/>
+
+        <TextView
+            android:id="@+id/time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|end"
+            android:layout_alignBottom="@+id/btn_time"
+            android:layout_toEndOf="@+id/btn_time"
+            android:layout_below="@+id/btn_date"
+            android:layout_marginLeft="16dp"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -6,15 +6,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import it.uniupo.sportapp.models.Season;
+import it.uniupo.sportapp.models.Match;
 
 /**
  * Created by 20010562 on 10/30/17.
  */
 
-public class SeasonAdapter extends RecyclerView.Adapter<SeasonAdapter.ViewHolder>{
+public class SeasonDetailAdapter extends RecyclerView.Adapter<SeasonDetailAdapter.ViewHolder>{
 
-    private final ArrayList<Season> mSeasonArrayList;
+    private final ArrayList<Match> mSeasonArrayList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -29,17 +29,17 @@ public class SeasonAdapter extends RecyclerView.Adapter<SeasonAdapter.ViewHolder
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SeasonAdapter(ArrayList<Season> inputSeasonArrayList) {
+    public SeasonDetailAdapter(ArrayList<Match> inputSeasonArrayList) {
         mSeasonArrayList = inputSeasonArrayList;
     }
 
     @Override
-    public SeasonAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SeasonDetailAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return null;
     }
 
     @Override
-    public void onBindViewHolder(SeasonAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(SeasonDetailAdapter.ViewHolder holder, int position) {
 
     }
 

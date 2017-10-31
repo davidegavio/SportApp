@@ -13,6 +13,9 @@ public class Match {
     private String startTime;
     private String endTime;
 
+    public Match() {
+    }
+
     public Match(ArrayList<Team> opposingTeams, String matchDay, String startTime, String endTime) {
         this.opposingTeams = opposingTeams;
         this.matchDay = matchDay;

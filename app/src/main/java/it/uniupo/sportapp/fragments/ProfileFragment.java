@@ -3,7 +3,6 @@ package it.uniupo.sportapp.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
@@ -20,9 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
@@ -49,8 +46,11 @@ import static android.content.ContentValues.TAG;
 public class ProfileFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_NAME = "name";
+    private static final String ARG_DESCR = "descr";
+    private static final String ARG_MAIL = "mail";
+    private static final String ARG_UID = "uid";
+
     TextView nameTv, descriptionTv, emailTv;
     String uid;
     ImageView profileIv;
@@ -59,10 +59,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     private static final int RC_SIGN_IN = 100;
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String mPlayerName;
+    private String mPlayerDescription;
+    private String mPlayerEmail;
+    private String mPlayerUid;
 
     private OnFragmentInteractionListener mListener;
+    private Player currentPlayer;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -72,16 +75,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
+     *
+     * @param playerName
+     * @param playerDescription
+     * @param playerEmail Parameter 1.
+     * @param playerUid Parameter 2.   @return A new instance of fragment ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
+    public static ProfileFragment newInstance(String playerName, String playerDescription, String playerEmail, String playerUid) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_NAME, playerName);
+        args.putString(ARG_DESCR, playerDescription);
+        args.putString(ARG_MAIL, playerEmail);
+        args.putString(ARG_UID, playerUid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -90,8 +97,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mPlayerName = getArguments().getString(ARG_NAME);
+            mPlayerDescription = getArguments().getString(ARG_DESCR);
+            mPlayerEmail = getArguments().getString(ARG_MAIL);
+            mPlayerUid = getArguments().getString(ARG_UID);
+            currentPlayer = new Player(mPlayerName, mPlayerDescription, mPlayerEmail, false);
         }
     }
 
@@ -113,10 +123,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         seasonButton.setOnClickListener(this);
         newSeasonButton = view.findViewById(R.id.new_season_btn);
         newSeasonButton.setOnClickListener(this);
-        fillFields(MainActivity.getLoggedPlayer());
+        fillFields(currentPlayer);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onDeleteUser() {
         if (mListener != null) {
             mListener.onFragmentInteraction();
@@ -146,6 +155,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.seasons_btn:
+
                 break;
             case R.id.new_season_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -161,7 +171,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
                                 Log.d(TAG, String.valueOf(newSeasonName.getText()));
-                                Season newSeason = new Season(String.valueOf(newSeasonName.getText()), MainActivity.getLoggedPlayer());
+                                Season newSeason = new Season(String.valueOf(newSeasonName.getText()), currentPlayer);
                                 Calendar c = Calendar.getInstance();
                                 System.out.println("Current time => " + c.getTime());
                                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
@@ -169,8 +179,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 newSeason.setSeasonBeginningDate(formattedDate);
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("seasons").child(mDatabase.push().getKey()).setValue(newSeason);
-                                ((MainActivity)getActivity()).addFragment(new SeasonDetailFragment());
+                                String k = mDatabase.child("seasons").child(mDatabase.push().getKey()).getKey();
+                                mDatabase.child("seasons").child(k).setValue(newSeason);
+                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(k));
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -193,7 +204,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction();
     }
 
@@ -205,7 +215,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                 return true;
 
             case R.id.delete_profile:
-                    onDeleteUser();
+                onDeleteUser();
                 return true;
             default: return super.onOptionsItemSelected(item);
         }
@@ -268,10 +278,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         EditText editDescription = editview.findViewById(R.id.description_dialog);
                         EditText editEmail = editview.findViewById(R.id.email_dialog);
                         editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
-                        fillFields(MainActivity.getLoggedPlayer());
+                        fillFields(currentPlayer);
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("users").child(uid).setValue(MainActivity.getLoggedPlayer());
+                        mDatabase.child("users").child(uid).setValue(currentPlayer);
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

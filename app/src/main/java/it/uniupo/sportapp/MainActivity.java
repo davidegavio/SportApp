@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void writeNewUserIfNeeded() {
-        userRef.addValueEventListener(new ValueEventListener() {
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -163,15 +163,8 @@ public class MainActivity extends AppCompatActivity
                 }
                 else if(dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated){
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
-                    ProfileFragment profileFragment = new ProfileFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", loggedPlayer.getPlayerName());
-                    bundle.putString("description", loggedPlayer.getPlayerDescription());
-                    bundle.putString("email", loggedPlayer.getPlayerMail());
-                    bundle.putString("uid", getCurrentFirebaseUser().getUid());
-                    profileFragment.setArguments(bundle);
-                    addFragment(profileFragment);
-                    Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
+                    addFragment(ProfileFragment.newInstance(loggedPlayer.getPlayerName(), loggedPlayer.getPlayerDescription(), loggedPlayer.getPlayerMail(), getCurrentFirebaseUser().getUid()));
+                    //Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
 
             }
@@ -223,6 +216,8 @@ public class MainActivity extends AppCompatActivity
                 .setAllowNewEmailAccounts(true)
                 .build(), RC_SIGN_IN);
     }
+
+
 
     @Override
     public void onFragmentInteraction() {
