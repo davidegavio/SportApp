@@ -31,6 +31,7 @@ import java.util.Calendar;
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
 
 import static android.content.ContentValues.TAG;
@@ -54,7 +55,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     TextView nameTv, descriptionTv, emailTv;
     String uid;
     ImageView profileIv;
-    Button seasonButton, newSeasonButton;
+    Button roomsButton, newRoomButton;
     private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
     private static final int RC_SIGN_IN = 100;
 
@@ -119,10 +120,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         descriptionTv = view.findViewById(R.id.description_tv);
         emailTv = view.findViewById(R.id.email_tv);
         profileIv = view.findViewById(R.id.profile_image);
-        seasonButton = view.findViewById(R.id.seasons_btn);
-        seasonButton.setOnClickListener(this);
-        newSeasonButton = view.findViewById(R.id.new_season_btn);
-        newSeasonButton.setOnClickListener(this);
+        roomsButton = view.findViewById(R.id.rooms_btn);
+        roomsButton.setOnClickListener(this);
+        newRoomButton = view.findViewById(R.id.new_room_btn);
+        newRoomButton.setOnClickListener(this);
         fillFields(currentPlayer);
     }
 
@@ -154,22 +155,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.seasons_btn:
+            case R.id.rooms_btn:
 
                 break;
-            case R.id.new_season_btn:
+            case R.id.new_room_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 // Get the layout inflater
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 // Inflate and set the layout for the dialog
                 // Pass null as the parent view because its going in the dialog layout
-                final View editview = inflater.inflate(R.layout.create_season_dialog, null);
+                final View editview = inflater.inflate(R.layout.create_room_dialog, null);
                 builder.setView(editview)
                         // Add action buttons
                         .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
+                                EditText newRoomName = editview.findViewById(R.id.room_name_dialog);
+                                Room newRoom = new Room(String.valueOf(newRoomName.getText()));
+                                DatabaseReference mDatabase;
+                                mDatabase = FirebaseDatabase.getInstance().getReference();
+                                String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
+                                mDatabase.child("rooms").child(k).setValue(newRoom);
+                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(String.valueOf(newRoomName.getText())));
+                                /*EditText newSeasonName = editview.findViewById(R.id.room_name_dialog);
                                 Log.d(TAG, String.valueOf(newSeasonName.getText()));
                                 Season newSeason = new Season(String.valueOf(newSeasonName.getText()), currentPlayer);
                                 Calendar c = Calendar.getInstance();
@@ -181,7 +189,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
                                 String k = mDatabase.child("seasons").child(mDatabase.push().getKey()).getKey();
                                 mDatabase.child("seasons").child(k).setValue(newSeason);
-                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(k));
+                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(k));*/
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

@@ -32,12 +32,12 @@
             android:layout_below="@id/profile_image">
 
             <Button
-                android:id="@+id/seasons_btn"
+                android:id="@+id/rooms_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/teams24"
-                android:text="Your seasons"
+                android:text="Your rooms"
                 style="?android:attr/borderlessButtonStyle"/>
 
             <View
@@ -48,12 +48,12 @@
                 android:layout_marginBottom="10dp"/>
 
             <Button
-                android:id="@+id/new_season_btn"
+                android:id="@+id/new_room_btn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/teams24"
-                android:text="Create new season"
+                android:text="Create new room"
                 style="?android:attr/borderlessButtonStyle"/>
         </LinearLayout>
 
