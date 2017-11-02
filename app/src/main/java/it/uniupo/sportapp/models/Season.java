@@ -18,9 +18,8 @@ public class Season {
     public Season() {
     }
 
-    public Season(String seasonName, Player seasonAdmin) {
+    public Season(String seasonName) {
         this.seasonName = seasonName;
-        this.seasonAdmin = seasonAdmin;
     }
 
     public String getSeasonName() {

@@ -1,5 +1,7 @@
 package it.uniupo.sportapp.models;
 
+import java.util.ArrayList;
+
 /**
  * Created by dgavio on 16/10/17.
  */
@@ -10,12 +12,22 @@ public class Player {
     private String playerDescription;
     private String playerMail;
     private boolean isGoalkeeper;
+    private ArrayList<Room> playerRooms;
+
+    public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper, ArrayList<Room> playerRooms) {
+        this.playerName = playerName;
+        this.playerDescription = playerDescription;
+        this.playerMail = playerMail;
+        this.isGoalkeeper = isGoalkeeper;
+        this.playerRooms = playerRooms;
+    }
 
     public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper) {
         this.playerName = playerName;
         this.playerDescription = playerDescription;
         this.playerMail = playerMail;
         this.isGoalkeeper = isGoalkeeper;
+        this.playerRooms = new ArrayList<>();
     }
 
     public Player() {
@@ -51,5 +63,13 @@ public class Player {
 
     public void setPlayerMail(String playerMail) {
         this.playerMail = playerMail;
+    }
+
+    public ArrayList<Room> getPlayerRooms() {
+        return playerRooms;
+    }
+
+    public void setPlayerRooms(ArrayList<Room> playerRooms) {
+        this.playerRooms = playerRooms;
     }
 }

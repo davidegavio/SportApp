@@ -172,24 +172,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText newRoomName = editview.findViewById(R.id.room_name_dialog);
                                 Room newRoom = new Room(String.valueOf(newRoomName.getText()));
+                                MainActivity.getLoggedPlayer().getPlayerRooms().add(newRoom);
+                                newRoom.getActivePlayers().add(currentPlayer);
+                                newRoom.getAdminPlayers().add(currentPlayer);
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
+                                Log.d("Key", k);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
                                 ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(String.valueOf(newRoomName.getText())));
-                                /*EditText newSeasonName = editview.findViewById(R.id.room_name_dialog);
-                                Log.d(TAG, String.valueOf(newSeasonName.getText()));
-                                Season newSeason = new Season(String.valueOf(newSeasonName.getText()), currentPlayer);
-                                Calendar c = Calendar.getInstance();
-                                System.out.println("Current time => " + c.getTime());
-                                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                                String formattedDate = df.format(c.getTime());
-                                newSeason.setSeasonBeginningDate(formattedDate);
-                                DatabaseReference mDatabase;
-                                mDatabase = FirebaseDatabase.getInstance().getReference();
-                                String k = mDatabase.child("seasons").child(mDatabase.push().getKey()).getKey();
-                                mDatabase.child("seasons").child(k).setValue(newSeason);
-                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(k));*/
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

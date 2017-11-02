@@ -18,6 +18,9 @@ public class Room {
 
     public Room(String roomName){
         this.roomName = roomName;
+        this.activePlayers = new ArrayList<>();
+        this.adminPlayers = new ArrayList<>();
+        this.existingSeasons = new ArrayList<>();
     }
 
     public Room(ArrayList<Season> existingSeasons, ArrayList<Player> activePlayers, ArrayList<Player> adminPlayers, String roomName) {

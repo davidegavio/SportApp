@@ -26,10 +26,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
@@ -158,15 +160,18 @@ public class MainActivity extends AppCompatActivity
 
                 if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated) {
                     loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "", getCurrentFirebaseUser().getEmail(), false);
+                    if(loggedPlayer.getPlayerRooms() == null)
+                        loggedPlayer.setPlayerRooms(new ArrayList<Room>());
                     userRef.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }
                 else if(dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated){
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
-                    addFragment(ProfileFragment.newInstance(loggedPlayer.getPlayerName(), loggedPlayer.getPlayerDescription(), loggedPlayer.getPlayerMail(), getCurrentFirebaseUser().getUid()));
+                    if(loggedPlayer.getPlayerRooms() == null)
+                        loggedPlayer.setPlayerRooms(new ArrayList<Room>());
                     //Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
-
+                addFragment(ProfileFragment.newInstance(loggedPlayer.getPlayerName(), loggedPlayer.getPlayerDescription(), loggedPlayer.getPlayerMail(), getCurrentFirebaseUser().getUid()));
             }
 
             @Override
