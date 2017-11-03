@@ -58,9 +58,11 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempRoom.getRoomName());
         TextView playersTextView = holder.playersTv;
-        playersTextView.setText(tempRoom.getActivePlayers().size());
+        playersTextView.setText(String.valueOf(tempRoom.getActivePlayers().size()));
         TextView seasonsTextView = holder.seasonsTv;
-        seasonsTextView.setText(tempRoom.getExistingSeasons().size());
+        if(tempRoom.getExistingSeasons()!=null)
+            seasonsTextView.setText(String.valueOf(tempRoom.getExistingSeasons().size()));
+        else seasonsTextView.setText("0");
 
     }
 

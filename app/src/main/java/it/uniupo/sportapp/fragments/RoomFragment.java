@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,6 +46,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_KEY = "key";
+    private static final String ARG_INDEX = "index";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,10 +68,11 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
      * @return A new instasuper.onViewCreated(view, savedInstanceState);nce of fragment RoomFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RoomFragment newInstance(String param1) {
+    public static RoomFragment newInstance(String param1, String param2) {
         RoomFragment fragment = new RoomFragment();
         Bundle args = new Bundle();
         args.putString(ARG_KEY, param1);
+        args.putString(ARG_INDEX, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,6 +82,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_KEY);
+            mParam2 = getArguments().getString(ARG_INDEX);
         }
     }
 
@@ -90,6 +95,8 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Button showSeasonsBtn = view.findViewById(R.id.show_seasons_btn);
+        showSeasonsBtn.setOnClickListener(this);
         FloatingActionButton addPlayerFab = view.findViewById(R.id.add_player_btn);
         addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
@@ -117,45 +124,56 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View view) {
-        if(view.getId() == R.id.add_player_btn){
-            Log.d("Add", "Add player");
+        switch (view.getId()) {
+            case R.id.add_player_btn:
+                Log.d("Add", "Add player");
+                break;
+            case R.id.add_season_btn:
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                final View editview = inflater.inflate(R.layout.create_season_dialog, null);
+                builder.setView(editview)
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
+                                //Log.d(TAG, String.valueOf(newSeasonName.getText()));
+                                Season newSeason = new Season(String.valueOf(newSeasonName.getText()));
+                                Calendar c = Calendar.getInstance();
+                                System.out.println("Current time => " + c.getTime());
+                                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                                String formattedDate = df.format(c.getTime());
+                                newSeason.setSeasonBeginningDate(formattedDate);
+                                currentRoom.getExistingSeasons().add(newSeason);
+                                Singleton.setCurrentRoom(currentRoom);
+                                DatabaseReference mDatabase;
+                                mDatabase = FirebaseDatabase.getInstance().getReference();
+                                mDatabase.child("rooms").child(mParam1).setValue(currentRoom);
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(currentRoom);
+                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(String.valueOf(currentRoom.getExistingSeasons().size()), mParam1));
+
+                            }
+                        }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
+
+                Log.d("Add", "Add season");
+                break;
+            case R.id.show_seasons_btn:
+                ((MainActivity)getActivity()).addFragment(SeasonListFragment.newInstance());
+                break;
+            case R.id.show_players_btn:
+
+                break;
         }
-        else if(view.getId() == R.id.add_season_btn){
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            // Get the layout inflater
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
-            final View editview = inflater.inflate(R.layout.create_season_dialog, null);
-            builder.setView(editview)
-                    .setPositiveButton("Create", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
-                            //Log.d(TAG, String.valueOf(newSeasonName.getText()));
-                            Season newSeason = new Season(String.valueOf(newSeasonName.getText()));
-                            Calendar c = Calendar.getInstance();
-                            System.out.println("Current time => " + c.getTime());
-                            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                            String formattedDate = df.format(c.getTime());
-                            newSeason.setSeasonBeginningDate(formattedDate);
-                            currentRoom.getExistingSeasons().add(newSeason);
-                            DatabaseReference mDatabase;
-                            mDatabase = FirebaseDatabase.getInstance().getReference();
-                            mDatabase.child("rooms").child(mParam1).setValue(currentRoom);
-                            ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(String.valueOf(currentRoom.getExistingSeasons().size()), mParam1));
-
-                        }
-                    }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            }).create().show();
-
-            Log.d("Add", "Add season");
-        }
-
     }
+
+}
 
     /*// TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -195,6 +213,3 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }*/
-
-
-}

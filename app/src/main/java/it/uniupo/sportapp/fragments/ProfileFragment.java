@@ -30,6 +30,7 @@ import java.util.Calendar;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
@@ -156,7 +157,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.rooms_btn:
-
+                ((MainActivity)getActivity()).addFragment(RoomListFragment.newInstance(currentPlayer.getPlayerRooms()));
                 break;
             case R.id.new_room_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -181,7 +182,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
                                 Log.d("Key", k);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
-                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(k));
+                                String n = String.valueOf(MainActivity.getLoggedPlayer().getPlayerRooms().size()-1);
+                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(k, n));
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
