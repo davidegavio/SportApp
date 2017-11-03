@@ -61,13 +61,13 @@
         android:padding="10dp"
         android:id="@+id/season_rv"
         android:scrollbars="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginEnd="16dp"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"

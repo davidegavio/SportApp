@@ -14,15 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
 
 import static android.content.ContentValues.TAG;
@@ -37,12 +43,13 @@ import static android.content.ContentValues.TAG;
 public class RoomFragment extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_KEY = "key";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private Player currentPlayer;
+    private Room currentRoom;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -61,7 +68,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     public static RoomFragment newInstance(String param1) {
         RoomFragment fragment = new RoomFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_KEY, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,7 +77,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam1 = getArguments().getString(ARG_KEY);
         }
     }
 
@@ -87,6 +94,25 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("rooms").child(mParam1).exists()){
+                    currentRoom = dataSnapshot.child("rooms").child(mParam1).getValue(Room.class);
+                    currentRoom.setExistingSeasons(new ArrayList<Season>());
+                    Singleton.setCurrentRoom(currentRoom);
+                }
+                else{
+                    Log.d("Room", "Room doesn't exist");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -113,11 +139,11 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                             SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                             String formattedDate = df.format(c.getTime());
                             newSeason.setSeasonBeginningDate(formattedDate);
+                            currentRoom.getExistingSeasons().add(newSeason);
                             DatabaseReference mDatabase;
                             mDatabase = FirebaseDatabase.getInstance().getReference();
-                            String k = mDatabase.child("rooms").child(mParam1).child(mDatabase.push().getKey()).getKey();
-                            mDatabase.child("rooms").child(mParam1).child("seasons").child(k).setValue(newSeason);
-                            ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(k));
+                            mDatabase.child("rooms").child(mParam1).setValue(currentRoom);
+                            ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(String.valueOf(currentRoom.getExistingSeasons().size()), mParam1));
 
                         }
                     }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

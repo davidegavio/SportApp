@@ -177,11 +177,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 newRoom.getAdminPlayers().add(currentPlayer);
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(MainActivity.getLoggedPlayer());
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
                                 Log.d("Key", k);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
-                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(String.valueOf(newRoomName.getText())));
+                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(k));
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

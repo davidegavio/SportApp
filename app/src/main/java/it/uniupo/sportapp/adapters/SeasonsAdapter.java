@@ -12,7 +12,7 @@ import it.uniupo.sportapp.models.Match;
  * Created by 20010562 on 10/30/17.
  */
 
-public class SeasonDetailAdapter extends RecyclerView.Adapter<SeasonDetailAdapter.ViewHolder>{
+public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHolder>{
 
     private final ArrayList<Match> mSeasonArrayList;
 
@@ -29,17 +29,17 @@ public class SeasonDetailAdapter extends RecyclerView.Adapter<SeasonDetailAdapte
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SeasonDetailAdapter(ArrayList<Match> inputSeasonArrayList) {
+    public SeasonsAdapter(ArrayList<Match> inputSeasonArrayList) {
         mSeasonArrayList = inputSeasonArrayList;
     }
 
     @Override
-    public SeasonDetailAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public SeasonsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return null;
     }
 
     @Override
-    public void onBindViewHolder(SeasonDetailAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(SeasonsAdapter.ViewHolder holder, int position) {
 
     }
 

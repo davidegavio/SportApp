@@ -1,32 +1,30 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 
-import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
-import it.uniupo.sportapp.adapters.SeasonDetailAdapter;
+import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.adapters.MatchesAdapter;
+import it.uniupo.sportapp.adapters.SeasonsAdapter;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Season;
 
@@ -40,15 +38,17 @@ import it.uniupo.sportapp.models.Season;
 public class SeasonDetailFragment extends Fragment {
 
     private static final String ARG_KEY = "key";
+    private static final String ARG_ROOM = "room";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private SeasonDetailAdapter mAdapter;
+    private MatchesAdapter mAdapter;
 
     private TextView seasonNameTv;
 
 
     // TODO: Rename and change types of parameters
     private String mSeasonKey;
+    private String mRoomKey;
 
     Season currentSeason;
 
@@ -65,10 +65,11 @@ public class SeasonDetailFragment extends Fragment {
      * @return A new instance of fragment SeasonDetailFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SeasonDetailFragment newInstance(String key) {
+    public static SeasonDetailFragment newInstance(String key, String roomKey) {
         SeasonDetailFragment fragment = new SeasonDetailFragment();
         Bundle args = new Bundle();
         args.putString(ARG_KEY, key);
+        args.putString(ARG_ROOM, roomKey);
         fragment.setArguments(args);
         return fragment;
     }
@@ -79,24 +80,10 @@ public class SeasonDetailFragment extends Fragment {
         Log.d("onCreate", "Here");
         if (getArguments() != null) {
             mSeasonKey = getArguments().getString(ARG_KEY);
-            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("seasons");
-            Log.d("Season", String.valueOf(mDatabase.child(mSeasonKey).child("seasonName")));
-            String s = String.valueOf(mDatabase.child(mSeasonKey).child("seasonName"));
-            mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("onDataChange", "Here");
-                    currentSeason = dataSnapshot.child(mSeasonKey).getValue(Season.class);
-                    seasonNameTv.setText(currentSeason.getSeasonName());
-                    mAdapter = new SeasonDetailAdapter(currentSeason.getSeasonMatches());
-                    mRecyclerView.setAdapter(mAdapter);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            mRoomKey = getArguments().getString(ARG_ROOM);
+            currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)-1);
+            currentSeason.setSeasonMatches(new ArrayList<Match>());
+            mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), getContext());
         }
     }
 
@@ -111,7 +98,7 @@ public class SeasonDetailFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Log.d("onViewCreated", "Here");
         seasonNameTv = view.findViewById(R.id.app_bar_tv);
-
+        seasonNameTv.setText(currentSeason.getSeasonName());
         // Inflate the layout for this fragment
         mRecyclerView = (RecyclerView) view.findViewById(R.id.season_rv);
         // use this setting to improve performance if you know that changes
@@ -120,6 +107,9 @@ public class SeasonDetailFragment extends Fragment {
         // use a linear layout manager
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.setAdapter(mAdapter);
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
@@ -137,7 +127,7 @@ public class SeasonDetailFragment extends Fragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        final View timeview = inflater.inflate(R.layout.edit_dialog, null);
+        final View timeview = inflater.inflate(R.layout.create_match_dialog, null);
         builder.setView(timeview)
                 // Add action buttons
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -147,10 +137,14 @@ public class SeasonDetailFragment extends Fragment {
                         TextView timeTv = timeview.findViewById(R.id.time_tv);
                         dateTv.setText("31/10/2017");
                         timeTv.setText("19:00");
-                        currentSeason.getSeasonMatches().add(new Match());
+                        Match newMatch = new Match();
+                        newMatch.setMatchDay(dateTv.getText().toString());
+                        newMatch.setStartTime(timeTv.getText().toString());
+                        currentSeason.getSeasonMatches().add(newMatch);
+                        mAdapter.notifyDataSetChanged();
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("seasons").child(ARG_KEY).setValue(currentSeason);
+                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child("0").setValue(currentSeason);
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
