@@ -12,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -32,7 +34,6 @@ import it.uniupo.sportapp.models.Season;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * to handle interaction events.
- * Use the {@link SeasonDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class SeasonDetailFragment extends Fragment {
@@ -58,22 +59,6 @@ public class SeasonDetailFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment SeasonDetailFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SeasonDetailFragment newInstance(String key, String roomKey) {
-        SeasonDetailFragment fragment = new SeasonDetailFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_KEY, key);
-        args.putString(ARG_ROOM, roomKey);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,6 +69,7 @@ public class SeasonDetailFragment extends Fragment {
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)-1);
             currentSeason.setSeasonMatches(new ArrayList<Match>());
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), getContext());
+            Singleton.setCurrentFragment("seasonDetailed");
         }
     }
 
@@ -119,6 +105,12 @@ public class SeasonDetailFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void createNewMatch() {

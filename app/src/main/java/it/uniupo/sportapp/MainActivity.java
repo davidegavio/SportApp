@@ -13,6 +13,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.firebase.ui.auth.AuthUI;
@@ -79,6 +81,30 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        // Handle back button clicks here
+        Log.d(TAG, "Back pressed");
+        Log.d(TAG, Singleton.getCurrentFragment());
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        assert drawer != null;
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            switch (Singleton.getCurrentFragment()) {
+                case "room":
+                    addFragment(new ProfileFragment());
+                    break;
+                case "seasonDetailed":
+                    break;
+                case "seasonList":
+                    break;
+
+            }
+        }
+    }
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RC_SIGN_IN){
             if(resultCode == RESULT_OK){
@@ -101,15 +127,6 @@ public class MainActivity extends AppCompatActivity
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else
-            drawer.openDrawer(GravityCompat.START);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -169,9 +186,10 @@ public class MainActivity extends AppCompatActivity
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
                     if(loggedPlayer.getPlayerRooms() == null)
                         loggedPlayer.setPlayerRooms(new ArrayList<Room>());
-                    //Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
+                    Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
-                addFragment(ProfileFragment.newInstance(loggedPlayer.getPlayerName(), loggedPlayer.getPlayerDescription(), loggedPlayer.getPlayerMail(), getCurrentFirebaseUser().getUid()));
+                Singleton.setCurrentPlayer(loggedPlayer);
+                addFragment(new ProfileFragment());
             }
 
             @Override
@@ -195,6 +213,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -214,8 +233,9 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                 .setLogo(R.drawable.teams96)
                 .setTheme(R.style.GreyTheme)
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build(),
+                        new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()))
                 .setTosUrl(GOOGLE_TOS_URL)
                 .setIsSmartLockEnabled(false, true)
                 .setAllowNewEmailAccounts(true)

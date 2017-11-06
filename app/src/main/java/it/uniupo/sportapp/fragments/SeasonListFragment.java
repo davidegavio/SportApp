@@ -10,6 +10,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -65,6 +67,7 @@ public class SeasonListFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
         mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext());
+        Singleton.setCurrentFragment("seasonList");
     }
 
     @Override
@@ -84,6 +87,12 @@ public class SeasonListFragment extends Fragment {
         
         //mAdapter = new SeasonsAdapter(seasonArrayList);
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

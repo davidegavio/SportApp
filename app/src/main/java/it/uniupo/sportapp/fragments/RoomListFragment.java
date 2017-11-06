@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.RoomsAdapter;
 import it.uniupo.sportapp.models.Room;
 
@@ -24,7 +25,6 @@ import it.uniupo.sportapp.models.Room;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * to handle interaction events.
- * Use the {@link RoomListFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class RoomListFragment extends Fragment {
@@ -42,25 +42,12 @@ public class RoomListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * Fragment RoomListFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RoomListFragment newInstance(ArrayList<Room> rooms) {
-        RoomListFragment fragment = new RoomListFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_ROOMS, rooms);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mRooms = (ArrayList<Room>) getArguments().getSerializable(ARG_ROOMS);
+        if (Singleton.getCurrentPlayer().getPlayerRooms() != null) {
+            mRooms = Singleton.getCurrentPlayer().getPlayerRooms();
         }
     }
 

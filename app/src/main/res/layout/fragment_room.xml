@@ -14,12 +14,12 @@
         android:background="@color/primaryColor">
 
         <TextView
+            android:id="@+id/room_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Room name"
             android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="@color/secondaryColor"/>
@@ -68,7 +68,7 @@
                     android:layout_below="@id/info_season"
                     android:layout_alignParentStart="true"
                     android:gravity="start|center_horizontal"
-                    android:text="Shows all currently active players"
+                    android:text="Shows all currently active seasons"
                     android:layout_toStartOf="@+id/show_seasons_btn"
                     android:layout_alignBottom="@+id/show_seasons_btn" />
 
@@ -169,7 +169,6 @@
                 app:fabSize="normal"
                 android:layout_alignTop="@+id/add_player_btn"
                 android:layout_toEndOf="@+id/add_player_btn"
-                android:layout_toRightOf="@id/add_player_btn"
                 android:src="@drawable/calendar_plus_64"
                 android:layout_marginStart="8dp"/>
 

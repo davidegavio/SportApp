@@ -10,10 +10,14 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -39,7 +43,6 @@ import static android.content.ContentValues.TAG;
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * to handle interaction events.
- * Use the {@link RoomFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class RoomFragment extends Fragment implements View.OnClickListener{
@@ -60,35 +63,21 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instasuper.onViewCreated(view, savedInstanceState);nce of fragment RoomFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RoomFragment newInstance(String param1, String param2) {
-        RoomFragment fragment = new RoomFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_KEY, param1);
-        args.putString(ARG_INDEX, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_KEY);
             mParam2 = getArguments().getString(ARG_INDEX);
+
         }
+        Singleton.setCurrentFragment("room");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_room, container, false);
     }
@@ -101,25 +90,16 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child("rooms").child(mParam1).exists()){
-                    currentRoom = dataSnapshot.child("rooms").child(mParam1).getValue(Room.class);
-                    currentRoom.setExistingSeasons(new ArrayList<Season>());
-                    Singleton.setCurrentRoom(currentRoom);
-                }
-                else{
-                    Log.d("Room", "Room doesn't exist");
-                }
-            }
+        currentRoom = Singleton.getCurrentRoom();
+        currentRoom.setExistingSeasons(new ArrayList<Season>());
+        TextView roomNameTv = view.findViewById(R.id.room_name_tv);
+        roomNameTv.setText(currentRoom.getRoomName());
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -127,6 +107,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.add_player_btn:
                 Log.d("Add", "Add player");
+                ((MainActivity)getActivity()).addFragment(new PlayerListFragment());
                 break;
             case R.id.add_season_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -153,7 +134,12 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("rooms").child(mParam1).setValue(currentRoom);
                                 mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(currentRoom);
-                                ((MainActivity)getActivity()).addFragment(SeasonDetailFragment.newInstance(String.valueOf(currentRoom.getExistingSeasons().size()), mParam1));
+                                SeasonDetailFragment fragment = new SeasonDetailFragment();
+                                Bundle args = new Bundle();
+                                args.putString(ARG_KEY, String.valueOf(currentRoom.getExistingSeasons().size()));
+                                args.putString("room", mParam1);
+                                fragment.setArguments(args);
+                                ((MainActivity)getActivity()).addFragment(fragment);
 
                             }
                         }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -165,7 +151,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 Log.d("Add", "Add season");
                 break;
             case R.id.show_seasons_btn:
-                ((MainActivity)getActivity()).addFragment(SeasonListFragment.newInstance());
+                ((MainActivity)getActivity()).addFragment(new SeasonListFragment());
                 break;
             case R.id.show_players_btn:
 
@@ -173,43 +159,15 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-}
-
-    /*// TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }*/
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_profile:
+                ((MainActivity)getActivity()).addFragment(new ProfileFragment());
+                return true;
+            default: return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }*/
+}
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    /*public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/

@@ -42,7 +42,6 @@ import static android.content.ContentValues.TAG;
  * Activities that contain this fragment must implement the
  * {@link ProfileFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment implements View.OnClickListener{
@@ -73,38 +72,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     *
-     * @param playerName
-     * @param playerDescription
-     * @param playerEmail Parameter 1.
-     * @param playerUid Parameter 2.   @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String playerName, String playerDescription, String playerEmail, String playerUid) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_NAME, playerName);
-        args.putString(ARG_DESCR, playerDescription);
-        args.putString(ARG_MAIL, playerEmail);
-        args.putString(ARG_UID, playerUid);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mPlayerName = getArguments().getString(ARG_NAME);
-            mPlayerDescription = getArguments().getString(ARG_DESCR);
-            mPlayerEmail = getArguments().getString(ARG_MAIL);
-            mPlayerUid = getArguments().getString(ARG_UID);
+        if (Singleton.getCurrentPlayer() != null) {
+            mPlayerName = Singleton.getCurrentPlayer().getPlayerName();
+            mPlayerDescription = Singleton.getCurrentPlayer().getPlayerDescription();
+            mPlayerEmail = Singleton.getCurrentPlayer().getPlayerMail();
+            mPlayerUid = FirebaseAuth.getInstance().getUid();
             currentPlayer = new Player(mPlayerName, mPlayerDescription, mPlayerEmail, false);
         }
+        Singleton.setCurrentFragment("profile");
     }
 
     @Override
@@ -157,7 +135,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.rooms_btn:
-                ((MainActivity)getActivity()).addFragment(RoomListFragment.newInstance(currentPlayer.getPlayerRooms()));
+                ((MainActivity)getActivity()).addFragment(new RoomListFragment());
                 break;
             case R.id.new_room_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -173,7 +151,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText newRoomName = editview.findViewById(R.id.room_name_dialog);
                                 Room newRoom = new Room(String.valueOf(newRoomName.getText()));
-                                MainActivity.getLoggedPlayer().getPlayerRooms().add(newRoom);
+                                Singleton.getCurrentPlayer().getPlayerRooms().add(newRoom);
                                 newRoom.getActivePlayers().add(currentPlayer);
                                 newRoom.getAdminPlayers().add(currentPlayer);
                                 DatabaseReference mDatabase;
@@ -183,7 +161,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 Log.d("Key", k);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
                                 String n = String.valueOf(MainActivity.getLoggedPlayer().getPlayerRooms().size()-1);
-                                ((MainActivity)getActivity()).addFragment(RoomFragment.newInstance(k, n));
+                                RoomFragment fragment = new RoomFragment();
+                                Bundle args = new Bundle();
+                                args.putString("key", k);
+                                args.putString("index", n);
+                                fragment.setArguments(args);
+                                newRoom.setRoomKey(k);
+                                Singleton.setCurrentRoom(newRoom);
+                                ((MainActivity)getActivity()).addFragment(fragment);
                             }
                         })
                         .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -229,25 +214,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    public void showSignInDialog(){
-        startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
-                .setLogo(R.drawable.teams96)
-                .setTheme(R.style.GreyTheme)
-                .setAvailableProviders(Arrays.asList(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build(),
-                        new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
-                .setTosUrl(GOOGLE_TOS_URL)
-                .setIsSmartLockEnabled(false, true)
-                .setAllowNewEmailAccounts(true)
-                .build(), RC_SIGN_IN);
-    }
-
     private void editLoggedUser(String eName, String eDescription, String eEmail){
         if(!eName.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerName(eName);
+            Singleton.getCurrentPlayer().setPlayerName(eName);
         if(!eDescription.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerDescription(eDescription);
+            Singleton.getCurrentPlayer().setPlayerDescription(eDescription);
         if(!eEmail.equals(""))
-            MainActivity.getLoggedPlayer().setPlayerMail(eEmail);
+            Singleton.getCurrentPlayer().setPlayerMail(eEmail);
     }
 
     private void fillFields(Player player){
@@ -258,7 +231,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         }
         else descriptionTv.setText(player.getPlayerDescription());
         emailTv.setText(player.getPlayerMail());
-        uid = getArguments().getString("uid");
+        uid = FirebaseAuth.getInstance().getUid();
         Log.d(TAG, "Url "+FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
         if(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()!=null)
             Picasso.with(getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileIv);

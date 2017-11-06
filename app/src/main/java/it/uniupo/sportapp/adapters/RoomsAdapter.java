@@ -9,7 +9,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.fragments.RoomFragment;
 import it.uniupo.sportapp.models.Room;
 
 /**
@@ -27,6 +30,13 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
             nameTv = itemView.findViewById(R.id.room_name_tv);
             playersTv = itemView.findViewById(R.id.room_players_tv);
             seasonsTv = itemView.findViewById(R.id.room_seasons_tv);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Singleton.setCurrentRoom(mRooms.get(getAdapterPosition()));
+                    ((MainActivity)getContext()).addFragment(new RoomFragment());
+                }
+            });
         }
     }
 

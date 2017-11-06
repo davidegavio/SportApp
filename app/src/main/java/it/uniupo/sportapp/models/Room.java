@@ -1,5 +1,7 @@
 package it.uniupo.sportapp.models;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 
 /**
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 
 public class Room {
 
+    @Exclude
+    private String roomKey;
     private ArrayList<Season> existingSeasons;
     private ArrayList<Player> activePlayers;
     private ArrayList<Player> adminPlayers;
@@ -60,5 +64,13 @@ public class Room {
 
     public void setAdminPlayers(ArrayList<Player> adminPlayers) {
         this.adminPlayers = adminPlayers;
+    }
+
+    public String getRoomKey() {
+        return roomKey;
+    }
+
+    public void setRoomKey(String roomKey) {
+        this.roomKey = roomKey;
     }
 }
