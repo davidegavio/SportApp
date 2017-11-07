@@ -87,6 +87,9 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         Button showSeasonsBtn = view.findViewById(R.id.show_seasons_btn);
         showSeasonsBtn.setOnClickListener(this);
         FloatingActionButton addPlayerFab = view.findViewById(R.id.add_player_btn);
+        Log.d("Admins", String.valueOf(Singleton.getCurrentRoom().getAdminPlayers()));
+        Log.d("Current", String.valueOf(Singleton.getCurrentPlayer()));
+        if(checkAdmin())
         addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
@@ -167,6 +170,15 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 return true;
             default: return super.onOptionsItemSelected(item);
         }
+    }
+
+    private boolean checkAdmin(){
+        for(Player p : Singleton.getCurrentRoom().getAdminPlayers()){
+            if(p.getPlayerMail().equals(Singleton.getCurrentPlayer().getPlayerMail())){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

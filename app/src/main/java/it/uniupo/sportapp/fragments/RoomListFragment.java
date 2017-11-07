@@ -61,7 +61,7 @@ public class RoomListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvRooms = view.findViewById(R.id.roomsRv);
-        RoomsAdapter mAdapter = new RoomsAdapter(MainActivity.getLoggedPlayer().getPlayerRooms(), getContext());
+        RoomsAdapter mAdapter = new RoomsAdapter(Singleton.getCurrentPlayer().getPlayerRooms(), getContext());
         rvRooms.setAdapter(mAdapter);
         rvRooms.setLayoutManager(new LinearLayoutManager(getContext()));
         rvRooms.setItemAnimator(new DefaultItemAnimator());
@@ -69,42 +69,4 @@ public class RoomListFragment extends Fragment {
 
     }
 
-    /*// TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }*/
 }

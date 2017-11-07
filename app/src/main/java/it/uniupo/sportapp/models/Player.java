@@ -1,5 +1,7 @@
 package it.uniupo.sportapp.models;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 
 /**
@@ -13,6 +15,8 @@ public class Player {
     private String playerMail;
     private boolean isGoalkeeper;
     private ArrayList<Room> playerRooms;
+    @Exclude
+    private String playerKey;
 
     public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper, ArrayList<Room> playerRooms) {
         this.playerName = playerName;
@@ -71,5 +75,13 @@ public class Player {
 
     public void setPlayerRooms(ArrayList<Room> playerRooms) {
         this.playerRooms = playerRooms;
+    }
+
+    public String getPlayerKey() {
+        return playerKey;
+    }
+
+    public void setPlayerKey(String playerKey) {
+        this.playerKey = playerKey;
     }
 }

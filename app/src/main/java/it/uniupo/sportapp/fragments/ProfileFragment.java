@@ -156,11 +156,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 newRoom.getAdminPlayers().add(currentPlayer);
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(MainActivity.getLoggedPlayer());
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
                                 Log.d("Key", k);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
-                                String n = String.valueOf(MainActivity.getLoggedPlayer().getPlayerRooms().size()-1);
+                                String n = String.valueOf(Singleton.getCurrentPlayer().getPlayerRooms().size()-1);
                                 RoomFragment fragment = new RoomFragment();
                                 Bundle args = new Bundle();
                                 args.putString("key", k);

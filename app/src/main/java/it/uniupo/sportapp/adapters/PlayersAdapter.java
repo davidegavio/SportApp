@@ -2,6 +2,7 @@ package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
 
         public ViewHolder(View itemView) {
             super(itemView);
-            nameTv = itemView.findViewById(R.id.name_tv);
+            nameTv = itemView.findViewById(R.id.tv_name);
             mailTv = itemView.findViewById(R.id.tv_mail);
             addBtn = itemView.findViewById(R.id.add_button);
         }
@@ -61,19 +62,25 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
     @Override
     public void onBindViewHolder(PlayersAdapter.ViewHolder holder, int position) {
         final Player tempPlayer = mPlayers.get(position);
-        TextView nameTextView = holder.nameTv;
-        nameTextView.setText(tempPlayer.getPlayerName());
-        TextView mailTextView = holder.mailTv;
-        mailTextView.setText(tempPlayer.getPlayerMail());
-        Button addButton = holder.addBtn;
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
-            }
-        });
+        if(!mPlayers.isEmpty()) {
+            TextView nameTextView = holder.nameTv;
+            nameTextView.setText(tempPlayer.getPlayerName());
+            TextView mailTextView = holder.mailTv;
+            mailTextView.setText(tempPlayer.getPlayerMail());
+            Button addButton = holder.addBtn;
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                    //Log.d("URL", Singleton.getCurrentRoom().getRoomKey());
+                    Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
+                    tempPlayer.getPlayerRooms().add(Singleton.getCurrentRoom());
+                    mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
+                    mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
+                    mDatabase.child("users").child(tempPlayer.getPlayerKey()).setValue(tempPlayer);
+                }
+            });
+        }
 
     }
 

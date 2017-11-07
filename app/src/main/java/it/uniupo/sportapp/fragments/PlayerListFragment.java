@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -54,7 +55,7 @@ public class PlayerListFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Player player = snapshot.getValue(Player.class);
-                            Singleton.getCurrentRoom().getActivePlayers().add(player);
+                            allPlayers.add(player);
                             Log.d("Name", player.getPlayerName());
                         }
                     }
@@ -81,10 +82,22 @@ public class PlayerListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        PlayersAdapter mAdapter = new PlayersAdapter(Singleton.getCurrentRoom().getActivePlayers(), getContext());
+        final PlayersAdapter mAdapter = new PlayersAdapter(allPlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

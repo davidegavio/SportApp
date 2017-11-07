@@ -69,7 +69,6 @@ public class Room {
     public String getRoomKey() {
         return roomKey;
     }
-
     public void setRoomKey(String roomKey) {
         this.roomKey = roomKey;
     }
