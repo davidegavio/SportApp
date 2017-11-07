@@ -56,8 +56,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
     String uid;
     ImageView profileIv;
     Button roomsButton, newRoomButton;
-    private static final String GOOGLE_TOS_URL = "https://www.google.com/policies/terms/";
-    private static final int RC_SIGN_IN = 100;
 
     // TODO: Rename and change types of parameters
     private String mPlayerName;
@@ -151,7 +149,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText newRoomName = editview.findViewById(R.id.room_name_dialog);
                                 Room newRoom = new Room(String.valueOf(newRoomName.getText()));
-                                Singleton.getCurrentPlayer().getPlayerRooms().add(newRoom);
                                 newRoom.getActivePlayers().add(currentPlayer);
                                 newRoom.getAdminPlayers().add(currentPlayer);
                                 DatabaseReference mDatabase;
@@ -159,6 +156,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();
                                 Log.d("Key", k);
+                                newRoom.setRoomKey(k);
+                                Singleton.getCurrentPlayer().getPlayerRooms().add(newRoom);
                                 mDatabase.child("rooms").child(k).setValue(newRoom);
                                 String n = String.valueOf(Singleton.getCurrentPlayer().getPlayerRooms().size()-1);
                                 RoomFragment fragment = new RoomFragment();
@@ -166,7 +165,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 args.putString("key", k);
                                 args.putString("index", n);
                                 fragment.setArguments(args);
-                                newRoom.setRoomKey(k);
                                 Singleton.setCurrentRoom(newRoom);
                                 ((MainActivity)getActivity()).addFragment(fragment);
                             }

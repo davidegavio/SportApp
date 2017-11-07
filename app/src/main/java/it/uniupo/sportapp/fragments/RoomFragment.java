@@ -55,7 +55,6 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     private String mParam1;
     private String mParam2;
     private Player currentPlayer;
-    private Room currentRoom;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -66,11 +65,14 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_KEY);
-            mParam2 = getArguments().getString(ARG_INDEX);
-
-        }
+        mParam1 = getArguments().getString(ARG_KEY);
+        mParam2 = getArguments().getString(ARG_INDEX);
+        Log.d("mParam1", mParam1);
+        Singleton.getCurrentRoom().setRoomKey(mParam1);
+        Singleton.getCurrentPlayer().getPlayerRooms().get(Integer.parseInt(mParam2)).setRoomKey(mParam1);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
+        ref.child("players").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(Singleton.getCurrentRoom());
         Singleton.setCurrentFragment("room");
     }
 
@@ -90,13 +92,12 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         Log.d("Admins", String.valueOf(Singleton.getCurrentRoom().getAdminPlayers()));
         Log.d("Current", String.valueOf(Singleton.getCurrentPlayer()));
         if(checkAdmin())
-        addPlayerFab.setOnClickListener(this);
+            addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
-        currentRoom = Singleton.getCurrentRoom();
-        currentRoom.setExistingSeasons(new ArrayList<Season>());
+        Singleton.getCurrentRoom().setExistingSeasons(new ArrayList<Season>());
         TextView roomNameTv = view.findViewById(R.id.room_name_tv);
-        roomNameTv.setText(currentRoom.getRoomName());
+        roomNameTv.setText(Singleton.getCurrentRoom().getRoomName());
     }
 
     @Override
@@ -131,15 +132,14 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                                 String formattedDate = df.format(c.getTime());
                                 newSeason.setSeasonBeginningDate(formattedDate);
-                                currentRoom.getExistingSeasons().add(newSeason);
-                                Singleton.setCurrentRoom(currentRoom);
+                                Singleton.getCurrentRoom().getExistingSeasons().add(newSeason);
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                                mDatabase.child("rooms").child(mParam1).setValue(currentRoom);
-                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(currentRoom);
+                                mDatabase.child("rooms").child(mParam1).setValue(Singleton.getCurrentRoom());
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(Singleton.getCurrentRoom());
                                 SeasonDetailFragment fragment = new SeasonDetailFragment();
                                 Bundle args = new Bundle();
-                                args.putString(ARG_KEY, String.valueOf(currentRoom.getExistingSeasons().size()));
+                                args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()));
                                 args.putString("room", mParam1);
                                 fragment.setArguments(args);
                                 ((MainActivity)getActivity()).addFragment(fragment);
@@ -173,11 +173,9 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     }
 
     private boolean checkAdmin(){
-        for(Player p : Singleton.getCurrentRoom().getAdminPlayers()){
-            if(p.getPlayerMail().equals(Singleton.getCurrentPlayer().getPlayerMail())){
+        for(Player p : Singleton.getCurrentRoom().getAdminPlayers())
+            if(p.getPlayerMail().equals(Singleton.getCurrentPlayer().getPlayerMail()))
                 return true;
-            }
-        }
         return false;
     }
 

@@ -13,12 +13,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 
 /**
  * Created by 20010562 on 11/6/17.
@@ -72,9 +74,10 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    //Log.d("URL", Singleton.getCurrentRoom().getRoomKey());
-                    Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
+                    tempPlayer.setPlayerRooms(new ArrayList<Room>());
                     tempPlayer.getPlayerRooms().add(Singleton.getCurrentRoom());
+                    Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
+                    Log.d("K", "K: "+Singleton.getCurrentRoom().getRoomKey());
                     mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
                     mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
                     mDatabase.child("users").child(tempPlayer.getPlayerKey()).setValue(tempPlayer);
