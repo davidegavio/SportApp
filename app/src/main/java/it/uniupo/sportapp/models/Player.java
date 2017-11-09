@@ -14,11 +14,11 @@ public class Player {
     private String playerDescription;
     private String playerMail;
     private boolean isGoalkeeper;
-    private ArrayList<Room> playerRooms;
+    private ArrayList<String> playerRooms;
     @Exclude
     private String playerKey;
 
-    public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper, ArrayList<Room> playerRooms) {
+    public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper, ArrayList<String> playerRooms) {
         this.playerName = playerName;
         this.playerDescription = playerDescription;
         this.playerMail = playerMail;
@@ -69,11 +69,11 @@ public class Player {
         this.playerMail = playerMail;
     }
 
-    public ArrayList<Room> getPlayerRooms() {
+    public ArrayList<String> getPlayerRooms() {
         return playerRooms;
     }
 
-    public void setPlayerRooms(ArrayList<Room> playerRooms) {
+    public void setPlayerRooms(ArrayList<String> playerRooms) {
         this.playerRooms = playerRooms;
     }
 

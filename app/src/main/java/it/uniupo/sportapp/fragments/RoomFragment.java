@@ -1,8 +1,10 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -53,7 +55,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String mParam2;
+    private int mParam2;
     private Player currentPlayer;
 
     //private OnFragmentInteractionListener mListener;
@@ -66,13 +68,13 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mParam1 = getArguments().getString(ARG_KEY);
-        mParam2 = getArguments().getString(ARG_INDEX);
-        Log.d("mParam1", mParam1);
+        mParam2 = getArguments().getInt(ARG_INDEX);
+        Log.d("mParam1", "K: "+mParam1);
         Singleton.getCurrentRoom().setRoomKey(mParam1);
-        Singleton.getCurrentPlayer().getPlayerRooms().get(Integer.parseInt(mParam2)).setRoomKey(mParam1);
+        Singleton.getCurrentPlayer().getPlayerRooms().set(mParam2, mParam1);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
-        ref.child("players").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(Singleton.getCurrentRoom());
+        ref.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
         Singleton.setCurrentFragment("room");
     }
 
@@ -111,6 +113,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.add_player_btn:
                 Log.d("Add", "Add player");
+                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ((MainActivity)getActivity()).addFragment(new PlayerListFragment());
                 break;
             case R.id.add_season_btn:
@@ -136,7 +139,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("rooms").child(mParam1).setValue(Singleton.getCurrentRoom());
-                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(mParam2).setValue(Singleton.getCurrentRoom());
+                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom());
                                 SeasonDetailFragment fragment = new SeasonDetailFragment();
                                 Bundle args = new Bundle();
                                 args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()));

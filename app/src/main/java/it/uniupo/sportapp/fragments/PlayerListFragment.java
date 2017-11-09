@@ -63,6 +63,7 @@ public class PlayerListFragment extends Fragment {
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
+        Singleton.setCurrentFragment("playerList");
     }
 
     @Override

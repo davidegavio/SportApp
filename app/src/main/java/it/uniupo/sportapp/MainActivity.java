@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import it.uniupo.sportapp.fragments.ProfileFragment;
+import it.uniupo.sportapp.fragments.RoomFragment;
+import it.uniupo.sportapp.fragments.SeasonDetailFragment;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
 
@@ -97,6 +99,21 @@ public class MainActivity extends AppCompatActivity
                 case "seasonDetailed":
                     break;
                 case "seasonList":
+                    addFragment(new SeasonDetailFragment());
+                    break;
+                case "playerList":
+                    RoomFragment fragment = new RoomFragment();
+                    Bundle args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                    fragment.setArguments(args);
+                    addFragment(fragment);
+                    break;
+                case "roomList":
+                    fragment = new RoomFragment();
+                    args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                    fragment.setArguments(args);
+                    addFragment(fragment);
                     break;
 
             }
@@ -178,7 +195,7 @@ public class MainActivity extends AppCompatActivity
                 if (!dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated) {
                     loggedPlayer = new Player(getCurrentFirebaseUser().getDisplayName(), "", getCurrentFirebaseUser().getEmail(), false);
                     if(loggedPlayer.getPlayerRooms() == null)
-                        loggedPlayer.setPlayerRooms(new ArrayList<Room>());
+                        loggedPlayer.setPlayerRooms(new ArrayList<String>());
                     loggedPlayer.setPlayerKey(getCurrentFirebaseUser().getUid());
                     userRef.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
@@ -186,7 +203,7 @@ public class MainActivity extends AppCompatActivity
                 else if(dataSnapshot.child(getCurrentFirebaseUser().getUid()).exists() && isAuthenticated){
                     loggedPlayer = dataSnapshot.child(getCurrentFirebaseUser().getUid()).getValue(Player.class);
                     if(loggedPlayer.getPlayerRooms() == null)
-                        loggedPlayer.setPlayerRooms(new ArrayList<Room>());
+                        loggedPlayer.setPlayerRooms(new ArrayList<String>());
                     Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
                 Singleton.setCurrentPlayer(loggedPlayer);

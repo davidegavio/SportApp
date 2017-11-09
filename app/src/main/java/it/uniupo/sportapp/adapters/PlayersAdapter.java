@@ -1,6 +1,8 @@
 package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -26,7 +29,7 @@ import it.uniupo.sportapp.models.Room;
  * Created by 20010562 on 11/6/17.
  */
 
-public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHolder> {
+public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHolder>  {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,6 +41,7 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
             nameTv = itemView.findViewById(R.id.tv_name);
             mailTv = itemView.findViewById(R.id.tv_mail);
             addBtn = itemView.findViewById(R.id.add_button);
+
         }
     }
 
@@ -64,8 +68,9 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
     @Override
     public void onBindViewHolder(PlayersAdapter.ViewHolder holder, int position) {
         final Player tempPlayer = mPlayers.get(position);
+        tempPlayer.setPlayerRooms(new ArrayList<String>());
         if(!mPlayers.isEmpty()) {
-            TextView nameTextView = holder.nameTv;
+            final TextView nameTextView = holder.nameTv;
             nameTextView.setText(tempPlayer.getPlayerName());
             TextView mailTextView = holder.mailTv;
             mailTextView.setText(tempPlayer.getPlayerMail());
@@ -74,18 +79,19 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    tempPlayer.setPlayerRooms(new ArrayList<Room>());
-                    tempPlayer.getPlayerRooms().add(Singleton.getCurrentRoom());
+                    mDatabase.child("prova").child("A").setValue(new Player());
+                    tempPlayer.getPlayerRooms().add(Singleton.getCurrentRoom().getRoomKey());
                     Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
-                    Log.d("K", "K: "+Singleton.getCurrentRoom().getRoomKey());
                     mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
-                    mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
                     mDatabase.child("users").child(tempPlayer.getPlayerKey()).setValue(tempPlayer);
+                    Toast.makeText(getContext(), nameTextView.getText(), Toast.LENGTH_SHORT).show();
+                    Log.d("K", "K: "+"rooms/"+Singleton.getCurrentRoom().getRoomKey());
                 }
             });
         }
 
     }
+
 
     @Override
     public int getItemCount() {
