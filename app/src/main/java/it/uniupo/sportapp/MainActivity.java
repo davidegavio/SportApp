@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SIGN_IN = 100;
     private static final String TAG = "Log info";
     private static final String USERS_TABLE = "users";
-    private static final String SEASONS_TABLE = "seasons";
     //Firebase authenticator
     private FirebaseAuth mAuth;
     //Firebase authenticator listener
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
-    DatabaseReference seasonRef = FirebaseDatabase.getInstance().getReference(SEASONS_TABLE);
     private boolean isAuthenticated = false;
 
 

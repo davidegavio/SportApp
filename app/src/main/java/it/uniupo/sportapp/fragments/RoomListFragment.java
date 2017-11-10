@@ -12,6 +12,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -67,6 +69,7 @@ public class RoomListFragment extends Fragment {
                         for(String l : Singleton.getCurrentPlayer().getPlayerRooms()){
                             Log.d("l", l);
                             if(l.equals(tempRoom.getRoomKey())){
+                                Log.d("tR", String.valueOf(tempRoom.getExistingSeasons().size()));
                                 mRooms.add(tempRoom);
                                 mAdapter.notifyDataSetChanged();
                             }
@@ -86,8 +89,15 @@ public class RoomListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_room_list, container, false);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

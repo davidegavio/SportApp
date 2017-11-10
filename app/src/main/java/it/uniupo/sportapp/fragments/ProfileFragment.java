@@ -79,6 +79,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
             mPlayerEmail = Singleton.getCurrentPlayer().getPlayerMail();
             mPlayerUid = FirebaseAuth.getInstance().getUid();
             currentPlayer = new Player(mPlayerName, mPlayerDescription, mPlayerEmail, false);
+            currentPlayer.setPlayerKey(Singleton.getCurrentPlayer().getPlayerKey());
         }
         Singleton.setCurrentFragment("profile");
     }
@@ -149,8 +150,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText newRoomName = editview.findViewById(R.id.room_name_dialog);
                                 Room newRoom = new Room(String.valueOf(newRoomName.getText()));
-                                newRoom.getActivePlayers().add(currentPlayer);
-                                newRoom.getAdminPlayers().add(currentPlayer);
+                                newRoom.getActivePlayers().add(currentPlayer.getPlayerKey());
+                                newRoom.getAdminPlayers().add(currentPlayer.getPlayerKey());
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
                                 String k = mDatabase.child("rooms").child(mDatabase.push().getKey()).getKey();

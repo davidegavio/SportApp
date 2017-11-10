@@ -13,8 +13,8 @@ public class Room {
     @Exclude
     private String roomKey;
     private ArrayList<Season> existingSeasons;
-    private ArrayList<Player> activePlayers;
-    private ArrayList<Player> adminPlayers;
+    private ArrayList<String> activePlayers;
+    private ArrayList<String> adminPlayers;
     private String roomName;
 
     public Room() {
@@ -27,7 +27,7 @@ public class Room {
         this.existingSeasons = new ArrayList<>();
     }
 
-    public Room(ArrayList<Season> existingSeasons, ArrayList<Player> activePlayers, ArrayList<Player> adminPlayers, String roomName) {
+    public Room(ArrayList<Season> existingSeasons, ArrayList<String> activePlayers, ArrayList<String> adminPlayers, String roomName) {
         this.existingSeasons = existingSeasons;
         this.activePlayers = activePlayers;
         this.adminPlayers = adminPlayers;
@@ -42,11 +42,11 @@ public class Room {
         this.existingSeasons = existingSeasons;
     }
 
-    public ArrayList<Player> getActivePlayers() {
+    public ArrayList<String> getActivePlayers() {
         return activePlayers;
     }
 
-    public void setActivePlayers(ArrayList<Player> activePlayers) {
+    public void setActivePlayers(ArrayList<String> activePlayers) {
         this.activePlayers = activePlayers;
     }
 
@@ -58,11 +58,11 @@ public class Room {
         this.roomName = roomName;
     }
 
-    public ArrayList<Player> getAdminPlayers() {
+    public ArrayList<String> getAdminPlayers() {
         return adminPlayers;
     }
 
-    public void setAdminPlayers(ArrayList<Player> adminPlayers) {
+    public void setAdminPlayers(ArrayList<String> adminPlayers) {
         this.adminPlayers = adminPlayers;
     }
 

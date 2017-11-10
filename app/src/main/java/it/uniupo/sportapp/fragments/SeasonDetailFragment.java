@@ -76,6 +76,7 @@ public class SeasonDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_season_detail, container, false);
     }
@@ -86,7 +87,7 @@ public class SeasonDetailFragment extends Fragment {
         seasonNameTv = view.findViewById(R.id.app_bar_tv);
         seasonNameTv.setText(currentSeason.getSeasonName());
         // Inflate the layout for this fragment
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.season_rv);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.season_match_rv);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -102,7 +103,6 @@ public class SeasonDetailFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 createNewMatch();
-
             }
         });
     }
@@ -136,7 +136,7 @@ public class SeasonDetailFragment extends Fragment {
                         mAdapter.notifyDataSetChanged();
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child("0").setValue(currentSeason);
+                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child(String.valueOf(currentSeason.getSeasonMatches().size())).setValue(currentSeason);
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -148,34 +148,4 @@ public class SeasonDetailFragment extends Fragment {
 
     }
 
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        //mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-    }*/
 }

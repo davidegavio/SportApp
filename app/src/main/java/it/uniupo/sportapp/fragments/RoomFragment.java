@@ -93,7 +93,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         FloatingActionButton addPlayerFab = view.findViewById(R.id.add_player_btn);
         Log.d("Admins", String.valueOf(Singleton.getCurrentRoom().getAdminPlayers()));
         Log.d("Current", String.valueOf(Singleton.getCurrentPlayer()));
-        if(checkAdmin())
+        //if(checkAdmin())
             addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
@@ -139,7 +139,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 DatabaseReference mDatabase;
                                 mDatabase = FirebaseDatabase.getInstance().getReference();
                                 mDatabase.child("rooms").child(mParam1).setValue(Singleton.getCurrentRoom());
-                                mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom());
+                                //mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
                                 SeasonDetailFragment fragment = new SeasonDetailFragment();
                                 Bundle args = new Bundle();
                                 args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()));
@@ -175,12 +175,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private boolean checkAdmin(){
-        for(Player p : Singleton.getCurrentRoom().getAdminPlayers())
-            if(p.getPlayerMail().equals(Singleton.getCurrentPlayer().getPlayerMail()))
-                return true;
-        return false;
-    }
+
 
 }
 

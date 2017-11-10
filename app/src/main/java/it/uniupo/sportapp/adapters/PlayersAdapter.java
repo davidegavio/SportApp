@@ -79,9 +79,8 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                    mDatabase.child("prova").child("A").setValue(new Player());
                     tempPlayer.getPlayerRooms().add(Singleton.getCurrentRoom().getRoomKey());
-                    Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer);
+                    Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer.getPlayerKey());
                     mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
                     mDatabase.child("users").child(tempPlayer.getPlayerKey()).setValue(tempPlayer);
                     Toast.makeText(getContext(), nameTextView.getText(), Toast.LENGTH_SHORT).show();
