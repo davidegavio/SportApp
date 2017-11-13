@@ -37,6 +37,7 @@ public class RoomsAdapter extends RecyclerView.Adapter<RoomsAdapter.ViewHolder> 
                 public void onClick(View view) {
                     Log.d("KK", "K: "+mRooms.get(getAdapterPosition()).getRoomKey());
                     Singleton.setCurrentRoom(mRooms.get(getAdapterPosition()));
+                    Log.d("roomListFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
                     RoomFragment fragment = new RoomFragment();
                     Bundle args = new Bundle();
                     args.putString("key", Singleton.getCurrentRoom().getRoomKey());

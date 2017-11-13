@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -69,7 +70,6 @@ public class RoomListFragment extends Fragment {
                         for(String l : Singleton.getCurrentPlayer().getPlayerRooms()){
                             Log.d("l", l);
                             if(l.equals(tempRoom.getRoomKey())){
-                                Log.d("tR", String.valueOf(tempRoom.getExistingSeasons().size()));
                                 mRooms.add(tempRoom);
                                 mAdapter.notifyDataSetChanged();
                             }
@@ -109,6 +109,16 @@ public class RoomListFragment extends Fragment {
         rvRooms.setItemAnimator(new DefaultItemAnimator());
         rvRooms.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_profile:
+                ((MainActivity)getActivity()).addFragment(new ProfileFragment());
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 
 }

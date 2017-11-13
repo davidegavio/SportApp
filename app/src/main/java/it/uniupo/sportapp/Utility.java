@@ -1,12 +1,16 @@
 package it.uniupo.sportapp;
 
+import android.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
 
 import java.util.Arrays;
+
+import it.uniupo.sportapp.fragments.TimePickerFragment;
 
 import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
@@ -23,4 +27,6 @@ public class Utility extends AppCompatActivity{
         inflater.inflate(R.menu.main, menu);
         return true;
     }
+
+
 }

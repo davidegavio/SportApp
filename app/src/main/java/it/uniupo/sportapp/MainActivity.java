@@ -1,5 +1,6 @@
 package it.uniupo.sportapp;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,9 +33,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.uniupo.sportapp.fragments.DatePickerFragment;
 import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.fragments.RoomFragment;
 import it.uniupo.sportapp.fragments.SeasonDetailFragment;
+import it.uniupo.sportapp.fragments.TimePickerFragment;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
 
@@ -270,5 +274,15 @@ public class MainActivity extends AppCompatActivity
                 signIn();
             }
         });
+    }
+
+    public void showTimePickerDialog(View view) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    public void showDatePickerDialog(View view) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getFragmentManager(), "datePicker");
     }
 }

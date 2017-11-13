@@ -97,7 +97,8 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
             addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);
-        Singleton.getCurrentRoom().setExistingSeasons(new ArrayList<Season>());
+        if(Singleton.getCurrentRoom().getExistingSeasons() == null)
+            Singleton.getCurrentRoom().setExistingSeasons(new ArrayList<Season>());
         TextView roomNameTv = view.findViewById(R.id.room_name_tv);
         roomNameTv.setText(Singleton.getCurrentRoom().getRoomName());
     }
@@ -157,6 +158,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 Log.d("Add", "Add season");
                 break;
             case R.id.show_seasons_btn:
+                Log.d("roomFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
                 ((MainActivity)getActivity()).addFragment(new SeasonListFragment());
                 break;
             case R.id.show_players_btn:

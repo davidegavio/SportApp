@@ -12,11 +12,12 @@ import it.uniupo.sportapp.models.Room;
 
 public class Singleton {
 
-    private static Player currentPlayer;
-    private static Player clickedPlayer;
-    private static Room currentRoom;
-    private static ArrayList<Match> matchesArrayList;
     private static String currentFragment;
+    private static Player currentPlayer;
+    private static Room currentRoom;
+    private static Match currentMatch;
+    private static Player clickedPlayer;
+    private static ArrayList<Match> matchesArrayList;
 
     public static ArrayList<Match> getMatchesArrayList() {
         return matchesArrayList;
@@ -56,5 +57,13 @@ public class Singleton {
 
     public static void setClickedPlayer(Player clickedPlayer) {
         Singleton.clickedPlayer = clickedPlayer;
+    }
+
+    public static Match getCurrentMatch() {
+        return currentMatch;
+    }
+
+    public static void setCurrentMatch(Match currentMatch) {
+        Singleton.currentMatch = currentMatch;
     }
 }

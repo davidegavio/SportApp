@@ -19,14 +19,20 @@
             android:id="@+id/btn_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Select date" />
+            android:text="Select date"
+            android:onClick="showDatePickerDialog"
+            android:background="@color/fui_transparent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" />
 
         <Button
             android:id="@+id/btn_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select time"
+            android:onClick="showTimePickerDialog"
             android:layout_below="@id/btn_date"
+            android:background="@color/fui_transparent"
             />
 
         <TextView

@@ -1,6 +1,7 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.MatchesAdapter;
@@ -125,13 +128,7 @@ public class SeasonDetailFragment extends Fragment {
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        TextView dateTv = timeview.findViewById(R.id.date_tv);
-                        TextView timeTv = timeview.findViewById(R.id.time_tv);
-                        dateTv.setText("31/10/2017");
-                        timeTv.setText("19:00");
                         Match newMatch = new Match();
-                        newMatch.setMatchDay(dateTv.getText().toString());
-                        newMatch.setStartTime(timeTv.getText().toString());
                         currentSeason.getSeasonMatches().add(newMatch);
                         mAdapter.notifyDataSetChanged();
                         DatabaseReference mDatabase;
@@ -144,8 +141,16 @@ public class SeasonDetailFragment extends Fragment {
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_profile:
+                ((MainActivity)getActivity()).addFragment(new ProfileFragment());
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 
 }

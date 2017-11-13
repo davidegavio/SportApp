@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.SeasonsAdapter;
@@ -65,7 +67,7 @@ public class SeasonListFragment extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext());
-        Log.d("al", Singleton.getCurrentRoom().getExistingSeasons().toString());
+        Log.d("seasonListFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -80,6 +82,16 @@ public class SeasonListFragment extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_season_list, container, false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_profile:
+                ((MainActivity)getActivity()).addFragment(new ProfileFragment());
+                return true;
+            default: return super.onOptionsItemSelected(item);
+        }
     }
 
 }
