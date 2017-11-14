@@ -143,7 +143,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 //mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
                                 SeasonDetailFragment fragment = new SeasonDetailFragment();
                                 Bundle args = new Bundle();
-                                args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()));
+                                args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
                                 args.putString("room", mParam1);
                                 fragment.setArguments(args);
                                 ((MainActivity)getActivity()).addFragment(fragment);

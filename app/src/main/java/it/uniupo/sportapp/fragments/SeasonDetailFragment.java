@@ -2,11 +2,16 @@ package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,6 +58,7 @@ public class SeasonDetailFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mSeasonKey;
     private String mRoomKey;
+    private String matchDate, matchTime;
 
     Season currentSeason;
 
@@ -101,6 +107,7 @@ public class SeasonDetailFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(mAdapter);
 
+
         FloatingActionButton floatingActionButton = view.findViewById(R.id.fab);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +115,7 @@ public class SeasonDetailFragment extends Fragment {
                 createNewMatch();
             }
         });
+        registerListener();
     }
 
     @Override
@@ -122,18 +130,24 @@ public class SeasonDetailFragment extends Fragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        final View timeview = inflater.inflate(R.layout.create_match_dialog, null);
-        builder.setView(timeview)
+        final View itemview = inflater.inflate(R.layout.create_match_dialog, null);
+        builder.setView(itemview)
                 // Add action buttons
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        Match newMatch = new Match();
+                        final Match newMatch = new Match();
+                        final TextView dateTv = itemview.findViewById(R.id.date_tv);
+                        final TextView timeTv = itemview.findViewById(R.id.time_tv);
+                        newMatch.setMatchDay(matchDate);
+                        newMatch.setStartTime(matchTime);
+                        dateTv.setText(newMatch.getMatchDay());
+                        timeTv.setText(newMatch.getStartTime());
                         currentSeason.getSeasonMatches().add(newMatch);
                         mAdapter.notifyDataSetChanged();
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child(String.valueOf(currentSeason.getSeasonMatches().size())).setValue(currentSeason);
+                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -151,6 +165,26 @@ public class SeasonDetailFragment extends Fragment {
                 return true;
             default: return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void registerListener(){
+        BroadcastReceiver listener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("intent", intent.getAction());
+                if(intent.getAction().equals("date_set")){
+                    Log.d("date", intent.getStringExtra("date"));
+                    matchDate = intent.getStringExtra("date");
+                }
+                else if(intent.getAction().equals("time_set")){
+                    Log.d("time", intent.getStringExtra("time"));
+                    matchTime = intent.getStringExtra("time");
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
+
     }
 
 }

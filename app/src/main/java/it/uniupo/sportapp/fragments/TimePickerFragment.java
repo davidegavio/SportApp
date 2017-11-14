@@ -3,7 +3,9 @@ package it.uniupo.sportapp.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
@@ -30,5 +32,11 @@ public class TimePickerFragment extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Do something with the time chosen by the user
+        String time = String.valueOf(hourOfDay)+":"+String.valueOf(minute);
+        // Do something with the date chosen by the user
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        Intent localIntent = new Intent("time_set");
+        localIntent.putExtra("time", time);
+        localBroadcastManager.sendBroadcast(localIntent);
     }
 }

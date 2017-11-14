@@ -3,8 +3,10 @@ package it.uniupo.sportapp.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.DatePicker;
 
 /**
@@ -33,6 +35,12 @@ public class DatePickerFragment extends DialogFragment
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
+        String date = String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);
         // Do something with the date chosen by the user
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        Intent localIntent = new Intent("date_set");
+        localIntent.putExtra("date", date);
+        localBroadcastManager.sendBroadcast(localIntent);
+
     }
 }
