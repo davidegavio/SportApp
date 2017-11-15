@@ -1,9 +1,9 @@
 package it.uniupo.sportapp;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity
             }
         };
         signIn();
-
     }
 
     @Override
@@ -222,7 +221,7 @@ public class MainActivity extends AppCompatActivity
 
     public void addFragment(Fragment fragment) {
         // Fragment Manager
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.your_placeholder, fragment);
         fragmentTransaction.commit();

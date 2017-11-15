@@ -2,7 +2,7 @@ package it.uniupo.sportapp.fragments;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,10 @@ import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 
 /**
- * A simple {@link Fragment} subclass.
  * Use the {@link MatchDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MatchDetailFragment extends android.support.v4.app.Fragment {
+public class MatchDetailFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,9 +74,9 @@ public class MatchDetailFragment extends android.support.v4.app.Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Toolbar toolbar = view.findViewById(R.id.match_toolbar);
-        getActivity().setActionBar(toolbar);
-        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+        //Toolbar toolbar = view.findViewById(R.id.match_toolbar);
+        //((MainActivity)getActivity()).setSupportActionBar(toolbar);
+        //((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         TabLayout tabLayout = view.findViewById(R.id.tabs);
@@ -86,8 +85,8 @@ public class MatchDetailFragment extends android.support.v4.app.Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
-        adapter.addFragment(new MatchInfoTabFragment(), "ONE");
-        adapter.addFragment(new MatchTeamsTabFragment(), "TWO");
+        adapter.addFragment(new MatchInfoTabFragment(), "Details");
+        adapter.addFragment(new MatchTeamsTabFragment(), "Chat");
         viewPager.setAdapter(adapter);
     }
 
@@ -103,18 +102,23 @@ public class MatchDetailFragment extends android.support.v4.app.Fragment {
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
-            return null;
+            return mFragmentList.get(position);
         }
 
 
         @Override
         public int getCount() {
-            return 0;
+            return mFragmentList.size();
         }
 
         public void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
         }
     }
 }

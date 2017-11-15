@@ -1,14 +1,15 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
@@ -34,7 +35,6 @@ import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.MatchesAdapter;
-import it.uniupo.sportapp.adapters.SeasonsAdapter;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Season;
 
@@ -44,7 +44,7 @@ import it.uniupo.sportapp.models.Season;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class SeasonDetailFragment extends Fragment {
+public class SeasonDetailFragment extends android.support.v4.app.Fragment {
 
     private static final String ARG_KEY = "key";
     private static final String ARG_ROOM = "room";
@@ -148,6 +148,8 @@ public class SeasonDetailFragment extends Fragment {
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
                         mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
+                        ((MainActivity)getActivity()).addFragment(new MatchDetailFragment());
+
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
