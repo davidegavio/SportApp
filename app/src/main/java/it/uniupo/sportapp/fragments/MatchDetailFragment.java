@@ -11,12 +11,10 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 
 /**
@@ -86,7 +84,7 @@ public class MatchDetailFragment extends Fragment{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
         adapter.addFragment(new MatchInfoTabFragment(), "Details");
-        adapter.addFragment(new MatchTeamsTabFragment(), "Chat");
+        adapter.addFragment(new MatchChatTabFragment(), "Chat");
         viewPager.setAdapter(adapter);
     }
 
