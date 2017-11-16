@@ -78,6 +78,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)-1);
             currentSeason.setSeasonMatches(new ArrayList<Match>());
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), getContext());
+            Singleton.setCurrentSeason(currentSeason);
             Singleton.setCurrentFragment("seasonDetailed");
         }
     }

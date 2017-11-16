@@ -10,7 +10,7 @@
     <dimen name="padding_login_middle">4dp</dimen>
     <dimen name="top_image">64dp</dimen>
     <dimen name="edit_text_padding">10dp</dimen>
-    <dimen name="card_corners">2dp</dimen>
+    <dimen name="card_corners">5dp</dimen>
     <dimen name="card_elevation">4dp</dimen>
 
     </resources>

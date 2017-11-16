@@ -5,62 +5,85 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+
+import java.util.ArrayList;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.adapters.ChatAdapter;
+import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link MatchChatTabFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MatchChatTabFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<ChatMessage> chatMessageList = new ArrayList<>();
 
 
     public MatchChatTabFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MatchChatTabFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MatchChatTabFragment newInstance(String param1, String param2) {
-        MatchChatTabFragment fragment = new MatchChatTabFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    }
+
+    private void initializeFirebaseAndList(View view) {
+        final RecyclerView rvMessages = view.findViewById(R.id.list_of_messages);
+        final ChatAdapter mAdapter = new ChatAdapter(chatMessageList);
+        rvMessages.setAdapter(mAdapter);
+        rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvMessages.setItemAnimator(new DefaultItemAnimator());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages");
+        ref.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                chatMessageList.add(dataSnapshot.getValue(ChatMessage.class));
+                mAdapter.notifyItemInserted(chatMessageList.size()-1);
+                rvMessages.scrollToPosition(chatMessageList.size()-1);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -69,6 +92,8 @@ public class MatchChatTabFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_match_chat_tab, container, false);
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -80,10 +105,10 @@ public class MatchChatTabFragment extends Fragment {
                 FirebaseDatabase.getInstance().getReference("messages")
                         .push()
                         .setValue(new ChatMessage(input.getText().toString(),
-                            Singleton.getCurrentPlayer().getPlayerName()));
+                            Singleton.getCurrentPlayer().getPlayerKey()));
                 input.setText("");
             }
         });
-
+        initializeFirebaseAndList(view);
     }
 }

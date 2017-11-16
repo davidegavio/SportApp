@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
+import it.uniupo.sportapp.models.Season;
 
 /**
  * Created by dgavio on 26/10/17.
@@ -15,6 +16,7 @@ public class Singleton {
     private static String currentFragment;
     private static Player currentPlayer;
     private static Room currentRoom;
+    private static Season currentSeason;
     private static Match currentMatch;
     private static Player clickedPlayer;
     private static ArrayList<Match> matchesArrayList;
@@ -65,5 +67,14 @@ public class Singleton {
 
     public static void setCurrentMatch(Match currentMatch) {
         Singleton.currentMatch = currentMatch;
+    }
+
+
+    public static Season getCurrentSeason() {
+        return currentSeason;
+    }
+
+    public static void setCurrentSeason(Season currentSeason) {
+        Singleton.currentSeason = currentSeason;
     }
 }

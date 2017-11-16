@@ -1,6 +1,7 @@
 package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.fragments.SeasonDetailFragment;
 import it.uniupo.sportapp.models.Season;
 
 /**
@@ -26,6 +30,18 @@ public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHold
             super(itemView);
             nameTv = itemView.findViewById(R.id.season_name_tv);
             startTv = itemView.findViewById(R.id.season_date);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SeasonDetailFragment fragment = new SeasonDetailFragment();
+                    Bundle args = new Bundle();
+                    args.putString("key", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    args.putString("room", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    fragment.setArguments(args);
+                    ((MainActivity)getContext()).addFragment(fragment);
+
+                }
+            });
         }
     }
 
