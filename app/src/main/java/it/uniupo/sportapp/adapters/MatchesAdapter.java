@@ -42,6 +42,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
                     b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()));
+                    b.putString("season", seasonIndex);
                     fragment.setArguments(b);
                     ((MainActivity)getmContext()).addFragment(fragment);
                 }
@@ -53,10 +54,12 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
     private List<Match> mMatches;
     // Store the context for easy access
     private Context mContext;
+    private String seasonIndex;
 
-    public MatchesAdapter(List<Match> mMatches, Context mContext) {
+    public MatchesAdapter(List<Match> mMatches, String seasonIndex,Context mContext) {
         this.mMatches = mMatches;
         this.mContext = mContext;
+        this.seasonIndex = seasonIndex;
     }
 
     private Context getmContext(){

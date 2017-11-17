@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -29,6 +31,7 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.ChatAdapter;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
+import it.uniupo.sportapp.models.Match;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +39,10 @@ import it.uniupo.sportapp.models.ChatMessage;
  */
 public class MatchChatTabFragment extends Fragment {
 
+    private static final String ARG_PARAM1 = "index";
+    private static final String ARG_PARAM2 = "season";
+
+    private String matchIndex, seasonIndex;
     private ArrayList<ChatMessage> chatMessageList = new ArrayList<>();
 
 
@@ -46,6 +53,10 @@ public class MatchChatTabFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            matchIndex = getArguments().getString(ARG_PARAM1);
+            seasonIndex = getArguments().getString(ARG_PARAM2);
+        }
     }
 
     private void initializeFirebaseAndList(View view) {
@@ -54,7 +65,8 @@ public class MatchChatTabFragment extends Fragment {
         rvMessages.setAdapter(mAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMessages.setItemAnimator(new DefaultItemAnimator());
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages");
+        Log.d("ref", "ref "+String.valueOf(FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child("seasonMatches").child(seasonIndex).child(matchIndex).child("chatMessages")));
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -102,10 +114,13 @@ public class MatchChatTabFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference("messages")
-                        .push()
-                        .setValue(new ChatMessage(input.getText().toString(),
-                            Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerImageUid()));
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentRoom().getRoomKey()).child(seasonIndex).child(matchIndex);
+                Match m = Singleton.getCurrentMatch();
+                Log.d("m", String.valueOf(m));
+                Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>(chatMessageList));
+                Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
+                        Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerImageUid()));
+                ref.setValue(Singleton.getCurrentMatch());
                 input.setText("");
             }
         });

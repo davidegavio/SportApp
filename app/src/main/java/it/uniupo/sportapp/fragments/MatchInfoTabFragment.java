@@ -27,8 +27,9 @@ import it.uniupo.sportapp.Utility;
 public class MatchInfoTabFragment extends Fragment implements Button.OnClickListener{
 
     private static final String ARG_PARAM1 = "index";
+    private static final String ARG_PARAM2 = "season";
 
-    private String matchIndex;
+    private String matchIndex, seasonIndex;
     private Button editTeamsButton, editResultButton, editGoalsButton;
     private TextView homeResultTextView, awayResultTextView;
 
@@ -42,6 +43,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
+            seasonIndex = getArguments().getString(ARG_PARAM2);
         }
     }
 

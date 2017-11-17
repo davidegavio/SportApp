@@ -35,8 +35,8 @@ public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHold
                 public void onClick(View view) {
                     SeasonDetailFragment fragment = new SeasonDetailFragment();
                     Bundle args = new Bundle();
-                    args.putString("key", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
-                    args.putString("room", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    //args.putString("room", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
                     fragment.setArguments(args);
                     ((MainActivity)getContext()).addFragment(fragment);
 

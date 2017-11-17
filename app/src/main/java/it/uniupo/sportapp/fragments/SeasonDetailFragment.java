@@ -49,7 +49,7 @@ import it.uniupo.sportapp.models.Season;
  */
 public class SeasonDetailFragment extends android.support.v4.app.Fragment {
 
-    private static final String ARG_KEY = "key";
+    private static final String ARG_KEY = "season";
     private static final String ARG_ROOM = "room";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -80,17 +80,19 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey));
             currentSeason.setSeasonMatches(new ArrayList<Match>());
             Log.i("onCreateSeason", "Here");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
             Log.i("onCreate", Singleton.getCurrentRoom().getRoomKey());
             Log.i("onCreate", mSeasonKey);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for(DataSnapshot d : dataSnapshot.getChildren()){
-                        currentSeason.getSeasonMatches().add(d.getValue(Match.class));
-                        mAdapter.notifyDataSetChanged();
-                        Log.i("onDataChange",currentSeason.getSeasonMatches().toString());
-                    }
+                    if(dataSnapshot.exists())
+                        for(DataSnapshot d : dataSnapshot.getChildren()){
+                            currentSeason.getSeasonMatches().add(d.getValue(Match.class));
+                            mAdapter.notifyDataSetChanged();
+                            Log.i("onDataChange",currentSeason.getSeasonMatches().toString());
+                            Singleton.setCurrentSeason(currentSeason);
+                        }
                 }
 
                 @Override
@@ -98,7 +100,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
 
                 }
             });
-            mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), getContext());
+            mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
             Singleton.setCurrentSeason(currentSeason);
             Singleton.setCurrentFragment("seasonDetailed");
         }
@@ -175,6 +177,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                         mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
                         MatchDetailFragment fragment = new MatchDetailFragment();
                         Bundle b = new Bundle();
+                        b.putString("season", mSeasonKey);
                         b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()));
                         fragment.setArguments(b);
                         ((MainActivity)getActivity()).addFragment(fragment);

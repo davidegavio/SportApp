@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
 
 /**
  * create an instance of this fragment.
@@ -26,7 +28,8 @@ public class MatchDetailFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "index";
-    private String matchIndex;
+    private static final String ARG_PARAM2 = "season";
+    private String matchIndex, seasonIndex;
 
 
     public MatchDetailFragment() {
@@ -38,7 +41,10 @@ public class MatchDetailFragment extends Fragment{
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
+            seasonIndex = getArguments().getString(ARG_PARAM2);
+            Log.d("mDet", seasonIndex );
         }
+        //Singleton.setCurrentMatch();
     }
 
     @Override
@@ -67,6 +73,7 @@ public class MatchDetailFragment extends Fragment{
         ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager());
         Bundle b = new Bundle();
         b.putString("index", matchIndex);
+        b.putString("season", seasonIndex);
         MatchInfoTabFragment matchInfoTabFragment = new MatchInfoTabFragment();
         matchInfoTabFragment.setArguments(b);
         MatchChatTabFragment matchChatTabFragment = new MatchChatTabFragment();
