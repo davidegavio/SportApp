@@ -26,8 +26,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -71,12 +74,30 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("onCreate", "Here");
         if (getArguments() != null) {
             mSeasonKey = getArguments().getString(ARG_KEY);
             mRoomKey = getArguments().getString(ARG_ROOM);
-            currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)-1);
+            currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey));
             currentSeason.setSeasonMatches(new ArrayList<Match>());
+            Log.i("onCreateSeason", "Here");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons");
+            Log.i("onCreate", Singleton.getCurrentRoom().getRoomKey());
+            Log.i("onCreate", mSeasonKey);
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot d : dataSnapshot.getChildren()){
+                        currentSeason.getSeasonMatches().add(d.getValue(Match.class));
+                        mAdapter.notifyDataSetChanged();
+                        Log.i("onDataChange",currentSeason.getSeasonMatches().toString());
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), getContext());
             Singleton.setCurrentSeason(currentSeason);
             Singleton.setCurrentFragment("seasonDetailed");
@@ -90,6 +111,8 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_season_detail, container, false);
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -145,11 +168,16 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                         dateTv.setText(newMatch.getMatchDay());
                         timeTv.setText(newMatch.getStartTime());
                         currentSeason.getSeasonMatches().add(newMatch);
+                        Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)).setSeasonMatches(currentSeason.getSeasonMatches());
                         mAdapter.notifyDataSetChanged();
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(mRoomKey).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
-                        ((MainActivity)getActivity()).addFragment(new MatchDetailFragment());
+                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
+                        MatchDetailFragment fragment = new MatchDetailFragment();
+                        Bundle b = new Bundle();
+                        b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()));
+                        fragment.setArguments(b);
+                        ((MainActivity)getActivity()).addFragment(fragment);
 
                     }
                 })

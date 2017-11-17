@@ -5,7 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.List;
@@ -24,15 +28,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     private static final int MESSAGE_RECEIVED = 2;
 
 
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView messageTv, authorTv, timeTv;
+        public ImageView profileIv;
 
         ViewHolder(View itemView) {
             super(itemView);
             messageTv = itemView.findViewById(R.id.txt_message);
             authorTv = itemView.findViewById(R.id.txt_user);
             timeTv = itemView.findViewById(R.id.time_tv);
+            profileIv = itemView.findViewById(R.id.profile_msg_img);
         }
     }
 
@@ -41,8 +48,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     // Store the context for easy access
     private Context mContext;
 
-    public ChatAdapter(List<ChatMessage> mMessages) {
+    public ChatAdapter(List<ChatMessage> mMessages, Context mContext) {
         this.mMessages = mMessages;
+        this.mContext = mContext;
+    }
+
+    private Context getContext() {
+        return mContext;
     }
 
     @Override public ChatAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -62,6 +74,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         ChatMessage chat = mMessages.get(position);
         holder.messageTv.setText(chat.getMessageText());
         holder.authorTv.setText(chat.getMessageUser());
+        ImageView profileImageView = holder.profileIv;
+        if(getItemViewType(position) == MESSAGE_SENT && Singleton.getCurrentPlayer().getPlayerImageUid()!=null)
+            Picasso.with(getContext()).load(chat.getMessageUserImage()).into(profileImageView);
     }
 
     @Override public int getItemCount() {

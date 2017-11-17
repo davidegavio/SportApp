@@ -50,7 +50,7 @@ public class MatchChatTabFragment extends Fragment {
 
     private void initializeFirebaseAndList(View view) {
         final RecyclerView rvMessages = view.findViewById(R.id.list_of_messages);
-        final ChatAdapter mAdapter = new ChatAdapter(chatMessageList);
+        final ChatAdapter mAdapter = new ChatAdapter(chatMessageList, getActivity().getApplicationContext());
         rvMessages.setAdapter(mAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMessages.setItemAnimator(new DefaultItemAnimator());
@@ -105,7 +105,7 @@ public class MatchChatTabFragment extends Fragment {
                 FirebaseDatabase.getInstance().getReference("messages")
                         .push()
                         .setValue(new ChatMessage(input.getText().toString(),
-                            Singleton.getCurrentPlayer().getPlayerKey()));
+                            Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 input.setText("");
             }
         });

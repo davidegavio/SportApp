@@ -1,16 +1,25 @@
 package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.fragments.MatchDetailFragment;
 import it.uniupo.sportapp.models.Match;
+import android.content.Context;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by 20010562 on 11/3/17.
@@ -27,6 +36,16 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
             dayTv = itemView.findViewById(R.id.match_day);
             startHourTv = itemView.findViewById(R.id.match_start_hour);
             endHourTv = itemView.findViewById(R.id.match_end_hour);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    MatchDetailFragment fragment = new MatchDetailFragment();
+                    Bundle b = new Bundle();
+                    b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()));
+                    fragment.setArguments(b);
+                    ((MainActivity)getmContext()).addFragment(fragment);
+                }
+            });
         }
     }
 

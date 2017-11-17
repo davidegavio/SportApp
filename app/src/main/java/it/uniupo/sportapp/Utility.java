@@ -11,6 +11,7 @@ import com.firebase.ui.auth.AuthUI;
 import java.util.Arrays;
 
 import it.uniupo.sportapp.fragments.TimePickerFragment;
+import it.uniupo.sportapp.models.Player;
 
 import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
@@ -26,6 +27,15 @@ public class Utility extends AppCompatActivity{
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
         return true;
+    }
+
+    public static boolean checkIfAdmin(){
+        for(String player : Singleton.getCurrentRoom().getAdminPlayers()){
+            if(Singleton.getCurrentPlayer().getPlayerKey().equals(player)){
+                return true;
+            }
+        }
+        return false;
     }
 
 

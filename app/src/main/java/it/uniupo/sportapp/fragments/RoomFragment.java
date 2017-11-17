@@ -35,6 +35,7 @@ import java.util.Calendar;
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
@@ -93,7 +94,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         FloatingActionButton addPlayerFab = view.findViewById(R.id.add_player_btn);
         Log.d("Admins", String.valueOf(Singleton.getCurrentRoom().getAdminPlayers()));
         Log.d("Current", String.valueOf(Singleton.getCurrentPlayer()));
-        //if(checkAdmin())
+        if(Utility.checkIfAdmin())
             addPlayerFab.setOnClickListener(this);
         FloatingActionButton addSeasonFab = view.findViewById(R.id.add_season_btn);
         addSeasonFab.setOnClickListener(this);

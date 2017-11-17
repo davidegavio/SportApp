@@ -13,6 +13,7 @@ public class Match {
     private String startTime;
     private String endTime;
     private ArrayList<ChatMessage> chatMessages;
+    private String matchResult;
 
     public Match() {
     }
@@ -63,4 +64,14 @@ public class Match {
     public void setChatMessages(ArrayList<ChatMessage> chatMessages) {
         this.chatMessages = chatMessages;
     }
+
+    public String getMatchResult() {
+        return matchResult;
+    }
+
+    public void setMatchResult(String matchResult) {
+        this.matchResult = matchResult;
+    }
+
+
 }

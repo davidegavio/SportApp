@@ -198,6 +198,7 @@ public class MainActivity extends AppCompatActivity
                     if(loggedPlayer.getPlayerRooms() == null)
                         loggedPlayer.setPlayerRooms(new ArrayList<String>());
                     loggedPlayer.setPlayerKey(getCurrentFirebaseUser().getUid());
+                    loggedPlayer.setPlayerImageUid(String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()));
                     userRef.child(getCurrentFirebaseUser().getUid()).setValue(loggedPlayer);
                     Log.d(TAG, "Player doesn't exist yet.");
                 }

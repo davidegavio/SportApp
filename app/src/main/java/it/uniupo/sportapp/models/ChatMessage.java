@@ -10,15 +10,17 @@ public class ChatMessage {
 
     private String messageText;
     private String messageUser;
+    private String messageUserImage;
     private long messageTime;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String messageText, String messageUser) {
+    public ChatMessage(String messageText, String messageUser, String messageUserImage) {
         this.messageText = messageText;
         this.messageUser = messageUser;
         this.messageTime = Calendar.getInstance().getTimeInMillis();
+        this.messageUserImage = messageUserImage;
     }
 
     public String getMessageText() {
@@ -43,5 +45,13 @@ public class ChatMessage {
 
     public void setMessageTime(long messageTime) {
         this.messageTime = messageTime;
+    }
+
+    public String getMessageUserImage() {
+        return messageUserImage;
+    }
+
+    public void setMessageUserImage(String messageUserImage) {
+        this.messageUserImage = messageUserImage;
     }
 }

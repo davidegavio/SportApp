@@ -14,6 +14,7 @@ public class Player {
     private String playerDescription;
     private String playerMail;
     private boolean isGoalkeeper;
+    private String playerImageUid;
     private ArrayList<String> playerRooms;
     @Exclude
     private String playerKey;
@@ -83,5 +84,13 @@ public class Player {
 
     public void setPlayerKey(String playerKey) {
         this.playerKey = playerKey;
+    }
+
+    public String getPlayerImageUid() {
+        return playerImageUid;
+    }
+
+    public void setPlayerImageUid(String playerImageUid) {
+        this.playerImageUid = playerImageUid;
     }
 }
