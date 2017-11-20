@@ -1,10 +1,16 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,12 +32,17 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.ChatAdapter;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
+import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +54,6 @@ public class MatchChatTabFragment extends Fragment {
     private static final String ARG_PARAM2 = "season";
 
     private String matchIndex, seasonIndex;
-    private ArrayList<ChatMessage> chatMessageList = new ArrayList<>();
 
 
     public MatchChatTabFragment() {
@@ -86,6 +96,9 @@ public class MatchChatTabFragment extends Fragment {
                 Singleton.getCurrentMatch().getChatMessages().add(dataSnapshot.getValue(ChatMessage.class));
                 mAdapter.notifyItemInserted(Singleton.getCurrentMatch().getChatMessages().size()-1);
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
+                if(!Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey()))
+                    notifyUser(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
+
             }
 
             @Override
@@ -112,6 +125,7 @@ public class MatchChatTabFragment extends Fragment {
 
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -135,9 +149,28 @@ public class MatchChatTabFragment extends Fragment {
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 input.setText("");
-
             }
         });
+
+    }
+
+    private void notifyUser(ChatMessage chatMessage) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getContext())
+                        .setSmallIcon(R.drawable.teams48)
+                        .setDefaults(DEFAULT_VIBRATE)
+                        .setPriority(DEFAULT_ALL)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(chatMessage.getMessageText());
+        Intent resultIntent = new Intent(getContext(), MainActivity.class);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(getContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(001, mBuilder.build());
+
+
 
     }
 }

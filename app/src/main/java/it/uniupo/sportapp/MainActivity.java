@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        getSupportFragmentManager().getFragments().clear();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -276,12 +277,12 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void showTimePickerDialog(View view) {
+    public void showTimePickerDialog() {
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getFragmentManager(), "timePicker");
     }
 
-    public void showDatePickerDialog(View view) {
+    public void showDatePickerDialog() {
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }

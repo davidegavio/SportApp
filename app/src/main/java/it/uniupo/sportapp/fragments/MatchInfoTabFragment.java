@@ -1,11 +1,17 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
@@ -29,9 +36,10 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private static final String ARG_PARAM1 = "index";
     private static final String ARG_PARAM2 = "season";
 
+    private String matchDate, matchTime;
     private String matchIndex, seasonIndex;
     private Button editTeamsButton, editResultButton, editGoalsButton;
-    private TextView homeResultTextView, awayResultTextView;
+    private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView;
 
 
     public MatchInfoTabFragment() {
@@ -51,6 +59,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        registerListener();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_match_info_tab, container, false);
     }
@@ -59,6 +68,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        matchDayTextView = view.findViewById(R.id.match_day_tv);
+        matchHourTextView = view.findViewById(R.id.match_hour_tv);
         homeResultTextView = view.findViewById(R.id.result_home);
         awayResultTextView = view.findViewById(R.id.result_away);
         editTeamsButton = view.findViewById(R.id.edit_teams_btn);
@@ -73,6 +84,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editResultButton.setOnClickListener(this);
             editGoalsButton.setOnClickListener(this);
         }
+        ((MainActivity)getActivity()).showDatePickerDialog();
+        ((MainActivity)getActivity()).showTimePickerDialog();
     }
 
     @Override
@@ -114,5 +127,27 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                         dialog.dismiss();
                     }
                 }).create().show();
+    }
+
+    private void registerListener(){
+        BroadcastReceiver listener = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("intent", intent.getAction());
+                if(intent.getAction().equals("date_set")){
+                    Log.d("date", intent.getStringExtra("date"));
+                    matchDate = intent.getStringExtra("date");
+                    matchDayTextView.setText(matchDate);
+                }
+                else if(intent.getAction().equals("time_set")){
+                    Log.d("time", intent.getStringExtra("time"));
+                    matchTime = intent.getStringExtra("time");
+                    matchHourTextView.setText(matchTime);
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
+
     }
 }

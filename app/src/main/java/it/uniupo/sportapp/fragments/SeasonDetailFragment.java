@@ -24,6 +24,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +34,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -62,7 +67,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mSeasonKey;
     private String mRoomKey;
-    private String matchDate, matchTime;
+
 
     Season currentSeason;
 
@@ -139,10 +144,25 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createNewMatch();
+                //createNewMatch();
+                Match newMatch = new Match();
+                currentSeason.getSeasonMatches().add(newMatch);
+                Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)).setSeasonMatches(currentSeason.getSeasonMatches());
+                mAdapter.notifyDataSetChanged();
+                Singleton.setCurrentMatch(newMatch);
+                Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
+                DatabaseReference mDatabase;
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
+                MatchDetailFragment fragment = new MatchDetailFragment();
+                Bundle b = new Bundle();
+                b.putString("season", mSeasonKey);
+                b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
+                fragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(fragment);
             }
         });
-        registerListener();
+
     }
 
     @Override
@@ -151,7 +171,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    private void createNewMatch() {
+    /*private void createNewMatch() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -164,8 +184,8 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         final Match newMatch = new Match();
-                        final TextView dateTv = itemview.findViewById(R.id.date_tv);
-                        final TextView timeTv = itemview.findViewById(R.id.time_tv);
+                        TextView dateTv = itemview.findViewById(R.id.date_tv);
+                        TextView timeTv = itemview.findViewById(R.id.time_tv);
                         newMatch.setMatchDay(matchDate);
                         newMatch.setStartTime(matchTime);
                         dateTv.setText(newMatch.getMatchDay());
@@ -192,7 +212,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                         dialog.dismiss();
                     }
                 }).create().show();
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -204,24 +224,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    private void registerListener(){
-        BroadcastReceiver listener = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d("intent", intent.getAction());
-                if(intent.getAction().equals("date_set")){
-                    Log.d("date", intent.getStringExtra("date"));
-                    matchDate = intent.getStringExtra("date");
-                }
-                else if(intent.getAction().equals("time_set")){
-                    Log.d("time", intent.getStringExtra("time"));
-                    matchTime = intent.getStringExtra("time");
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
 
-    }
 
 }

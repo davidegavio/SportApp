@@ -1,49 +1,94 @@
 <RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="255dp"
-                android:id="@+id/linearLayout"
-                android:background="@color/primaryColor"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentStart="true">
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="255dp"
+        android:background="@color/primaryColor"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-                <TextView
-                    android:id="@+id/result_home"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="start"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:layout_weight="2"
-                    android:text="0"
-                    android:textSize="50sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primaryTextLightColor"/>
+            <TextView
+                android:id="@+id/result_home"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:gravity="center_horizontal|center_vertical"
+                android:layout_weight="2"
+                android:text="0"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:textColor="@color/primaryTextLightColor"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="-"
-                    android:textSize="50sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primaryTextLightColor"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="-"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:textColor="@color/primaryTextLightColor"/>
 
-                <TextView
-                    android:id="@+id/result_away"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:gravity="center"
-                    android:layout_weight="2"
-                    android:text="0"
-                    android:textSize="50sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/primaryTextLightColor"/>
+            <TextView
+                android:id="@+id/result_away"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:gravity="center"
+                android:layout_weight="2"
+                android:text="0"
+                android:textSize="50sp"
+                android:textStyle="bold"
+                android:textColor="@color/primaryTextLightColor"/>
 
-            </LinearLayout>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/title_day_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Giorno: "
+                android:textColor="@color/primaryTextLightColor"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/title_hour_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ora: "
+                android:textColor="@color/primaryTextLightColor"
+                android:textStyle="bold"
+                android:layout_below="@id/title_day_tv"/>
+
+            <TextView
+                android:id="@+id/match_day_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@id/title_day_tv"
+                android:textColor="@color/primaryTextLightColor"/>
+
+            <TextView
+                android:id="@+id/match_hour_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/match_day_tv"
+                android:layout_alignEnd="@id/title_hour_tv"
+                android:textColor="@color/primaryTextLightColor"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:id="@+id/teams_rel"

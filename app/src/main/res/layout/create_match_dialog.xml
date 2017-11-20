@@ -55,6 +55,26 @@
             android:layout_below="@+id/btn_date"
             android:layout_marginLeft="16dp"/>
 
+        <Spinner
+            android:id="@+id/teams_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btn_time"
+            android:layout_toStartOf="@+id/time_tv">
+
+        </Spinner>
+
+
+        <TextView
+            android:id="@+id/teams_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center|end"
+            android:layout_alignBottom="@+id/teams_spinner"
+            android:layout_toEndOf="@+id/btn_time"
+            android:layout_below="@+id/time_tv"
+            android:layout_marginLeft="16dp"/>
+
     </RelativeLayout>
 
 
