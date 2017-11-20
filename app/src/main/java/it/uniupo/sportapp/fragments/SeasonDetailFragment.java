@@ -38,6 +38,7 @@ import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.MatchesAdapter;
+import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Season;
 
@@ -172,13 +173,15 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                         currentSeason.getSeasonMatches().add(newMatch);
                         Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)).setSeasonMatches(currentSeason.getSeasonMatches());
                         mAdapter.notifyDataSetChanged();
+                        Singleton.setCurrentMatch(newMatch);
+                        Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
                         mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
                         MatchDetailFragment fragment = new MatchDetailFragment();
                         Bundle b = new Bundle();
                         b.putString("season", mSeasonKey);
-                        b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()));
+                        b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
                         fragment.setArguments(b);
                         ((MainActivity)getActivity()).addFragment(fragment);
 

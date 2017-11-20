@@ -61,18 +61,31 @@ public class MatchChatTabFragment extends Fragment {
 
     private void initializeFirebaseAndList(View view) {
         final RecyclerView rvMessages = view.findViewById(R.id.list_of_messages);
-        final ChatAdapter mAdapter = new ChatAdapter(chatMessageList, getActivity().getApplicationContext());
+        final ChatAdapter mAdapter = new ChatAdapter(Singleton.getCurrentMatch().getChatMessages(), getActivity().getApplicationContext());
         rvMessages.setAdapter(mAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMessages.setItemAnimator(new DefaultItemAnimator());
         Log.d("ref", "ref "+String.valueOf(FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child("seasonMatches").child(seasonIndex).child(matchIndex).child("chatMessages")));
+        DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child("seasonMatches").child(seasonIndex).child(matchIndex).child("chatMessages");
+        r.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot d : dataSnapshot.getChildren())
+                    Singleton.getCurrentMatch().getChatMessages().add(d.getValue(ChatMessage.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                chatMessageList.add(dataSnapshot.getValue(ChatMessage.class));
-                mAdapter.notifyItemInserted(chatMessageList.size()-1);
-                rvMessages.scrollToPosition(chatMessageList.size()-1);
+                Singleton.getCurrentMatch().getChatMessages().add(dataSnapshot.getValue(ChatMessage.class));
+                mAdapter.notifyItemInserted(Singleton.getCurrentMatch().getChatMessages().size()-1);
+                rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
             }
 
             @Override
@@ -96,6 +109,7 @@ public class MatchChatTabFragment extends Fragment {
             }
         });
 
+
     }
 
     @Override
@@ -110,20 +124,20 @@ public class MatchChatTabFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         final EditText input = view.findViewById(R.id.input);
+        initializeFirebaseAndList(view);
         FloatingActionButton fab = view.findViewById(R.id.fab_send);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentRoom().getRoomKey()).child(seasonIndex).child(matchIndex);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
                 Match m = Singleton.getCurrentMatch();
                 Log.d("m", String.valueOf(m));
-                Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>(chatMessageList));
-                Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
-                        Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerImageUid()));
-                ref.setValue(Singleton.getCurrentMatch());
+                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(new ChatMessage(input.getText().toString(),
+                        Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 input.setText("");
+
             }
         });
-        initializeFirebaseAndList(view);
+
     }
 }

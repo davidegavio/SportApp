@@ -57,5 +57,5 @@
         android:layout_toStartOf="@id/msg_lin"
         android:layout_alignBottom="@id/msg_lin"
         android:text="11:40"
-        android:textSize="10sp"/>
+        android:textSize="10sp" />
 </RelativeLayout>

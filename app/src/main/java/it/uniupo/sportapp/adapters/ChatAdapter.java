@@ -73,7 +73,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     @Override public void onBindViewHolder(ViewHolder holder, int position) {
         ChatMessage chat = mMessages.get(position);
         holder.messageTv.setText(chat.getMessageText());
-        holder.authorTv.setText(chat.getMessageUser());
+        holder.authorTv.setText(chat.getMessageUserName());
         ImageView profileImageView = holder.profileIv;
         if(getItemViewType(position) == MESSAGE_SENT && Singleton.getCurrentPlayer().getPlayerImageUid()!=null)
             Picasso.with(getContext()).load(chat.getMessageUserImage()).into(profileImageView);
@@ -84,7 +84,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     @Override public int getItemViewType(int position) {
-        if (mMessages.get(position).getMessageUser().equals(Singleton.getCurrentPlayer().getPlayerKey())) return MESSAGE_SENT;
+        if (mMessages.get(position).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey())) return MESSAGE_SENT;
 
         return MESSAGE_RECEIVED;
     }
