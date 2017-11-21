@@ -3,9 +3,11 @@ package it.uniupo.sportapp.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,6 +43,7 @@ public class PlayerListFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private ArrayList<Player> allPlayers;
+    private PlayersAdapter mAdapter;
 
 
     public PlayerListFragment() {
@@ -71,6 +74,7 @@ public class PlayerListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_player_list, container, false);
     }
@@ -78,14 +82,32 @@ public class PlayerListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+
+
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        final PlayersAdapter mAdapter = new PlayersAdapter(allPlayers, getContext());
+        mAdapter = new PlayersAdapter(allPlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());

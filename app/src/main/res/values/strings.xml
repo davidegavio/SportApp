@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">SportApp</string>
+    <string name="facebook_app_id">147279152570470</string>
+    <string name="fb_login_protocol_scheme">fb147279152570470</string>
+
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -21,4 +24,6 @@
     <string name="profile_email_title">E-mail</string>
     <string name="edit_profile">Edit profile</string>
     <string name="delete_profile">Delete profile</string>
+
+
 </resources>

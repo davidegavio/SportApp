@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +31,9 @@ import it.uniupo.sportapp.models.Room;
  * Created by 20010562 on 11/6/17.
  */
 
-public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHolder>  {
+public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHolder> implements Filterable {
+
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -46,11 +50,13 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
     }
 
     private List<Player> mPlayers;
+    private List<Player> mFilteredPlayers = new ArrayList<>();
     private Context mContext;
 
     public PlayersAdapter(List<Player> mPlayers, Context mContext) {
         this.mPlayers = mPlayers;
         this.mContext = mContext;
+        mFilteredPlayers = mPlayers;
     }
 
     private Context getContext() {
@@ -95,6 +101,35 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
     @Override
     public int getItemCount() {
         return mPlayers.size();
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                FilterResults filterResults = new FilterResults();
+                if (charString.isEmpty()) {
+                    mFilteredPlayers = mPlayers;
+                } else{
+                    ArrayList<Player> filteredList = new ArrayList<>();
+                    for(Player player : mPlayers){
+                        if(player.getPlayerName().toLowerCase().contains(charString) || player.getPlayerMail().toLowerCase().contains(charString))
+                            filteredList.add(player);
+                    }
+                    mFilteredPlayers = filteredList;
+                }
+                filterResults.values = mFilteredPlayers;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mFilteredPlayers = (ArrayList<Player>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 
 }
