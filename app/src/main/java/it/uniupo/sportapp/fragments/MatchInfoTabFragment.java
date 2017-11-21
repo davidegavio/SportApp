@@ -11,6 +11,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,10 +26,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
+import it.uniupo.sportapp.models.ChatMessage;
+import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Season;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +52,10 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private String matchDate, matchTime;
     private String matchIndex, seasonIndex;
     private Button editTeamsButton, editResultButton, editGoalsButton;
-    private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView;
+    private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView, emptyView;
+    private RecyclerView teamARecyclerView, teamBRecyclerView;
+    private LinearLayoutManager mLayoutManager;
+    private Season currentSeason;
 
 
     public MatchInfoTabFragment() {
@@ -52,6 +68,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
+            currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex));
+            currentSeason.setSeasonMatches(new ArrayList<Match>());
         }
     }
 
@@ -68,6 +86,24 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        teamARecyclerView = view.findViewById(R.id.team_a_rv);
+        teamARecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        teamARecyclerView.setLayoutManager(mLayoutManager);
+        teamARecyclerView.setItemAnimator(new DefaultItemAnimator());
+        teamARecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        teamBRecyclerView = view.findViewById(R.id.team_b_rv);
+        teamBRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getContext());
+        teamBRecyclerView.setLayoutManager(mLayoutManager);
+        teamBRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        teamBRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        emptyView = view.findViewById(R.id.empty_view);
+        if(teamARecyclerView.getAdapter()==null && teamBRecyclerView.getAdapter()==null){
+            teamARecyclerView.setVisibility(View.GONE);
+            teamBRecyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
         matchDayTextView = view.findViewById(R.id.match_day_tv);
         matchHourTextView = view.findViewById(R.id.match_hour_tv);
         homeResultTextView = view.findViewById(R.id.result_home);
@@ -84,8 +120,27 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editResultButton.setOnClickListener(this);
             editGoalsButton.setOnClickListener(this);
         }
-        ((MainActivity)getActivity()).showDatePickerDialog();
-        ((MainActivity)getActivity()).showTimePickerDialog();
+        if(Singleton.getCurrentMatch().getMatchDay()==null && Singleton.getCurrentMatch().getStartTime()==null){
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("You are invited to choose day and time of your match in the dialogs that will be displayed")
+                    .setTitle("Warning!")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ((MainActivity)getActivity()).showDatePickerDialog();
+                            dialogInterface.dismiss();
+                        }
+                    });
+            builder.create().show();
+        }else {
+            matchDayTextView.setText(Singleton.getCurrentMatch().getMatchDay());
+            matchHourTextView.setText(Singleton.getCurrentMatch().getStartTime());
+            String[] r = Singleton.getCurrentMatch().getMatchResult().split("-");
+            homeResultTextView.setText(r[0]);
+            awayResultTextView.setText(r[1]);
+        }
+
+
     }
 
     @Override
@@ -95,7 +150,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 Toast.makeText(getContext(), "Edit teams!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.edit_result_btn:
-
+                editResult();
                 Toast.makeText(getContext(), "Edit result!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.edit_goals_btn:
@@ -119,7 +174,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     public void onClick(DialogInterface dialog, int id) {
                         final EditText homeEt = itemview.findViewById(R.id.home_result_dialog);
                         final EditText awayEt = itemview.findViewById(R.id.away_result_dialog);
-
+                        homeResultTextView.setText(homeEt.getText());
+                        awayResultTextView.setText(awayEt.getText());
+                        Singleton.getCurrentMatch().setMatchResult(homeResultTextView.getText()+"-"+awayResultTextView.getText());
+                        DatabaseReference mDatabase;
+                        mDatabase = FirebaseDatabase.getInstance().getReference();
+                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -138,11 +198,13 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     Log.d("date", intent.getStringExtra("date"));
                     matchDate = intent.getStringExtra("date");
                     matchDayTextView.setText(matchDate);
+                    ((MainActivity)getActivity()).showTimePickerDialog();
                 }
                 else if(intent.getAction().equals("time_set")){
                     Log.d("time", intent.getStringExtra("time"));
                     matchTime = intent.getStringExtra("time");
                     matchHourTextView.setText(matchTime);
+                    createMatch();
                 }
             }
         };
@@ -150,4 +212,20 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
 
     }
+
+    private void createMatch() {
+        Match newMatch = new Match();
+        newMatch.setMatchDay(matchDate);
+        newMatch.setStartTime(matchTime);
+        currentSeason.getSeasonMatches().add(newMatch);
+        Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).setSeasonMatches(currentSeason.getSeasonMatches());
+        Singleton.setCurrentMatch(newMatch);
+        Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
+        DatabaseReference mDatabase;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(currentSeason);
+
+    }
+
+
 }

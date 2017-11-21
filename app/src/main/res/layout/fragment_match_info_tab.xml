@@ -11,8 +11,7 @@
         android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="221dp">
 
             <TextView
                 android:id="@+id/result_home"
@@ -20,11 +19,11 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="start"
                 android:gravity="center_horizontal|center_vertical"
-                android:layout_weight="2"
                 android:text="0"
                 android:textSize="50sp"
                 android:textStyle="bold"
-                android:textColor="@color/primaryTextLightColor"/>
+                android:textColor="@color/primaryTextLightColor"
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -42,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:gravity="center"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="0"
                 android:textSize="50sp"
                 android:textStyle="bold"
@@ -59,7 +58,9 @@
                 android:layout_height="wrap_content"
                 android:text="Giorno: "
                 android:textColor="@color/primaryTextLightColor"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                android:layout_alignBaseline="@+id/match_day_tv"
+                android:layout_alignBottom="@+id/match_day_tv" />
 
             <TextView
                 android:id="@+id/title_hour_tv"
@@ -68,22 +69,25 @@
                 android:text="Ora: "
                 android:textColor="@color/primaryTextLightColor"
                 android:textStyle="bold"
-                android:layout_below="@id/title_day_tv"/>
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/match_day_tv" />
 
             <TextView
                 android:id="@+id/match_day_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/title_day_tv"
-                android:textColor="@color/primaryTextLightColor"/>
+                android:textColor="@color/primaryTextLightColor"
+                android:layout_above="@+id/title_hour_tv"
+                android:layout_toEndOf="@+id/title_day_tv" />
 
             <TextView
                 android:id="@+id/match_hour_tv"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/match_day_tv"
-                android:layout_alignEnd="@id/title_hour_tv"
-                android:textColor="@color/primaryTextLightColor"/>
+                android:textColor="@color/primaryTextLightColor"
+                android:layout_alignParentBottom="true"
+                android:layout_toEndOf="@+id/title_day_tv" />
         </RelativeLayout>
 
     </LinearLayout>
@@ -111,6 +115,8 @@
                 android:layout_centerInParent="true">
 
             </android.support.v7.widget.RecyclerView>
+
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -124,6 +130,14 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"/>
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="No teams selected."
+            android:visibility="gone" />
 
         </LinearLayout>
 

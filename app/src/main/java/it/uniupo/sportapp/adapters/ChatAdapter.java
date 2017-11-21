@@ -38,7 +38,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
             super(itemView);
             messageTv = itemView.findViewById(R.id.txt_message);
             authorTv = itemView.findViewById(R.id.txt_user);
-            timeTv = itemView.findViewById(R.id.time_tv);
+            timeTv = itemView.findViewById(R.id.time_msg);
             profileIv = itemView.findViewById(R.id.profile_msg_img);
         }
     }
@@ -74,6 +74,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         ChatMessage chat = mMessages.get(position);
         holder.messageTv.setText(chat.getMessageText());
         holder.authorTv.setText(chat.getMessageUserName());
+        holder.timeTv.setText(String.valueOf(chat.getMessageTime()));
         ImageView profileImageView = holder.profileIv;
         if(getItemViewType(position) == MESSAGE_SENT && Singleton.getCurrentPlayer().getPlayerImageUid()!=null)
             Picasso.with(getContext()).load(chat.getMessageUserImage()).into(profileImageView);

@@ -1,6 +1,9 @@
 package it.uniupo.sportapp.models;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by dgavio on 15/11/17.
@@ -12,7 +15,7 @@ public class ChatMessage {
     private String messageUserKey;
     private String messageUserName;
     private String messageUserImage;
-    private long messageTime;
+    private String messageTime;
 
     public ChatMessage() {
     }
@@ -22,7 +25,9 @@ public class ChatMessage {
         this.messageUserKey = messageUserKey;
         this.messageUserName = messageUserName;
         this.messageUserImage = messageUserImage;
-        this.messageTime = Calendar.getInstance().getTimeInMillis();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.ITALY);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT+01"));
+        this.messageTime = simpleDateFormat.format(Calendar.getInstance().getTimeInMillis());
     }
 
     public String getMessageText() {
@@ -41,11 +46,11 @@ public class ChatMessage {
         this.messageUserKey = messageUser;
     }
 
-    public long getMessageTime() {
+    public String getMessageTime() {
         return messageTime;
     }
 
-    public void setMessageTime(long messageTime) {
+    public void setMessageTime(String messageTime) {
         this.messageTime = messageTime;
     }
 

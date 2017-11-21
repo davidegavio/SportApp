@@ -54,6 +54,7 @@ public class MatchChatTabFragment extends Fragment {
     private static final String ARG_PARAM2 = "season";
 
     private String matchIndex, seasonIndex;
+    private RecyclerView rvMessages;
 
 
     public MatchChatTabFragment() {
@@ -70,7 +71,7 @@ public class MatchChatTabFragment extends Fragment {
     }
 
     private void initializeFirebaseAndList(View view) {
-        final RecyclerView rvMessages = view.findViewById(R.id.list_of_messages);
+        rvMessages = view.findViewById(R.id.list_of_messages);
         final ChatAdapter mAdapter = new ChatAdapter(Singleton.getCurrentMatch().getChatMessages(), getActivity().getApplicationContext());
         rvMessages.setAdapter(mAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -82,6 +83,7 @@ public class MatchChatTabFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot d : dataSnapshot.getChildren())
                     Singleton.getCurrentMatch().getChatMessages().add(d.getValue(ChatMessage.class));
+                rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
             }
 
             @Override
@@ -148,6 +150,7 @@ public class MatchChatTabFragment extends Fragment {
                 Log.d("m", String.valueOf(m));
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
+
                 input.setText("");
             }
         });
