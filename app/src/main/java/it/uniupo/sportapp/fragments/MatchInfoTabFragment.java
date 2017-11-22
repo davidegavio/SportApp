@@ -36,6 +36,7 @@ import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
+import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Season;
@@ -135,9 +136,11 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         }else {
             matchDayTextView.setText(Singleton.getCurrentMatch().getMatchDay());
             matchHourTextView.setText(Singleton.getCurrentMatch().getStartTime());
-            String[] r = Singleton.getCurrentMatch().getMatchResult().split("-");
-            homeResultTextView.setText(r[0]);
-            awayResultTextView.setText(r[1]);
+            if(Singleton.getCurrentMatch().getMatchResult()!=null) {
+                String[] r = Singleton.getCurrentMatch().getMatchResult().split("-");
+                homeResultTextView.setText(r[0]);
+                awayResultTextView.setText(r[1]);
+            }
         }
 
 
@@ -147,6 +150,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.edit_teams_btn:
+                EditTeamsFragment editTeamsFragment = new EditTeamsFragment();
+                Bundle b = new Bundle();
+                b.putString("index", matchIndex);
+                b.putString("season", seasonIndex);
+                editTeamsFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(editTeamsFragment);
                 Toast.makeText(getContext(), "Edit teams!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.edit_result_btn:
@@ -206,10 +215,18 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     matchHourTextView.setText(matchTime);
                     createMatch();
                 }
+                else if(intent.getAction().equals("teams_set")){
+                    emptyView.setVisibility(View.GONE);
+                    teamARecyclerView.setVisibility(View.VISIBLE);
+                    teamBRecyclerView.setVisibility(View.VISIBLE);
+                    teamARecyclerView.setAdapter(new PlayersAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext()));
+                    teamBRecyclerView.setAdapter(new PlayersAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext()));
+                }
             }
         };
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("teams_set"));
 
     }
 

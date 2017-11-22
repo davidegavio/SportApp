@@ -115,7 +115,6 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.add_player_btn:
                 Log.d("Add", "Add player");
-                final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ((MainActivity)getActivity()).addFragment(new PlayerListFragment());
                 break;
             case R.id.add_season_btn:
@@ -144,7 +143,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 //mDatabase.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
                                 SeasonDetailFragment fragment = new SeasonDetailFragment();
                                 Bundle args = new Bundle();
-                                args.putString(ARG_KEY, String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                                args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
                                 args.putString("room", mParam1);
                                 fragment.setArguments(args);
                                 ((MainActivity)getActivity()).addFragment(fragment);
@@ -163,7 +162,11 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 ((MainActivity)getActivity()).addFragment(new SeasonListFragment());
                 break;
             case R.id.show_players_btn:
-
+                PlayerListFragment playerListFragment = new PlayerListFragment();
+                Bundle b = new Bundle();
+                b.putString("value", "current");
+                playerListFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(playerListFragment);
                 break;
         }
     }

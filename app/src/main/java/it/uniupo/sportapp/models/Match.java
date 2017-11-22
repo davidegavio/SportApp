@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 public class Match {
 
-    private ArrayList<Team> opposingTeams;
+    private Team teamA, teamB;
     private String matchDay;
     private String startTime;
     private String endTime;
@@ -18,19 +18,28 @@ public class Match {
     public Match() {
     }
 
-    public Match(ArrayList<Team> opposingTeams, String matchDay, String startTime, String endTime) {
-        this.opposingTeams = opposingTeams;
+    public Match(Team teamA, Team teamB, String matchDay, String startTime, String endTime) {
+        this.teamA = teamA;
+        this.teamB = teamB;
         this.matchDay = matchDay;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public ArrayList<Team> getOpposingTeams() {
-        return opposingTeams;
+    public Team getTeamA() {
+        return teamA;
     }
 
-    public void setOpposingTeams(ArrayList<Team> opposingTeams) {
-        this.opposingTeams = opposingTeams;
+    public void setTeamA(Team teamA) {
+        this.teamA = teamA;
+    }
+
+    public Team getTeamB() {
+        return teamB;
+    }
+
+    public void setTeamB(Team teamB) {
+        this.teamB = teamB;
     }
 
     public String getMatchDay() {

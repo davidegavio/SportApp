@@ -30,6 +30,8 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.Player;
 
+import static android.support.v4.view.MenuItemCompat.getActionView;
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -39,11 +41,11 @@ import it.uniupo.sportapp.models.Player;
 public class PlayerListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_VALUE = "value";
 
-    private ArrayList<Player> allPlayers;
+    private ArrayList<Player> allPlayers,availablePlayers;
     private PlayersAdapter mAdapter;
+    private Boolean showCurrentPlayers;
 
 
     public PlayerListFragment() {
@@ -53,7 +55,11 @@ public class PlayerListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null && getArguments().getString(ARG_VALUE).equals("current")){
+            showCurrentPlayers = true;
+        }
         allPlayers = new ArrayList<>();
+        availablePlayers = new ArrayList<>();
         FirebaseDatabase.getInstance().getReference().child("users")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -61,6 +67,7 @@ public class PlayerListFragment extends Fragment {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Player player = snapshot.getValue(Player.class);
                             allPlayers.add(player);
+                            getAvailablePlayers();
                             Log.d("Name", player.getPlayerName());
                         }
                     }
@@ -84,30 +91,16 @@ public class PlayerListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchView.clearFocus();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                mAdapter.getFilter().filter(newText);
-                return true;
-            }
-        });
-
-
-
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        search(searchView);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        mAdapter = new PlayersAdapter(allPlayers, getContext());
+        getAvailablePlayers();
+        mAdapter = new PlayersAdapter(availablePlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
@@ -115,6 +108,7 @@ public class PlayerListFragment extends Fragment {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                getAvailablePlayers();
                 mAdapter.notifyDataSetChanged();
             }
 
@@ -134,6 +128,32 @@ public class PlayerListFragment extends Fragment {
             default: return super.onOptionsItemSelected(item);
         }
     }
+
+    private void getAvailablePlayers(){
+        availablePlayers.clear();
+        for(Player p : allPlayers){
+            if(!Singleton.getCurrentRoom().getActivePlayers().contains(p.getPlayerKey()))
+                availablePlayers.add(p);
+        }
+    }
+
+    private void search(final SearchView searchView){
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+
+    }
+
 
 }
 
