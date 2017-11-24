@@ -18,6 +18,9 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.fragments.MatchDetailFragment;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Team;
+
 import android.content.Context;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +46,10 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                 public void onClick(View view) {
                     Singleton.setCurrentMatch(mMatches.get(getAdapterPosition()));
                     Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
+                    Singleton.getCurrentMatch().setTeamA(new Team());
+                    Singleton.getCurrentMatch().setTeamB(new Team());
+                    Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
+                    Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
                     b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));

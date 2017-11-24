@@ -11,6 +11,9 @@ public class Team {
     private String teamName;
     private ArrayList<Player> teamPlayers;
 
+    public Team() {
+    }
+
     public Team(String teamName, ArrayList<Player> teamPlayers) {
         this.teamName = teamName;
         this.teamPlayers = teamPlayers;

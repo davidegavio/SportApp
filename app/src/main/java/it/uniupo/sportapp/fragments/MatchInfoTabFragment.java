@@ -39,7 +39,9 @@ import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Season;
+import it.uniupo.sportapp.models.Team;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,6 +60,11 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private LinearLayoutManager mLayoutManager;
     private Season currentSeason;
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     public MatchInfoTabFragment() {
         // Required empty public constructor
@@ -234,6 +241,10 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         Match newMatch = new Match();
         newMatch.setMatchDay(matchDate);
         newMatch.setStartTime(matchTime);
+        newMatch.setTeamA(new Team());
+        newMatch.setTeamB(new Team());
+        newMatch.getTeamA().setTeamPlayers(new ArrayList<Player>());
+        newMatch.getTeamB().setTeamPlayers(new ArrayList<Player>());
         currentSeason.getSeasonMatches().add(newMatch);
         Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).setSeasonMatches(currentSeason.getSeasonMatches());
         Singleton.setCurrentMatch(newMatch);

@@ -78,6 +78,8 @@ public class EditTeamsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
+        Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
         mAdapter = new TeamsAdapter(allPlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
@@ -87,6 +89,10 @@ public class EditTeamsFragment extends Fragment {
         saveTeamsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("teamA", Singleton.getCurrentMatch().getTeamA().getTeamPlayers().toString());
+                Log.d("teamB", Singleton.getCurrentMatch().getTeamB().getTeamPlayers().toString());
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);

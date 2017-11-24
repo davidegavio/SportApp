@@ -62,7 +62,7 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
     public TeamsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View playerView = inflater.inflate(R.layout.add_player_row, parent, false);
+        View playerView = inflater.inflate(R.layout.team_player_row, parent, false);
         return new TeamsAdapter.ViewHolder(playerView);
     }
 
