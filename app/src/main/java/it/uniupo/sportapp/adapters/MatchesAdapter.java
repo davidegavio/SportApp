@@ -24,6 +24,11 @@ import it.uniupo.sportapp.models.Team;
 import android.content.Context;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -50,6 +55,18 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                     Singleton.getCurrentMatch().setTeamB(new Team());
                     Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
                     Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
+                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Singleton.setCurrentMatch(dataSnapshot.getValue(Match.class));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
                     b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
@@ -65,12 +82,13 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
     private List<Match> mMatches;
     // Store the context for easy access
     private Context mContext;
-    private String seasonIndex;
+    private String seasonIndex, matchIndex;
 
-    public MatchesAdapter(List<Match> mMatches, String seasonIndex,Context mContext) {
+    public MatchesAdapter(List<Match> mMatches, String seasonIndex, Context mContext) {
         this.mMatches = mMatches;
         this.mContext = mContext;
         this.seasonIndex = seasonIndex;
+        this.matchIndex = matchIndex;
     }
 
     private Context getmContext(){

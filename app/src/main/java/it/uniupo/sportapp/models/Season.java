@@ -1,6 +1,7 @@
 package it.uniupo.sportapp.models;
 
 import java.util.ArrayList;
+import java.util.SortedMap;
 
 /**
  * Created by dgavio on 16/10/17.
@@ -14,6 +15,7 @@ public class Season {
     private String seasonEndingDate;
     private Player seasonAdmin;
     private Player seasonPlayers;
+    private SortedMap<Player, Integer> seasonGoalsChart;
 
     public Season() {
     }
@@ -68,5 +70,13 @@ public class Season {
 
     public void setSeasonPlayers(Player seasonPlayers) {
         this.seasonPlayers = seasonPlayers;
+    }
+
+    public SortedMap<Player, Integer> getSeasonGoalsChart() {
+        return seasonGoalsChart;
+    }
+
+    public void setSeasonGoalsChart(SortedMap<Player, Integer> seasonGoalsChart) {
+        this.seasonGoalsChart = seasonGoalsChart;
     }
 }

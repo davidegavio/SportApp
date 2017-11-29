@@ -59,6 +59,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private RecyclerView teamARecyclerView, teamBRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private Season currentSeason;
+    private PlayersAdapter teamAPlayers, teamBPlayers;
 
 
     @Override
@@ -94,6 +95,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        teamAPlayers = new PlayersAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
+        teamBPlayers = new PlayersAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
         teamARecyclerView = view.findViewById(R.id.team_a_rv);
         teamARecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -107,9 +110,11 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         teamBRecyclerView.setItemAnimator(new DefaultItemAnimator());
         teamBRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         emptyView = view.findViewById(R.id.empty_view);
+        teamARecyclerView.setAdapter(teamAPlayers);
+        teamARecyclerView.setAdapter(teamBPlayers);
         if(teamARecyclerView.getAdapter()==null && teamBRecyclerView.getAdapter()==null){
-            teamARecyclerView.setVisibility(View.GONE);
-            teamBRecyclerView.setVisibility(View.GONE);
+            teamARecyclerView.setVisibility(View.INVISIBLE);
+            teamBRecyclerView.setVisibility(View.INVISIBLE);
             emptyView.setVisibility(View.VISIBLE);
         }
         matchDayTextView = view.findViewById(R.id.match_day_tv);
@@ -170,6 +175,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 Toast.makeText(getContext(), "Edit result!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.edit_goals_btn:
+                EditGoalsFragment editGoalsFragment = new EditGoalsFragment();
+                b = new Bundle();
+                b.putString("index", matchIndex);
+                b.putString("season", seasonIndex);
+                editGoalsFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(editGoalsFragment);
                 Toast.makeText(getContext(), "Edit goals!", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -223,11 +234,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     createMatch();
                 }
                 else if(intent.getAction().equals("teams_set")){
-                    emptyView.setVisibility(View.GONE);
+                    Log.d("TP", Singleton.getCurrentMatch().getTeamA().getTeamPlayers().toString());
+                    emptyView.setVisibility(View.INVISIBLE);
                     teamARecyclerView.setVisibility(View.VISIBLE);
                     teamBRecyclerView.setVisibility(View.VISIBLE);
-                    teamARecyclerView.setAdapter(new PlayersAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext()));
-                    teamBRecyclerView.setAdapter(new PlayersAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext()));
+                    teamAPlayers.notifyDataSetChanged();
+                    teamBPlayers.notifyDataSetChanged();
                 }
             }
         };
@@ -254,6 +266,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(currentSeason);
 
     }
+
+
 
 
 }

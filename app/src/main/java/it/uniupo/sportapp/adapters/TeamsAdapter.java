@@ -14,14 +14,18 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
+import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Team;
 
@@ -48,10 +52,13 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
 
     private List<Player> mPlayers;
     private Context mContext;
+    private String seasonIndex, matchIndex;
 
-    public TeamsAdapter(List<Player> mPlayers, Context mContext) {
+    public TeamsAdapter(List<Player> mPlayers, Context mContext, String seasonIndex, String matchIndex) {
         this.mPlayers = mPlayers;
         this.mContext = mContext;
+        this.seasonIndex = seasonIndex;
+        this.matchIndex = matchIndex;
     }
 
     private Context getContext() {
@@ -75,6 +82,7 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
             nameTextView.setText(tempPlayer.getPlayerName());
             TextView mailTextView = holder.mailTv;
             mailTextView.setText(tempPlayer.getPlayerMail());
+
         }
 
         radioGroupTeams.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -96,8 +104,6 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
         });
 
     }
-
-
 
 
     @Override

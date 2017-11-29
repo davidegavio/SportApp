@@ -42,6 +42,8 @@ import it.uniupo.sportapp.fragments.TimePickerFragment;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
 
+import static java.security.AccessController.getContext;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
 
@@ -99,13 +101,22 @@ public class MainActivity extends AppCompatActivity
                     addFragment(new ProfileFragment());
                     break;
                 case "seasonDetailed":
-                    break;
-                case "seasonList":
-                    addFragment(new SeasonDetailFragment());
-                    break;
-                case "playerList":
                     RoomFragment fragment = new RoomFragment();
                     Bundle args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                    fragment.setArguments(args);
+                    addFragment(fragment);
+                    break;
+                case "seasonList":
+                    fragment = new RoomFragment();
+                    args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                    fragment.setArguments(args);
+                    addFragment(fragment);
+                    break;
+                case "playerList":
+                    fragment = new RoomFragment();
+                    args = new Bundle();
                     args.putString("key", Singleton.getCurrentRoom().getRoomKey());
                     fragment.setArguments(args);
                     addFragment(fragment);
@@ -116,6 +127,13 @@ public class MainActivity extends AppCompatActivity
                     args.putString("key", Singleton.getCurrentRoom().getRoomKey());
                     fragment.setArguments(args);
                     addFragment(fragment);
+                    break;
+                case "matchDetail":
+                    SeasonDetailFragment sFragment = new SeasonDetailFragment();
+                    args = new Bundle();
+                    args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    sFragment.setArguments(args);
+                    addFragment(sFragment);
                     break;
 
             }

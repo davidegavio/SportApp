@@ -1,9 +1,11 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +30,7 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.adapters.TeamsAdapter;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Team;
 
 public class EditTeamsFragment extends Fragment {
 
@@ -65,7 +68,10 @@ public class EditTeamsFragment extends Fragment {
 
                 }
             });
-
+            Singleton.getCurrentMatch().setTeamA(new Team());
+            Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
+            Singleton.getCurrentMatch().setTeamB(new Team());
+            Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
         }
     }
 
@@ -78,10 +84,8 @@ public class EditTeamsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
-        Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        mAdapter = new TeamsAdapter(allPlayers, getContext());
+        mAdapter = new TeamsAdapter(allPlayers, getContext(), seasonIndex, matchIndex);
         rvPlayers.setAdapter(mAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
@@ -98,6 +102,10 @@ public class EditTeamsFragment extends Fragment {
                 b.putString("season", seasonIndex);
                 b.putString("index", matchIndex);
                 fragment.setArguments(b);
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                Intent localIntent = new Intent("teams_set");
+                //localIntent.putExtra("date", date);
+                localBroadcastManager.sendBroadcast(localIntent);
                 ((MainActivity)getActivity()).addFragment(fragment);
             }
         });
@@ -113,10 +121,5 @@ public class EditTeamsFragment extends Fragment {
         }
     }
 
-
-    /*
-
-
-     */
 
 }

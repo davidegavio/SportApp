@@ -81,9 +81,11 @@ public class MatchChatTabFragment extends Fragment {
         r.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
                 for (DataSnapshot d : dataSnapshot.getChildren())
                     Singleton.getCurrentMatch().getChatMessages().add(d.getValue(ChatMessage.class));
-                rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
+                if(Singleton.getCurrentMatch().getChatMessages()!=null)
+                    rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
             }
 
             @Override

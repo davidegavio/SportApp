@@ -46,7 +46,7 @@ public class MatchDetailFragment extends Fragment{
             seasonIndex = getArguments().getString(ARG_PARAM2);
             Log.d("mDet", seasonIndex );
         }
-        //Singleton.setCurrentMatch();
+        Singleton.setCurrentFragment("matchDetail");
     }
 
     @Override
