@@ -37,6 +37,7 @@ import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
+import it.uniupo.sportapp.adapters.TeamsMatchInfoAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
@@ -59,7 +60,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private RecyclerView teamARecyclerView, teamBRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private Season currentSeason;
-    private PlayersAdapter teamAPlayers, teamBPlayers;
+    private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
 
 
     @Override
@@ -95,8 +96,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        teamAPlayers = new PlayersAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
-        teamBPlayers = new PlayersAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
+        teamAPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
+        teamBPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
         teamARecyclerView = view.findViewById(R.id.team_a_rv);
         teamARecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -111,12 +112,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         teamBRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         emptyView = view.findViewById(R.id.empty_view);
         teamARecyclerView.setAdapter(teamAPlayers);
-        teamARecyclerView.setAdapter(teamBPlayers);
-        if(teamARecyclerView.getAdapter()==null && teamBRecyclerView.getAdapter()==null){
+        teamBRecyclerView.setAdapter(teamBPlayers);
+        /*if(teamARecyclerView.getAdapter().getItemCount()==0 && teamBRecyclerView.getAdapter().getItemCount()==0){
             teamARecyclerView.setVisibility(View.INVISIBLE);
             teamBRecyclerView.setVisibility(View.INVISIBLE);
             emptyView.setVisibility(View.VISIBLE);
-        }
+        }*/
         matchDayTextView = view.findViewById(R.id.match_day_tv);
         matchHourTextView = view.findViewById(R.id.match_hour_tv);
         homeResultTextView = view.findViewById(R.id.result_home);
