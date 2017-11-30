@@ -12,13 +12,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,13 +27,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
-import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.adapters.TeamsMatchInfoAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
@@ -56,7 +51,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private String matchDate, matchTime;
     private String matchIndex, seasonIndex;
     private Button editTeamsButton, editResultButton, editGoalsButton;
-    private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView, emptyView;
+    private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView, emptyView, goalsTextView;
     private RecyclerView teamARecyclerView, teamBRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private Season currentSeason;
@@ -80,6 +75,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             seasonIndex = getArguments().getString(ARG_PARAM2);
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex));
             currentSeason.setSeasonMatches(new ArrayList<Match>());
+            //Singleton.setCurrentMatch(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().get(Integer.parseInt(matchIndex)));
         }
     }
 
@@ -96,32 +92,32 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        teamAPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
-        teamBPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
+        if(Singleton.getCurrentMatch().getTeamA()!=null&&Singleton.getCurrentMatch().getTeamB()!=null) {
+            if (Singleton.getCurrentMatch().getTeamA().getTeamPlayers() == null && Singleton.getCurrentMatch().getTeamB().getTeamPlayers() == null){
+                Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
+                Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
+            }
+            teamAPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
+            teamBPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
+        }
         teamARecyclerView = view.findViewById(R.id.team_a_rv);
         teamARecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         teamARecyclerView.setLayoutManager(mLayoutManager);
         teamARecyclerView.setItemAnimator(new DefaultItemAnimator());
-        teamARecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         teamBRecyclerView = view.findViewById(R.id.team_b_rv);
         teamBRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         teamBRecyclerView.setLayoutManager(mLayoutManager);
         teamBRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        teamBRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         emptyView = view.findViewById(R.id.empty_view);
         teamARecyclerView.setAdapter(teamAPlayers);
         teamBRecyclerView.setAdapter(teamBPlayers);
-        /*if(teamARecyclerView.getAdapter().getItemCount()==0 && teamBRecyclerView.getAdapter().getItemCount()==0){
-            teamARecyclerView.setVisibility(View.INVISIBLE);
-            teamBRecyclerView.setVisibility(View.INVISIBLE);
-            emptyView.setVisibility(View.VISIBLE);
-        }*/
         matchDayTextView = view.findViewById(R.id.match_day_tv);
         matchHourTextView = view.findViewById(R.id.match_hour_tv);
         homeResultTextView = view.findViewById(R.id.result_home);
         awayResultTextView = view.findViewById(R.id.result_away);
+        goalsTextView = view.findViewById(R.id.goals_list);
         editTeamsButton = view.findViewById(R.id.edit_teams_btn);
         editResultButton = view.findViewById(R.id.edit_result_btn);
         editGoalsButton = view.findViewById(R.id.edit_goals_btn);
@@ -242,11 +238,17 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     teamAPlayers.notifyDataSetChanged();
                     teamBPlayers.notifyDataSetChanged();
                 }
+                else if(intent.getAction().equals("goals_set")){
+                    Log.d("int", intent.getStringExtra("goal"));
+                    goalsTextView.setText(intent.getStringExtra("goal"));
+                    Log.d("tv", goalsTextView.getText().toString());
+                }
             }
         };
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("teams_set"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("goals_set"));
 
     }
 

@@ -1,7 +1,11 @@
 package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.constraint.solver.Goal;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +24,7 @@ import java.util.List;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
+import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.models.Player;
 
 /**
@@ -27,6 +32,8 @@ import it.uniupo.sportapp.models.Player;
  */
 
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> {
+
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,6 +69,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        final String[] goals = {""};
         final Player tempPlayer = mPlayers.get(position);
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempPlayer.getPlayerName());
@@ -75,6 +83,14 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
+                if(goalsNumber!=0) {
+                    //localIntent.putExtra("goal", tempPlayer.getPlayerName() + "(" + goalsNumber + ")");
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(tempPlayer.getPlayerName() + "(" + goalsNumber + ")", String.valueOf(i));
+                    editor.apply();
+                    editor.commit();
+                }
                 Toast.makeText(mContext, tempPlayer.getPlayerName()+" "+goalsNumber, Toast.LENGTH_SHORT).show();
             }
 
@@ -84,6 +100,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             }
         });
 
+
     }
 
 
@@ -91,5 +108,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     public int getItemCount() {
         return mPlayers.size();
     }
+
+
 
 }

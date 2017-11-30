@@ -93,14 +93,12 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:id="@+id/teams_rel"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout"
+        android:layout_height="255dp"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp"
+        android:layout_below="@+id/linearLayout"
         android:baselineAligned="false">
 
         <RelativeLayout
@@ -108,11 +106,21 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/team_a_rv"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@id/team_a_rv"
+                android:text="Team A" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/team_a_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:paddingBottom="5dp">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -124,11 +132,21 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/team_b_rv"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_toStartOf="@id/team_b_rv"
+                android:text="Team B" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/team_b_rv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:paddingBottom="5dp" />
         </RelativeLayout>
 
         <TextView
@@ -139,7 +157,7 @@
             android:text="No teams selected."
             android:visibility="gone" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/score_title"
@@ -150,10 +168,16 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/primaryTextColor"/>
+
     <TextView
+        android:id="@+id/goals_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/score_title"
+        android:layout_alignBottom="@+id/score_title"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/teams_rel"
+        android:layout_toEndOf="@+id/score_title"
+        android:textStyle="italic"
         />
 
     <android.support.v7.widget.AppCompatButton

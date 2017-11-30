@@ -124,9 +124,12 @@ public class MainActivity extends AppCompatActivity
                 case "roomList":
                     fragment = new RoomFragment();
                     args = new Bundle();
-                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
-                    fragment.setArguments(args);
-                    addFragment(fragment);
+                    if(Singleton.getCurrentRoom()!=null) {
+                        args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                        fragment.setArguments(args);
+                        addFragment(fragment);
+                    }
+                    else addFragment(new ProfileFragment());
                     break;
                 case "matchDetail":
                     SeasonDetailFragment sFragment = new SeasonDetailFragment();

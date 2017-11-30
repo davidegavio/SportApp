@@ -13,7 +13,7 @@ import it.uniupo.sportapp.models.Season;
 
 public class Singleton {
 
-    private static String currentFragment;
+    private static String currentFragment, goalsString;
     private static Player currentPlayer;
     private static Room currentRoom;
     private static Season currentSeason;
@@ -69,12 +69,19 @@ public class Singleton {
         Singleton.currentMatch = currentMatch;
     }
 
-
     public static Season getCurrentSeason() {
         return currentSeason;
     }
 
     public static void setCurrentSeason(Season currentSeason) {
         Singleton.currentSeason = currentSeason;
+    }
+
+    public static String getGoalsString() {
+        return goalsString;
+    }
+
+    public static void setGoalsString(String goalsString) {
+        Singleton.goalsString = goalsString;
     }
 }

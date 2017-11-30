@@ -1,9 +1,16 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,11 +31,11 @@ import it.uniupo.sportapp.adapters.GoalsAdapter;
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class EditGoalsFragment extends Fragment {
+public class EditGoalsFragment extends Fragment{
 
 
     private Button saveGoalsButton;
-    private String matchIndex, seasonIndex;
+    private String matchIndex, seasonIndex, goalsList;
     private GoalsAdapter adapterA, adapterB;
 
 
@@ -70,14 +77,25 @@ public class EditGoalsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);
                 b.putString("index", matchIndex);
                 fragment.setArguments(b);
+                getPref();
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                Intent localIntent = new Intent("goals_set");
+                localIntent.putExtra("goal", goalsList);
+                localBroadcastManager.sendBroadcast(localIntent);
                 ((MainActivity)getActivity()).addFragment(fragment);
             }
         });
     }
+
+    private void getPref(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        goalsList=sharedPreferences.getAll().toString();
+    }
+
 }

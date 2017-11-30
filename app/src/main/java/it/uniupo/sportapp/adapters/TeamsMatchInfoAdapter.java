@@ -36,8 +36,6 @@ public class TeamsMatchInfoAdapter extends RecyclerView.Adapter<TeamsMatchInfoAd
         public ViewHolder(View itemView) {
             super(itemView);
             nameTv = itemView.findViewById(R.id.simple_player_name);
-            mailTv = itemView.findViewById(R.id.simple_player_mail);
-
         }
     }
 
@@ -62,8 +60,6 @@ public class TeamsMatchInfoAdapter extends RecyclerView.Adapter<TeamsMatchInfoAd
         final Player tempPlayer = mPlayers.get(position);
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempPlayer.getPlayerName());
-        TextView mailTextView = holder.mailTv;
-        mailTextView.setText(tempPlayer.getPlayerMail());
 
 
     }
