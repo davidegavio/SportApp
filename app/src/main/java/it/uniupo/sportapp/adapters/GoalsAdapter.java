@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.constraint.solver.Goal;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -84,12 +85,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
                 if(goalsNumber!=0) {
-                    //localIntent.putExtra("goal", tempPlayer.getPlayerName() + "(" + goalsNumber + ")");
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(tempPlayer.getPlayerName() + "(" + goalsNumber + ")", String.valueOf(i));
-                    editor.apply();
-                    editor.commit();
+                    Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
                 }
                 Toast.makeText(mContext, tempPlayer.getPlayerName()+" "+goalsNumber, Toast.LENGTH_SHORT).show();
             }

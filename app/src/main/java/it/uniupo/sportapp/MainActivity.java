@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Singleton singleton = new Singleton();
         initViews();
         //Firebase stuff
         mAuth = FirebaseAuth.getInstance();

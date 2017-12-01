@@ -83,19 +83,14 @@ public class EditGoalsFragment extends Fragment{
                 b.putString("season", seasonIndex);
                 b.putString("index", matchIndex);
                 fragment.setArguments(b);
-                getPref();
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
                 Intent localIntent = new Intent("goals_set");
-                localIntent.putExtra("goal", goalsList);
+                localIntent.putExtra("goal", Singleton.getGoalsString());
                 localBroadcastManager.sendBroadcast(localIntent);
                 ((MainActivity)getActivity()).addFragment(fragment);
             }
         });
     }
 
-    private void getPref(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        goalsList=sharedPreferences.getAll().toString();
-    }
 
 }

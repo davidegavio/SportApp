@@ -21,6 +21,16 @@ public class Singleton {
     private static Player clickedPlayer;
     private static ArrayList<Match> matchesArrayList;
 
+    public Singleton() {
+        currentFragment = "";
+        goalsString = "";
+        currentPlayer = new Player();
+        currentRoom = new Room();
+        currentSeason = new Season();
+        currentMatch = new Match();
+        matchesArrayList = new ArrayList<>();
+    }
+
     public static ArrayList<Match> getMatchesArrayList() {
         return matchesArrayList;
     }
