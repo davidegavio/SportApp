@@ -93,11 +93,12 @@ public class MatchChatTabFragment extends Fragment {
 
             }
         });
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex);
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Singleton.getCurrentMatch().getChatMessages().add(dataSnapshot.getValue(ChatMessage.class));
+                Match m = dataSnapshot.getValue(Match.class);
+                Singleton.setCurrentMatch(m);
                 mAdapter.notifyItemInserted(Singleton.getCurrentMatch().getChatMessages().size()-1);
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
                 if(!Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey()))
@@ -148,10 +149,10 @@ public class MatchChatTabFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
-                Match m = Singleton.getCurrentMatch();
-                Log.d("m", String.valueOf(m));
-                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(new ChatMessage(input.getText().toString(),
+                Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
+                Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
+                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()));
 
                 input.setText("");
             }
