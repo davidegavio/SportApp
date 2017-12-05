@@ -54,7 +54,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView, emptyView, goalsTextView;
     private RecyclerView teamARecyclerView, teamBRecyclerView;
     private LinearLayoutManager mLayoutManager;
-    private Season currentSeason;
     private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
 
 
@@ -73,9 +72,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
-            currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex));
-            currentSeason.setSeasonMatches(new ArrayList<Match>());
-            //Singleton.setCurrentMatch(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().get(Integer.parseInt(matchIndex)));
         }
     }
 
@@ -254,20 +250,11 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     }
 
     private void createMatch() {
-        Match newMatch = new Match();
-        newMatch.setMatchDay(matchDate);
-        newMatch.setStartTime(matchTime);
-        newMatch.setTeamA(new Team());
-        newMatch.setTeamB(new Team());
-        newMatch.getTeamA().setTeamPlayers(new ArrayList<Player>());
-        newMatch.getTeamB().setTeamPlayers(new ArrayList<Player>());
-        currentSeason.getSeasonMatches().add(newMatch);
-        Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).setSeasonMatches(currentSeason.getSeasonMatches());
-        Singleton.setCurrentMatch(newMatch);
-        Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
+        Singleton.getCurrentMatch().setMatchDay(matchDate);
+        Singleton.getCurrentMatch().setStartTime(matchTime);
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(currentSeason);
+        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
 
     }
 

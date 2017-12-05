@@ -78,6 +78,7 @@ public class EditGoalsFragment extends Fragment{
             public void onClick(View view) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);

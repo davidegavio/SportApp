@@ -45,7 +45,9 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.MatchesAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Season;
+import it.uniupo.sportapp.models.Team;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -151,9 +153,9 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 mAdapter.notifyDataSetChanged();
                 Singleton.setCurrentMatch(newMatch);
                 Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
-                DatabaseReference mDatabase;
-                mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
+                Singleton.getCurrentMatch().setTeamA(new Team("Team A", new ArrayList<Player>()));
+                Singleton.getCurrentMatch().setTeamB(new Team("Team B", new ArrayList<Player>()));
+                Singleton.setCurrentSeason(currentSeason);
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", mSeasonKey);
@@ -170,49 +172,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-    /*private void createNewMatch() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        final View itemview = inflater.inflate(R.layout.create_match_dialog, null);
-        builder.setView(itemview)
-                // Add action buttons
-                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        final Match newMatch = new Match();
-                        TextView dateTv = itemview.findViewById(R.id.date_tv);
-                        TextView timeTv = itemview.findViewById(R.id.time_tv);
-                        newMatch.setMatchDay(matchDate);
-                        newMatch.setStartTime(matchTime);
-                        dateTv.setText(newMatch.getMatchDay());
-                        timeTv.setText(newMatch.getStartTime());
-                        currentSeason.getSeasonMatches().add(newMatch);
-                        Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)).setSeasonMatches(currentSeason.getSeasonMatches());
-                        mAdapter.notifyDataSetChanged();
-                        Singleton.setCurrentMatch(newMatch);
-                        Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
-                        DatabaseReference mDatabase;
-                        mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).setValue(currentSeason);
-                        MatchDetailFragment fragment = new MatchDetailFragment();
-                        Bundle b = new Bundle();
-                        b.putString("season", mSeasonKey);
-                        b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
-                        fragment.setArguments(b);
-                        ((MainActivity)getActivity()).addFragment(fragment);
-
-                    }
-                })
-                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                }).create().show();
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

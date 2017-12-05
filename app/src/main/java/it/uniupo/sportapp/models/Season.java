@@ -1,6 +1,8 @@
 package it.uniupo.sportapp.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedMap;
 
 /**
@@ -15,8 +17,8 @@ public class Season {
     private String seasonEndingDate;
     private Player seasonAdmin;
     private Player seasonPlayers;
-    private SortedMap<Player, Integer> seasonGoalsChart;
-
+    private HashMap<String, String> seasonPlayerGoalsChart;
+    private HashMap<String, String> seasonPlayerPresencesChart;
     public Season() {
     }
 
@@ -72,11 +74,19 @@ public class Season {
         this.seasonPlayers = seasonPlayers;
     }
 
-    public SortedMap<Player, Integer> getSeasonGoalsChart() {
-        return seasonGoalsChart;
+    public HashMap<String, String> getSeasonPlayerGoalsChart() {
+        return seasonPlayerGoalsChart;
     }
 
-    public void setSeasonGoalsChart(SortedMap<Player, Integer> seasonGoalsChart) {
-        this.seasonGoalsChart = seasonGoalsChart;
+    public void setSeasonPlayerGoalsChart(HashMap<String, String> seasonPlayerGoalsChart) {
+        this.seasonPlayerGoalsChart = seasonPlayerGoalsChart;
+    }
+
+    public HashMap<String, String> getSeasonPlayerPresencesChart() {
+        return seasonPlayerPresencesChart;
+    }
+
+    public void setSeasonPlayerPresencesChart(HashMap<String, String> seasonPlayerPresencesChart) {
+        this.seasonPlayerPresencesChart = seasonPlayerPresencesChart;
     }
 }
