@@ -55,6 +55,7 @@ public class MatchChatTabFragment extends Fragment {
 
     private String matchIndex, seasonIndex;
     private RecyclerView rvMessages;
+    private ChatAdapter mAdapter;
 
 
     public MatchChatTabFragment() {
@@ -71,39 +72,38 @@ public class MatchChatTabFragment extends Fragment {
     }
 
     private void initializeFirebaseAndList(View view) {
+        if(Singleton.getCurrentMatch().getChatMessages()==null)
+            Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
         rvMessages = view.findViewById(R.id.list_of_messages);
-        final ChatAdapter mAdapter = new ChatAdapter(Singleton.getCurrentMatch().getChatMessages(), getActivity().getApplicationContext());
+        mAdapter = new ChatAdapter(Singleton.getCurrentMatch().getChatMessages(), getContext());
         rvMessages.setAdapter(mAdapter);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMessages.setItemAnimator(new DefaultItemAnimator());
-        Log.d("ref", "ref "+String.valueOf(FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child("seasonMatches").child(seasonIndex).child(matchIndex).child("chatMessages")));
-        DatabaseReference r = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child("seasonMatches").child(seasonIndex).child(matchIndex).child("chatMessages");
-        r.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
-                for (DataSnapshot d : dataSnapshot.getChildren())
-                    Singleton.getCurrentMatch().getChatMessages().add(d.getValue(ChatMessage.class));
-                if(Singleton.getCurrentMatch().getChatMessages()!=null)
-                    rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    }
 
-            }
-        });
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex);
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_match_chat_tab, container, false);
+    }
+
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        final EditText input = view.findViewById(R.id.input);
+        initializeFirebaseAndList(view);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Match m = dataSnapshot.getValue(Match.class);
-                Singleton.setCurrentMatch(m);
-                mAdapter.notifyItemInserted(Singleton.getCurrentMatch().getChatMessages().size()-1);
+                Log.d("datasnapshot", dataSnapshot.toString());
+                //Singleton.getCurrentMatch().getChatMessages().add(dataSnapshot.getValue(ChatMessage.class));
+                mAdapter.notifyDataSetChanged();
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
-                if(!Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey()))
-                    notifyUser(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
-
             }
 
             @Override
@@ -126,24 +126,27 @@ public class MatchChatTabFragment extends Fragment {
 
             }
         });
+        /*ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Match m = dataSnapshot.getValue(Match.class);
+                if(m.getChatMessages()==null)
+                    m.setChatMessages(new ArrayList<ChatMessage>());
+                if(m.getChatMessages().size()>=Singleton.getCurrentMatch().getChatMessages().size() && m.getChatMessages().size()>0 && Singleton.getCurrentMatch().getChatMessages().size()>0) {
+                    Singleton.setCurrentMatch(m);
+                    mAdapter.notifyDataSetChanged();
+                    rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size() - 1);
+                    if (!Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size() - 1).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey()))
+                        notifyUser(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size() - 1));
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-    }
+            }
+        });*/
 
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_match_chat_tab, container, false);
-    }
-
-
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final EditText input = view.findViewById(R.id.input);
-        initializeFirebaseAndList(view);
         FloatingActionButton fab = view.findViewById(R.id.fab_send);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,8 +155,8 @@ public class MatchChatTabFragment extends Fragment {
                 Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
-                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size())).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()));
-
+                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
+                mAdapter.notifyDataSetChanged();
                 input.setText("");
             }
         });

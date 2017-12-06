@@ -50,23 +50,6 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     Singleton.setCurrentMatch(mMatches.get(getAdapterPosition()));
-                    Singleton.getCurrentMatch().setChatMessages(new ArrayList<ChatMessage>());
-                    Singleton.getCurrentMatch().setTeamA(new Team());
-                    Singleton.getCurrentMatch().setTeamB(new Team());
-                    Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
-                    Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Singleton.setCurrentMatch(dataSnapshot.getValue(Match.class));
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
                     b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));

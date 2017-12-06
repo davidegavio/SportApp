@@ -15,7 +15,6 @@ public class Match {
     private String endTime;
     private ArrayList<ChatMessage> chatMessages;
     private String matchResult;
-    private Map<Player, Integer> matchGoalsChart;
 
     public Match() {
     }
@@ -84,11 +83,4 @@ public class Match {
         this.matchResult = matchResult;
     }
 
-    public Map<Player, Integer> getMatchGoalsChart() {
-        return matchGoalsChart;
-    }
-
-    public void setMatchGoalsChart(Map<Player, Integer> matchGoalsChart) {
-        this.matchGoalsChart = matchGoalsChart;
-    }
 }
