@@ -13,7 +13,7 @@
         android:textSize="22sp"
         android:textColor="@color/primaryTextColor"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@id/goals_a_rv"
+        android:layout_alignStart="@+id/goals_a_rv"
         />
 
     <!-- A RecyclerView with some commonly used attributes -->
