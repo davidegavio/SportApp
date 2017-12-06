@@ -235,9 +235,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     teamBPlayers.notifyDataSetChanged();
                 }
                 else if(intent.getAction().equals("goals_set")){
-                    goalsTextView.setText("AAAA");
                     Log.d("int", intent.getStringExtra("goal"));
-                    //goalsTextView.setText(intent.getStringExtra("goal"));
+                    goalsTextView.setText(intent.getStringExtra("goal"));
                     Log.d("tv", goalsTextView.getText().toString());
                 }
             }

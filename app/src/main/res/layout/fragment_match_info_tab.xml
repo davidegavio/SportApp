@@ -178,10 +178,10 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/teams_rel"
         android:layout_toEndOf="@+id/score_title"
-        android:textStyle="italic"
         android:gravity="center_vertical"
+        android:text="No goalscorers set yet"
         android:textSize="22sp"
-        />
+        android:textStyle="italic" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/edit_result_btn"

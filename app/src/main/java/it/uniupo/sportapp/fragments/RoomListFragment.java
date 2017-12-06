@@ -66,7 +66,6 @@ public class RoomListFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for(DataSnapshot s : dataSnapshot.getChildren()){
                         Room tempRoom = s.getValue(Room.class);
-                        //Log.d("r", tempRoom.getRoomKey());
                         for(String l : Singleton.getCurrentPlayer().getPlayerRooms()){
                             Log.d("l", l);
                             if(l.equals(tempRoom.getRoomKey())){

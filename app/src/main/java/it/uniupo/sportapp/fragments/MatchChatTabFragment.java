@@ -101,7 +101,6 @@ public class MatchChatTabFragment extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d("datasnapshot", dataSnapshot.toString());
-                //Singleton.getCurrentMatch().getChatMessages().add(dataSnapshot.getValue(ChatMessage.class));
                 mAdapter.notifyDataSetChanged();
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
             }
@@ -126,26 +125,6 @@ public class MatchChatTabFragment extends Fragment {
 
             }
         });
-        /*ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Match m = dataSnapshot.getValue(Match.class);
-                if(m.getChatMessages()==null)
-                    m.setChatMessages(new ArrayList<ChatMessage>());
-                if(m.getChatMessages().size()>=Singleton.getCurrentMatch().getChatMessages().size() && m.getChatMessages().size()>0 && Singleton.getCurrentMatch().getChatMessages().size()>0) {
-                    Singleton.setCurrentMatch(m);
-                    mAdapter.notifyDataSetChanged();
-                    rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size() - 1);
-                    if (!Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size() - 1).getMessageUserKey().equals(Singleton.getCurrentPlayer().getPlayerKey()))
-                        notifyUser(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size() - 1));
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
 
         FloatingActionButton fab = view.findViewById(R.id.fab_send);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +135,6 @@ public class MatchChatTabFragment extends Fragment {
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
-                mAdapter.notifyDataSetChanged();
                 input.setText("");
             }
         });
