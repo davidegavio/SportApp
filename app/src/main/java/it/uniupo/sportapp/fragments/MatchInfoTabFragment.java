@@ -48,8 +48,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private static final String ARG_PARAM1 = "index";
     private static final String ARG_PARAM2 = "season";
 
-    private String matchDate, matchTime;
-    private String matchIndex, seasonIndex;
+    private String matchDate, matchTime, matchIndex, seasonIndex, goalsList;
     private Button editTeamsButton, editResultButton, editGoalsButton;
     private TextView homeResultTextView, awayResultTextView, matchDayTextView, matchHourTextView, emptyView, goalsTextView;
     private RecyclerView teamARecyclerView, teamBRecyclerView;
@@ -72,6 +71,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
+            goalsList = getArguments().getString("goal");
         }
     }
 
@@ -79,7 +79,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        registerListener();
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_match_info_tab, container, false);
     }
@@ -88,6 +87,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        registerListener();
         if(Singleton.getCurrentMatch().getTeamA()!=null&&Singleton.getCurrentMatch().getTeamB()!=null) {
             if (Singleton.getCurrentMatch().getTeamA().getTeamPlayers() == null && Singleton.getCurrentMatch().getTeamB().getTeamPlayers() == null){
                 Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
@@ -114,6 +114,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         homeResultTextView = view.findViewById(R.id.result_home);
         awayResultTextView = view.findViewById(R.id.result_away);
         goalsTextView = view.findViewById(R.id.goals_list);
+        goalsTextView.setText(goalsList);
         editTeamsButton = view.findViewById(R.id.edit_teams_btn);
         editResultButton = view.findViewById(R.id.edit_result_btn);
         editGoalsButton = view.findViewById(R.id.edit_goals_btn);

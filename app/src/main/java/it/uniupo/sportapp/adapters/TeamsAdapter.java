@@ -3,31 +3,18 @@ package it.uniupo.sportapp.adapters;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Filter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
-import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
-import it.uniupo.sportapp.models.Team;
 
 /**
  * Created by dgavio on 22/11/17.
@@ -69,7 +56,7 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
     public TeamsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View playerView = inflater.inflate(R.layout.team_player_row, parent, false);
+        View playerView = inflater.inflate(R.layout.set_team_player_row, parent, false);
         return new TeamsAdapter.ViewHolder(playerView);
     }
 

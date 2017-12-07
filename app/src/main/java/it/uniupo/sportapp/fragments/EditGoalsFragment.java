@@ -83,12 +83,14 @@ public class EditGoalsFragment extends Fragment{
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);
                 b.putString("index", matchIndex);
+                b.putString("goal",  Singleton.getGoalsString());
                 fragment.setArguments(b);
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
                 Intent localIntent = new Intent("goals_set");
                 localIntent.putExtra("goal", Singleton.getGoalsString());
                 localBroadcastManager.sendBroadcast(localIntent);
                 ((MainActivity)getActivity()).addFragment(fragment);
+
             }
         });
     }

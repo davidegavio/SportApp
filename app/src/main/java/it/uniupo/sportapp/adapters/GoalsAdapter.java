@@ -1,32 +1,18 @@
 package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.constraint.solver.Goal;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.models.Player;
@@ -67,7 +53,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     public GoalsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View playerView = inflater.inflate(R.layout.goal_player_row, parent, false);
+        View playerView = inflater.inflate(R.layout.set_goal_player_row, parent, false);
         return new GoalsAdapter.ViewHolder(playerView);
     }
 
@@ -92,9 +78,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
                     int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
                     n+=goalsNumber;
                     Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
-
                 }
-                Toast.makeText(mContext, tempPlayer.getPlayerName()+" "+goalsNumber, Toast.LENGTH_SHORT).show();
             }
 
             @Override

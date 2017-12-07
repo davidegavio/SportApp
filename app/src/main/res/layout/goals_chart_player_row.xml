@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/chart_position_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:textSize="18sp"
+        android:text="#" />
+
+    <TextView
+        android:id="@+id/goals_chart_player_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/chart_position_tv"
+        android:layout_toStartOf="@id/goals_chart_goals_number"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingStart="10dp"
+        />
+
+    <TextView
+        android:id="@+id/goals_chart_goals_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textSize="18sp"
+        android:text="G "
+        />
+
+</RelativeLayout>

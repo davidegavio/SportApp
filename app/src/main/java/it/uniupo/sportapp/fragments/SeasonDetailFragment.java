@@ -1,18 +1,9 @@
 package it.uniupo.sportapp.fragments;
 
-import android.app.AlertDialog;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,9 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -34,8 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -62,6 +48,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private MatchesAdapter mAdapter;
+    private ArrayList<Player> seasonPlayers;
 
     private TextView seasonNameTv;
 
@@ -167,9 +154,11 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
 
     }
 
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.season_charts_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -178,6 +167,18 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
         switch (item.getItemId()){
             case R.id.action_profile:
                 ((MainActivity)getActivity()).addFragment(new ProfileFragment());
+                return true;
+            case R.id.action_goals_chart:
+                SeasonChartFragment seasonChartFragment = new SeasonChartFragment();
+                Bundle b = new Bundle();
+                b.putString("season", mSeasonKey);
+                b.putString("type", "goals");
+                seasonChartFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(seasonChartFragment);
+                return true;
+            case R.id.action_presences_chart:
+                return true;
+            case R.id.action_average_chart:
                 return true;
             default: return super.onOptionsItemSelected(item);
         }

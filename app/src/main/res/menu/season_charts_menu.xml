@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_profile"
+        android:orderInCategory="100"
+        android:title="Profile"
+        android:icon="@drawable/ic_account_circle_white_48dp"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_goals_chart"
+        android:orderInCategory="5"
+        android:title="Goals chart"
+        android:icon="@drawable/ic_search_white_48dp"
+        app:showAsAction="never"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
+        android:id="@+id/action_presences_chart"
+        android:orderInCategory="100"
+        android:title="Presences chart"
+        android:icon="@drawable/ic_account_circle_white_48dp"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_average_chart"
+        android:orderInCategory="100"
+        android:title="Average chart"
+        android:icon="@drawable/ic_account_circle_white_48dp"
+        app:showAsAction="never" />
+</menu>
