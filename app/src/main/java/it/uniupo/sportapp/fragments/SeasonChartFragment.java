@@ -73,11 +73,9 @@ public class SeasonChartFragment extends Fragment {
     }
 
     private ArrayList<Player> getArrayListFromMap() {
-        ArrayList<Player> stringArrayList = new ArrayList<>():
-        Iterator it = Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet().iterator();
-        while(it.hasNext()){
-            Log.d("IT", )
-        }
+        ArrayList<Player> stringArrayList = new ArrayList<>();
+        for(String j : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().values())
+            Log.d("V", j);
         return stringArrayList;
     }
 

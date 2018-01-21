@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "297927293159-0v663drtjt8gdar0bk6n3pu628cvm04s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.uniupo.sportapp",
+            "certificate_hash": "d417308be41662fe543e406e0ac763cd9e411dfb"
+          }
+        },
+        {
           "client_id": "297927293159-2o272u1bqo08kfm65vnhep97peurdb30.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

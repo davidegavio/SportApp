@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -138,7 +139,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                                 String formattedDate = df.format(c.getTime());
                                 newSeason.setSeasonBeginningDate(formattedDate);
-                                newSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
+                                newSeason.setSeasonPlayerGoalsChart(new ArrayMap<String, String>());
                                 setPlayersGoals(newSeason);
 
                             }
