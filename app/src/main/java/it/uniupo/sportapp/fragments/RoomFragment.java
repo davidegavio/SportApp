@@ -139,7 +139,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                                 String formattedDate = df.format(c.getTime());
                                 newSeason.setSeasonBeginningDate(formattedDate);
-                                newSeason.setSeasonPlayerGoalsChart(new ArrayMap<String, String>());
+                                newSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
                                 setPlayersGoals(newSeason);
 
                             }

@@ -19,8 +19,8 @@ public class Season {
     private String seasonEndingDate;
     private Player seasonAdmin;
     private ArrayList<Player> seasonPlayers;
-    private ArrayMap<String, String> seasonPlayerGoalsChart;
-    private ArrayMap<String, String> seasonPlayerPresencesChart;
+    private HashMap<String, String> seasonPlayerGoalsChart;
+    private HashMap<String, String> seasonPlayerPresencesChart;
     public Season() {
     }
 
@@ -76,19 +76,19 @@ public class Season {
         this.seasonPlayers = seasonPlayers;
     }
 
-    public ArrayMap<String, String> getSeasonPlayerGoalsChart() {
+    public HashMap<String, String> getSeasonPlayerGoalsChart() {
         return seasonPlayerGoalsChart;
     }
 
-    public void setSeasonPlayerGoalsChart(ArrayMap<String, String> seasonPlayerGoalsChart) {
+    public void setSeasonPlayerGoalsChart(HashMap<String, String> seasonPlayerGoalsChart) {
         this.seasonPlayerGoalsChart = seasonPlayerGoalsChart;
     }
 
-    public ArrayMap<String, String> getSeasonPlayerPresencesChart() {
+    public HashMap<String, String> getSeasonPlayerPresencesChart() {
         return seasonPlayerPresencesChart;
     }
 
-    public void setSeasonPlayerPresencesChart(ArrayMap<String, String> seasonPlayerPresencesChart) {
+    public void setSeasonPlayerPresencesChart(HashMap<String, String> seasonPlayerPresencesChart) {
         this.seasonPlayerPresencesChart = seasonPlayerPresencesChart;
     }
 }
