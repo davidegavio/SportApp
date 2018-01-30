@@ -37,6 +37,7 @@ public class EditGoalsFragment extends Fragment{
     private Button saveGoalsButton;
     private String matchIndex, seasonIndex, goalsList;
     private GoalsAdapter adapterA, adapterB;
+    private int matchResult;
 
 
     public EditGoalsFragment() {
@@ -49,6 +50,7 @@ public class EditGoalsFragment extends Fragment{
         if (getArguments() != null) {
             matchIndex = getArguments().getString("index");
             seasonIndex = getArguments().getString("season");
+            matchResult = getArguments().getInt("result");
         }
 
     }
@@ -63,12 +65,12 @@ public class EditGoalsFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvGoalsA = view.findViewById(R.id.goals_a_rv);
-        adapterA = new GoalsAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
+        adapterA = new GoalsAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), matchResult, getContext());
         rvGoalsA.setAdapter(adapterA);
         rvGoalsA.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGoalsA.setItemAnimator(new DefaultItemAnimator());
         RecyclerView rvGoalsB = view.findViewById(R.id.goals_b_rv);
-        adapterB = new GoalsAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
+        adapterB = new GoalsAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), matchResult, getContext());
         rvGoalsB.setAdapter(adapterB);
         rvGoalsB.setLayoutManager(new LinearLayoutManager(getContext()));
         rvGoalsB.setItemAnimator(new DefaultItemAnimator());

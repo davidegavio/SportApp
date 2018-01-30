@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +23,6 @@ import it.uniupo.sportapp.models.Player;
  */
 
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> {
-
-
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -43,10 +41,13 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
 
     private List<Player> mPlayers;
     private Context mContext;
+    private int matchResult;
 
-    public GoalsAdapter(ArrayList<Player> teamPlayers, Context context){
+
+    public GoalsAdapter(ArrayList<Player> teamPlayers, int matchResult,Context context){
         this.mPlayers = teamPlayers;
         this.mContext = context;
+        this.matchResult = matchResult;
     }
 
     @Override
@@ -73,11 +74,15 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
-                if(goalsNumber!=0) {
+                if(goalsNumber!=0 && matchResult>0 && goalsNumber<matchResult) {
                     Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
                     int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
                     n+=goalsNumber;
+                    matchResult-=n;
                     Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
+                }
+                else{
+                    Toast.makeText(mContext, "There's an error in your goals count", Toast.LENGTH_LONG).show();
                 }
             }
 

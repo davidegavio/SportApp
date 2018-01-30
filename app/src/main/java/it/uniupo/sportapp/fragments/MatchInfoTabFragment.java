@@ -54,7 +54,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private RecyclerView teamARecyclerView, teamBRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
-
+    private int matchResult;
 
     @Override
     public void onResume() {
@@ -146,6 +146,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 String[] r = Singleton.getCurrentMatch().getMatchResult().split("-");
                 homeResultTextView.setText(r[0]);
                 awayResultTextView.setText(r[1]);
+                matchResult = Integer.parseInt(String.valueOf(homeResultTextView.getText())) + Integer.parseInt(String.valueOf(awayResultTextView.getText()));
+                Log.d("result:", String.valueOf(matchResult));
             }
         }
 
@@ -166,11 +168,14 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 break;
             case R.id.edit_result_btn:
                 editResult();
+                matchResult = Integer.parseInt(String.valueOf(homeResultTextView.getText())) + Integer.parseInt(String.valueOf(awayResultTextView.getText()));
+                Log.d("result:", String.valueOf(matchResult));
                 Toast.makeText(getContext(), "Edit result!", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.edit_goals_btn:
                 EditGoalsFragment editGoalsFragment = new EditGoalsFragment();
                 b = new Bundle();
+                b.putInt("result", matchResult);
                 b.putString("index", matchIndex);
                 b.putString("season", seasonIndex);
                 editGoalsFragment.setArguments(b);
