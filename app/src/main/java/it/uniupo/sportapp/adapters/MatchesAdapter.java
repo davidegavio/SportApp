@@ -94,7 +94,6 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
         TextView startHourTextView = holder.startHourTv;
         startHourTextView.setText(tempMatch.getStartTime());
         TextView endHourTextView = holder.endHourTv;
-        endHourTextView.setText(tempMatch.getEndTime());
 
     }
 

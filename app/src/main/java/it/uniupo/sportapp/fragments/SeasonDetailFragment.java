@@ -15,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +29,7 @@ import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.MatchesAdapter;
+import it.uniupo.sportapp.adapters.PresencesChartAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
 import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
@@ -99,6 +99,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
             Singleton.setCurrentSeason(currentSeason);
             Singleton.setCurrentFragment("seasonDetailed");
+            //countPresences();
         }
     }
 
@@ -152,7 +153,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 ((MainActivity)getActivity()).addFragment(fragment);
             }
         });
-
     }
 
 
@@ -170,14 +170,20 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 ((MainActivity)getActivity()).addFragment(new ProfileFragment());
                 return true;
             case R.id.action_goals_chart:
-                SeasonChartFragment seasonChartFragment = new SeasonChartFragment();
+                SeasonGoalsChartFragment seasonGoalsChartFragment = new SeasonGoalsChartFragment();
                 Bundle b = new Bundle();
                 b.putString("season", mSeasonKey);
                 b.putString("type", "goals");
-                seasonChartFragment.setArguments(b);
-                ((MainActivity)getActivity()).addFragment(seasonChartFragment);
+                seasonGoalsChartFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(seasonGoalsChartFragment);
                 return true;
             case R.id.action_presences_chart:
+                SeasonPresencesChartFragment presencesChartFragment = new SeasonPresencesChartFragment();
+                b = new Bundle();
+                b.putString("season", mSeasonKey);
+                b.putString("type", "goals");
+                presencesChartFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(presencesChartFragment);
                 return true;
             case R.id.action_average_chart:
                 return true;

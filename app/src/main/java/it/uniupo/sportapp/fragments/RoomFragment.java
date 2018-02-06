@@ -140,7 +140,8 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 String formattedDate = df.format(c.getTime());
                                 newSeason.setSeasonBeginningDate(formattedDate);
                                 newSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
-                                setPlayersGoals(newSeason);
+                                newSeason.setSeasonPlayerPresencesChart(new HashMap<String, String>());
+                                setPlayersGoalsPresences(newSeason);
 
                             }
                         }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -162,7 +163,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void setPlayersGoals(Season season) {
+    private void setPlayersGoalsPresences(Season season) {
         final Season editedSeason = season;
         FirebaseDatabase.getInstance().getReference().child("users")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -171,6 +172,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                         for(String s : Singleton.getCurrentRoom().getActivePlayers()){
                             Player p = dataSnapshot.child(s).getValue(Player.class);
                             editedSeason.getSeasonPlayerGoalsChart().put(p.getPlayerKey(), "0");
+                            editedSeason.getSeasonPlayerPresencesChart().put(p.getPlayerKey(), "0");
                         }
                         Singleton.setCurrentSeason(editedSeason);
                         Singleton.getCurrentRoom().getExistingSeasons().add(Singleton.getCurrentSeason());
@@ -189,6 +191,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                     }
                 });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

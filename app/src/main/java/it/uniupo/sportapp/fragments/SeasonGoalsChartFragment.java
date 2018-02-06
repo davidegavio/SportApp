@@ -16,19 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.Map;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
-import it.uniupo.sportapp.adapters.ChartAdapter;
-import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.adapters.GoalsChartAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class SeasonChartFragment extends Fragment {
+public class SeasonGoalsChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "season";
@@ -37,10 +36,10 @@ public class SeasonChartFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String seasonIndex;
     private String chartType;
-    private ChartAdapter chartAdapter;
+    private GoalsChartAdapter goalsChartAdapter;
 
 
-    public SeasonChartFragment() {
+    public SeasonGoalsChartFragment() {
         // Required empty public constructor
     }
 
@@ -65,17 +64,29 @@ public class SeasonChartFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        chartAdapter = new ChartAdapter(getArrayListFromMap(), getContext(), chartType);
-        rvPlayers.setAdapter(chartAdapter);
+        goalsChartAdapter = new GoalsChartAdapter(getArrayListFromMap(), getContext());
+        rvPlayers.setAdapter(goalsChartAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
         rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
 
-    private ArrayList<Player> getArrayListFromMap() {
-        ArrayList<Player> stringArrayList = new ArrayList<>();
-        for(String j : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().values())
-            Log.d("V", j);
+    private ArrayList<String> getArrayListFromMap() {
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        ArrayList<Integer> integerArrayList = new ArrayList<>();
+        for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
+            integerArrayList.add(Integer.parseInt(entry.getValue()));
+        }
+        Collections.sort(integerArrayList);
+        Collections.reverse(integerArrayList);
+        for(int i : integerArrayList) {
+            for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
+                if(i==(Integer.parseInt(entry.getValue()))&&!stringArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
+                    stringArrayList.add(entry.getKey() + "-" + entry.getValue());
+                }
+            }
+        }
+        Log.d("Goals", String.valueOf(stringArrayList));
         return stringArrayList;
     }
 

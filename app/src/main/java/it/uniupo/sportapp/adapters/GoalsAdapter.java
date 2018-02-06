@@ -2,6 +2,7 @@ package it.uniupo.sportapp.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,14 +63,16 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final String[] goals = {""};
         final Player tempPlayer = mPlayers.get(position);
+        Log.d("Goal", Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempPlayer.getPlayerName());
         TextView mailTextView = holder.mailTv;
         mailTextView.setText(tempPlayer.getPlayerMail());
-        Spinner goalsSpinner = holder.goalsSpnr;
+        final Spinner goalsSpinner = holder.goalsSpnr;
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.spinner_goals, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         goalsSpinner.setAdapter(adapter);
+        goalsSpinner.setSelection(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())));
         goalsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
