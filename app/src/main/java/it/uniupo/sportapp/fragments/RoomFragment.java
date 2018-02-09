@@ -77,7 +77,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         Singleton.getCurrentRoom().setRoomKey(mParam1);
         Singleton.getCurrentPlayer().getPlayerRooms().set(mParam2, mParam1);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-        ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
+        ref.child("rooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom());
         ref.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
         Singleton.setCurrentFragment("room");
     }
@@ -151,7 +151,11 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 }).create().show();
                 break;
             case R.id.show_seasons_btn:
-                ((MainActivity)getActivity()).addFragment(new SeasonListFragment());
+                SeasonListFragment fragment = new SeasonListFragment();
+                Bundle c = new Bundle();
+                c.putString("key", String.valueOf(mParam2));
+                fragment.setArguments(c);
+                ((MainActivity)getActivity()).addFragment(fragment);
                 break;
             case R.id.show_players_btn:
                 PlayerListFragment playerListFragment = new PlayerListFragment();
@@ -178,11 +182,11 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                         Singleton.getCurrentRoom().getExistingSeasons().add(Singleton.getCurrentSeason());
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(mParam1).setValue(Singleton.getCurrentRoom());
+                        mDatabase.child("rooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom());
                         SeasonDetailFragment fragment = new SeasonDetailFragment();
                         Bundle args = new Bundle();
                         args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
-                        args.putString("room", mParam1);
+                        args.putString("key", String.valueOf(mParam2));
                         fragment.setArguments(args);
                         ((MainActivity)getActivity()).addFragment(fragment);
                     }

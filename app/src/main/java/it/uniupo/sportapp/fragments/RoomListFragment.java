@@ -46,7 +46,7 @@ public class RoomListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private ArrayList<Room> mRooms;
     RoomsAdapter mAdapter;
-    private String mParam2;
+    private String mParam;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -58,6 +58,8 @@ public class RoomListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null)
+            mParam = getArguments().getString("key");
         mRooms = new ArrayList<>();
         if (Singleton.getCurrentPlayer().getPlayerRooms() != null) {
             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("rooms");

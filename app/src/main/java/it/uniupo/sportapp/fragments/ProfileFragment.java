@@ -159,7 +159,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 newRoom.setRoomKey(k);
                                 Singleton.getCurrentPlayer().getPlayerRooms().add(newRoom.getRoomKey());
                                 mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(Singleton.getCurrentPlayer());
-                                mDatabase.child("rooms").child(k).setValue(newRoom);
                                 int n = Singleton.getCurrentPlayer().getPlayerRooms().size()-1;
                                 RoomFragment fragment = new RoomFragment();
                                 Bundle args = new Bundle();

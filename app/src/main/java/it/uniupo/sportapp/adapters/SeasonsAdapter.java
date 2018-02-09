@@ -22,6 +22,8 @@ import it.uniupo.sportapp.models.Season;
 
 public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHolder> {
 
+
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView nameTv, startTv;
@@ -36,7 +38,7 @@ public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHold
                     SeasonDetailFragment fragment = new SeasonDetailFragment();
                     Bundle args = new Bundle();
                     args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
-                    //args.putString("room", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    args.putString("key", mParam);
                     fragment.setArguments(args);
                     ((MainActivity)getContext()).addFragment(fragment);
 
@@ -48,10 +50,12 @@ public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHold
 
     private List<Season> mSeasons;
     private Context mContext;
+    private String mParam;
 
-    public SeasonsAdapter(List<Season> mSeasons, Context mContext) {
+    public SeasonsAdapter(List<Season> mSeasons, Context mContext, String mParam) {
         this.mSeasons = mSeasons;
         this.mContext = mContext;
+        this.mParam = mParam;
     }
 
     private Context getContext() {

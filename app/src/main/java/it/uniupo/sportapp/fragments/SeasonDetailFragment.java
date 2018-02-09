@@ -45,7 +45,7 @@ import it.uniupo.sportapp.models.Team;
 public class SeasonDetailFragment extends android.support.v4.app.Fragment {
 
     private static final String ARG_KEY = "season";
-    private static final String ARG_ROOM = "room";
+    private static final String ARG_ROOM = "key";
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private MatchesAdapter mAdapter;
@@ -76,9 +76,9 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey));
             currentSeason.setSeasonMatches(new ArrayList<Match>());
             Log.i("onCreateSeason", "Here");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(mRoomKey).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
             Log.i("onCreate", Singleton.getCurrentRoom().getRoomKey());
-            Log.i("onCreate", mSeasonKey);
+            Log.i("onCreate", mRoomKey);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,7 +99,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
             Singleton.setCurrentSeason(currentSeason);
             Singleton.setCurrentFragment("seasonDetailed");
-            //countPresences();
         }
     }
 
@@ -148,6 +147,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", mSeasonKey);
+                b.putString("room", mRoomKey);
                 b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
                 fragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(fragment);
@@ -181,6 +181,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 SeasonPresencesChartFragment presencesChartFragment = new SeasonPresencesChartFragment();
                 b = new Bundle();
                 b.putString("season", mSeasonKey);
+                b.putString("key", mRoomKey);
                 b.putString("type", "goals");
                 presencesChartFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(presencesChartFragment);

@@ -96,7 +96,13 @@ public class EditTeamsFragment extends Fragment {
                 Log.d("teamA", Singleton.getCurrentMatch().getTeamA().getTeamPlayers().toString());
                 Log.d("teamB", Singleton.getCurrentMatch().getTeamB().getTeamPlayers().toString());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                ArrayList<Player> temp = Singleton.getCurrentMatch().getTeamA().getTeamPlayers();
+                temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
+                for(Player p : temp) {
+                    Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
+                }
+                ref.child("rooms").child(matchIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                ref.child("rooms").child(matchIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);

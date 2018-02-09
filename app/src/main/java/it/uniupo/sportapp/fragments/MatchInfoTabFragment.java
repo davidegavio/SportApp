@@ -55,6 +55,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private LinearLayoutManager mLayoutManager;
     private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
     private int matchResult;
+    private String roomIndex;
 
     @Override
     public void onResume() {
@@ -71,6 +72,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
+            roomIndex = getArguments().getString("index");
             goalsList = getArguments().getString("goal");
         }
     }
@@ -205,7 +207,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                         Singleton.getCurrentMatch().setMatchResult(homeResultTextView.getText()+"-"+awayResultTextView.getText());
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                        mDatabase.child("rooms").child(roomIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -259,7 +261,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         Singleton.getCurrentMatch().setStartTime(matchTime);
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+        mDatabase.child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
 
     }
 

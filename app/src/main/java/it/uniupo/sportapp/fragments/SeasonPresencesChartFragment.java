@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import it.uniupo.sportapp.R;
@@ -30,6 +31,7 @@ import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.GoalsChartAdapter;
 import it.uniupo.sportapp.adapters.PresencesChartAdapter;
 import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,9 +40,10 @@ public class SeasonPresencesChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "season";
+    private static final String ARG_PARAM2 = "key";
 
     // TODO: Rename and change types of parameters
-    private String seasonIndex;
+    private String seasonIndex, roomIndex;
     private PresencesChartAdapter presencesChartAdapter;
 
 
@@ -53,6 +56,7 @@ public class SeasonPresencesChartFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             seasonIndex = getArguments().getString(ARG_PARAM1);
+            roomIndex = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -77,20 +81,25 @@ public class SeasonPresencesChartFragment extends Fragment {
     private ArrayList<String> getArrayListFromMap() {
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches");
+        Log.d("K", roomIndex);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot d : dataSnapshot.getChildren()){
                     Match t = d.getValue(Match.class);
-                    //if()
+                    ArrayList<Player> temp = t.getTeamA().getTeamPlayers();
+                    temp.addAll(t.getTeamB().getTeamPlayers());
+                    for(Player p : temp) {
+                        Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
+                    }
                 }
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentRoom());
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+            public void onCancelled(DatabaseError databaseError) {}
         });
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().entrySet()) {
             integerArrayList.add(Integer.parseInt(entry.getValue()));

@@ -40,6 +40,7 @@ public class SeasonListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private SeasonsAdapter mAdapter;
+    private String mParam;
 
     public SeasonListFragment() {
         // Required empty public constructor
@@ -48,6 +49,8 @@ public class SeasonListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments()!=null)
+            mParam = getArguments().getString("key");
         Singleton.setCurrentFragment("seasonList");
     }
 
@@ -66,7 +69,7 @@ public class SeasonListFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext());
+        mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext(), mParam);
         Log.d("seasonListFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
         mRecyclerView.setAdapter(mAdapter);
     }
