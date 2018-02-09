@@ -81,26 +81,6 @@ public class SeasonPresencesChartFragment extends Fragment {
     private ArrayList<String> getArrayListFromMap() {
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
-        Log.d("K", roomIndex);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot d : dataSnapshot.getChildren()){
-                    Match t = d.getValue(Match.class);
-                    ArrayList<Player> temp = t.getTeamA().getTeamPlayers();
-                    temp.addAll(t.getTeamB().getTeamPlayers());
-                    for(Player p : temp) {
-                        Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
-                    }
-                }
-                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentRoom());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().entrySet()) {
             integerArrayList.add(Integer.parseInt(entry.getValue()));
         }
