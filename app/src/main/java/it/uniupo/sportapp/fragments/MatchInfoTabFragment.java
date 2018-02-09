@@ -207,7 +207,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                         Singleton.getCurrentMatch().setMatchResult(homeResultTextView.getText()+"-"+awayResultTextView.getText());
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(roomIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {

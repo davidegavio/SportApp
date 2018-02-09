@@ -99,10 +99,13 @@ public class EditTeamsFragment extends Fragment {
                 ArrayList<Player> temp = Singleton.getCurrentMatch().getTeamA().getTeamPlayers();
                 temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
                 for(Player p : temp) {
+                    Log.d("ex", String.valueOf(Singleton.getCurrentSeason()));
+                    Log.d("ex", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()));
+                    Log.d("ex", p.getPlayerKey());
                     Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
                 }
-                ref.child("rooms").child(matchIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
-                ref.child("rooms").child(matchIndex).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);

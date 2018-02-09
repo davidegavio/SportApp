@@ -76,7 +76,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             currentSeason = Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey));
             currentSeason.setSeasonMatches(new ArrayList<Match>());
             Log.i("onCreateSeason", "Here");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(mRoomKey).child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
             Log.i("onCreate", Singleton.getCurrentRoom().getRoomKey());
             Log.i("onCreate", mRoomKey);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {

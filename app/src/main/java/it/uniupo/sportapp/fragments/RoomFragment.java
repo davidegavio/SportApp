@@ -132,7 +132,6 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 EditText newSeasonName = editview.findViewById(R.id.season_name_dialog);
-                                //Log.d(TAG, String.valueOf(newSeasonName.getText()));
                                 Season newSeason = new Season(String.valueOf(newSeasonName.getText()));
                                 Calendar c = Calendar.getInstance();
                                 System.out.println("Current time => " + c.getTime());
@@ -142,7 +141,6 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                                 newSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
                                 newSeason.setSeasonPlayerPresencesChart(new HashMap<String, String>());
                                 setPlayersGoalsPresences(newSeason);
-
                             }
                         }).setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
