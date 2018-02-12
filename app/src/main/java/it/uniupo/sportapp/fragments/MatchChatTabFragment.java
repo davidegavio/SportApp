@@ -156,7 +156,7 @@ public class MatchChatTabFragment extends Fragment {
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(001, mBuilder.build());
-
+        Log.d("c", "C");
 
 
     }
