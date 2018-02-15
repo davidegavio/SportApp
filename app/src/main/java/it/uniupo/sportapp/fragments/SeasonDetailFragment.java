@@ -187,6 +187,13 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 ((MainActivity)getActivity()).addFragment(presencesChartFragment);
                 return true;
             case R.id.action_average_chart:
+                SeasonAverageChartFragment seasonAverageChartFragment = new SeasonAverageChartFragment();
+                b = new Bundle();
+                b.putString("season", mSeasonKey);
+                b.putString("key", mRoomKey);
+                b.putString("type", "goals");
+                seasonAverageChartFragment.setArguments(b);
+                ((MainActivity)getActivity()).addFragment(seasonAverageChartFragment);
                 return true;
             default: return super.onOptionsItemSelected(item);
         }

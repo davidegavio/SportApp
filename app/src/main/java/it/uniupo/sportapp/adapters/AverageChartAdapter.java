@@ -25,25 +25,25 @@ import it.uniupo.sportapp.models.Player;
  * Created by dgavio on 07/12/17.
  */
 
-public class PresencesChartAdapter extends RecyclerView.Adapter<PresencesChartAdapter.ViewHolder> {
+public class AverageChartAdapter extends RecyclerView.Adapter<AverageChartAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView nameTv, positionTv, presencesTv;
+        public TextView nameTv, positionTv, averageTv;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            nameTv = itemView.findViewById(R.id.presences_chart_player_name);
+            nameTv = itemView.findViewById(R.id.average_chart_player_name);
             positionTv = itemView.findViewById(R.id.chart_position_tv);
-            presencesTv = itemView.findViewById(R.id.presences_chart_number);
+            averageTv = itemView.findViewById(R.id.average_chart_number);
         }
     }
 
-    private List<String> mPlayersPresences;
+    private List<String> mPlayersAverage;
     private Context mContext;
 
-    public PresencesChartAdapter(ArrayList<String> mPlayersPresences, Context mContext) {
-        this.mPlayersPresences = mPlayersPresences;
+    public AverageChartAdapter(ArrayList<String> mPlayersAverage, Context mContext) {
+        this.mPlayersAverage = mPlayersAverage;
         this.mContext = mContext;
     }
 
@@ -53,29 +53,29 @@ public class PresencesChartAdapter extends RecyclerView.Adapter<PresencesChartAd
 
 
     @Override
-    public PresencesChartAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AverageChartAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View chartView = inflater.inflate(R.layout.presences_chart_player_row, parent, false);
+        View chartView = inflater.inflate(R.layout.average_chart_player_row, parent, false);
         return new ViewHolder(chartView);
     }
 
     @Override
-    public void onBindViewHolder(final PresencesChartAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(final AverageChartAdapter.ViewHolder holder, final int position) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener()
         {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Player tempPlayer = dataSnapshot.child(mPlayersPresences.get(position).split("-")[0]).getValue(Player.class);
+                Player tempPlayer = dataSnapshot.child(mPlayersAverage.get(position).split("-")[0]).getValue(Player.class);
                 Log.d("Pla", String.valueOf(tempPlayer.getPlayerName()));
-                String presences = mPlayersPresences.get(position).split("-")[1];
+                String average = mPlayersAverage.get(position).split("-")[1];
                 TextView positionTextView = holder.positionTv;
                 TextView nameTextView = holder.nameTv;
-                TextView presencesTextView = holder.presencesTv;
+                TextView averageTextView = holder.averageTv;
                 positionTextView.setText(String.valueOf(position+1)+"°");
                 nameTextView.setText(tempPlayer.getPlayerName());
-                presencesTextView.setText("Presences: "+presences);
+                averageTextView.setText("Presences: "+average);
             }
 
             @Override
@@ -88,6 +88,6 @@ public class PresencesChartAdapter extends RecyclerView.Adapter<PresencesChartAd
 
     @Override
     public int getItemCount() {
-        return mPlayersPresences.size();
+        return mPlayersAverage.size();
     }
 }
