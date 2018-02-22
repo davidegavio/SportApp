@@ -17,7 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 import it.uniupo.sportapp.R;
@@ -50,6 +52,14 @@ public class SeasonAverageChartFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_season_chart, container, false);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
         averageChartAdapter = new AverageChartAdapter(getArrayListFromMap(), getContext());
@@ -63,18 +73,31 @@ public class SeasonAverageChartFragment extends Fragment {
         //goal/partite
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
+
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
-            integerArrayList.add(Integer.parseInt(entry.getValue())/Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(entry.getKey())));
-        }
-        Collections.sort(integerArrayList);
-        Collections.reverse(integerArrayList);
-        for(int i : integerArrayList) {
-            for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
-                if(i==(Integer.parseInt(entry.getValue()))&&!stringArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
-                    stringArrayList.add(entry.getKey() + "-" + entry.getValue());
-                }
+            float n = Float.parseFloat(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(entry.getKey()).replace(",","."));
+            float l = Float.parseFloat(entry.getValue().replace(",","."));
+            Log.d("n", String.valueOf(n));
+            Log.d("l", String.valueOf(l));
+            if(l!=0 && n!=0) {
+                Log.d("l/n", String.valueOf(l/n));
+                stringArrayList.add(entry.getKey() + "-" + String.format("%.2f", (l/n)));
+            }
+            else{
+                stringArrayList.add(entry.getKey() + "-0");
             }
         }
+        Collections.sort(stringArrayList, new Comparator<String>() {
+            @Override
+            public int compare(String s, String t1) {
+                if (Float.parseFloat(s.split("-")[1].replace(",", "."))< Float.parseFloat(t1.split("-")[1].replace(",", ".")))
+                    return -1;
+                if (Float.parseFloat(s.split("-")[1].replace(",", "."))> Float.parseFloat(t1.split("-")[1].replace(",", ".")))
+                    return 1;
+                return 0;
+            }
+        });
+        Collections.reverse(stringArrayList);
         Log.d("Average", String.valueOf(stringArrayList));
         return stringArrayList;
     }

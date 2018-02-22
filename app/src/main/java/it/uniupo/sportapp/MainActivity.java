@@ -1,12 +1,16 @@
 package it.uniupo.sportapp;
 
 import android.app.DialogFragment;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Base64;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,14 +18,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 
-import com.facebook.FacebookSdk;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,6 +31,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,9 +42,6 @@ import it.uniupo.sportapp.fragments.RoomFragment;
 import it.uniupo.sportapp.fragments.SeasonDetailFragment;
 import it.uniupo.sportapp.fragments.TimePickerFragment;
 import it.uniupo.sportapp.models.Player;
-import it.uniupo.sportapp.models.Room;
-
-import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
@@ -69,6 +66,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("it.uniupo.sportapp", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
         Singleton singleton = new Singleton();
         initViews();
         //Firebase stuff
@@ -140,7 +149,6 @@ public class MainActivity extends AppCompatActivity
                     sFragment.setArguments(args);
                     addFragment(sFragment);
                     break;
-
             }
         }
     }
@@ -152,9 +160,26 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == RESULT_OK){
                 initViews();
                 isAuthenticated = true;
+                //addChatListeners();
                 writeNewUserIfNeeded();
             }
         }
+    }
+
+    private void addChatListeners() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentPlayer().getPlayerKey()).child("playerRooms");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot d : dataSnapshot.getChildren()){
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

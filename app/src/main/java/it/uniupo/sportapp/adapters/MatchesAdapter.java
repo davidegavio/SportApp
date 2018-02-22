@@ -3,6 +3,7 @@ package it.uniupo.sportapp.adapters;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,9 +51,10 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                 @Override
                 public void onClick(View view) {
                     Singleton.setCurrentMatch(mMatches.get(getAdapterPosition()));
+                    Log.d("MatchIndex", String.valueOf(mMatches.get(getAdapterPosition())));
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
-                    b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
+                    b.putString("index", String.valueOf(getAdapterPosition()));
                     b.putString("season", seasonIndex);
                     fragment.setArguments(b);
                     ((MainActivity)getmContext()).addFragment(fragment);

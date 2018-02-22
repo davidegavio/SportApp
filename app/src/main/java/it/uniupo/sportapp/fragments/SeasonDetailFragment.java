@@ -182,7 +182,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 b = new Bundle();
                 b.putString("season", mSeasonKey);
                 b.putString("key", mRoomKey);
-                b.putString("type", "goals");
+                b.putString("type", "presences");
                 presencesChartFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(presencesChartFragment);
                 return true;
@@ -191,7 +191,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 b = new Bundle();
                 b.putString("season", mSeasonKey);
                 b.putString("key", mRoomKey);
-                b.putString("type", "goals");
+                b.putString("type", "average");
                 seasonAverageChartFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(seasonAverageChartFragment);
                 return true;

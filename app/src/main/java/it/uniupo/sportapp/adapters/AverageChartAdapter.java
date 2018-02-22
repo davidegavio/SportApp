@@ -75,7 +75,7 @@ public class AverageChartAdapter extends RecyclerView.Adapter<AverageChartAdapte
                 TextView averageTextView = holder.averageTv;
                 positionTextView.setText(String.valueOf(position+1)+"°");
                 nameTextView.setText(tempPlayer.getPlayerName());
-                averageTextView.setText("Presences: "+average);
+                averageTextView.setText("Average: "+average);
             }
 
             @Override
