@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
-import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.adapters.PlayersAddAdapter;
 import it.uniupo.sportapp.models.Player;
 
@@ -36,17 +35,17 @@ import it.uniupo.sportapp.models.Player;
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class PlayerListFragment extends Fragment {
+public class AddPlayerListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_VALUE = "value";
 
     private ArrayList<Player> allPlayers,availablePlayers;
-    private PlayersAdapter mAdapter;
+    private PlayersAddAdapter mAdapter;
     private Boolean showCurrentPlayers;
 
 
-    public PlayerListFragment() {
+    public AddPlayerListFragment() {
         // Required empty public constructor
     }
 
@@ -88,6 +87,9 @@ public class PlayerListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        search(searchView);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -95,7 +97,7 @@ public class PlayerListFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
         getAvailablePlayers();
-        mAdapter = new PlayersAdapter(availablePlayers, getContext());
+        mAdapter = new PlayersAddAdapter(availablePlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
@@ -130,6 +132,23 @@ public class PlayerListFragment extends Fragment {
             if(!Singleton.getCurrentRoom().getActivePlayers().contains(p.getPlayerKey()))
                 availablePlayers.add(p);
         }
+    }
+
+    private void search(final SearchView searchView){
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchView.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
+
     }
 
 

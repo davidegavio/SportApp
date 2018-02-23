@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
-import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.adapters.TeamsAdapter;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Team;

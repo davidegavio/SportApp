@@ -51,6 +51,7 @@ public class SeasonGoalsChartFragment extends Fragment {
             seasonIndex = getArguments().getString(ARG_PARAM1);
             chartType = getArguments().getString(ARG_PARAM2);
         }
+        Singleton.setCurrentFragment("chart");
     }
 
     @Override

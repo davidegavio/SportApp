@@ -36,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import it.uniupo.sportapp.fragments.AboutFragment;
 import it.uniupo.sportapp.fragments.DatePickerFragment;
 import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.fragments.RoomFragment;
@@ -151,6 +152,17 @@ public class MainActivity extends AppCompatActivity
                     sFragment.setArguments(args);
                     addFragment(sFragment);
                     break;
+                case "chart":
+                    sFragment = new SeasonDetailFragment();
+                    args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
+                    args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    sFragment.setArguments(args);
+                    addFragment(sFragment);
+                    break;
+                case "about":
+                    addFragment(new ProfileFragment());
+                    break;
             }
         }
     }
@@ -197,6 +209,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_about:
                 Log.i(TAG, "About pressed");
+                addFragment(new AboutFragment());
                 break;
             case R.id.nav_logout:
                 signOut();

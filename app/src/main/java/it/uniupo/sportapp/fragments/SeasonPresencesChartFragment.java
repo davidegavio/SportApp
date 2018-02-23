@@ -58,6 +58,7 @@ public class SeasonPresencesChartFragment extends Fragment {
             seasonIndex = getArguments().getString(ARG_PARAM1);
             roomIndex = getArguments().getString(ARG_PARAM2);
         }
+        Singleton.setCurrentFragment("chart");
     }
 
     @Override

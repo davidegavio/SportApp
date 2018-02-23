@@ -1,0 +1,61 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="it.uniupo.sportapp.fragments.AboutFragment">
+
+    <ImageView
+        android:id="@+id/upo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/about"
+        android:visibility="visible"/>
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/descr"
+        android:layout_below="@id/upo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="16sp"
+        android:textStyle="italic"
+        android:text="SportApp è un'applicazione sviluppata come progetto per la tesi nell'ambito del corso di Applicazioni Mobili del Dipartimento di Scienze e Innovazione Tecnologica dell'Università del Piemonte Orientale" />
+
+    <TextView
+        android:id="@+id/realized"
+        android:layout_below="@id/descr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="Realizzata da:"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_below="@id/realized"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Davide Gavio"
+        android:textSize="20sp"
+        android:textStyle="italic|bold"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_below="@id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|bottom"
+        android:textSize="16sp"
+        android:text="Contatto mail: mobileapp@uniupo.it"
+        android:textAlignment="center" />
+
+</RelativeLayout>

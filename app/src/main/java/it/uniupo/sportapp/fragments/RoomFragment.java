@@ -1,16 +1,11 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,17 +28,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.Utility;
+import it.uniupo.sportapp.adapters.PlayersAdapter;
+import it.uniupo.sportapp.adapters.PlayersAddAdapter;
 import it.uniupo.sportapp.models.Player;
-import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -94,6 +87,8 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Button showSeasonsBtn = view.findViewById(R.id.show_seasons_btn);
         showSeasonsBtn.setOnClickListener(this);
+        Button showActivePlayersBtn = view.findViewById(R.id.show_players_btn);
+        showActivePlayersBtn.setOnClickListener(this);
         FloatingActionButton addPlayerFab = view.findViewById(R.id.add_player_btn);
         Log.d("Admins", String.valueOf(Singleton.getCurrentRoom().getAdminPlayers()));
         Log.d("Current", String.valueOf(Singleton.getCurrentPlayer()));
@@ -118,7 +113,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         switch (view.getId()) {
             case R.id.add_player_btn:
                 Log.d("Add", "Add player");
-                ((MainActivity)getActivity()).addFragment(new PlayerListFragment());
+                ((MainActivity)getActivity()).addFragment(new AddPlayerListFragment());
                 break;
             case R.id.add_season_btn:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -156,11 +151,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
                 ((MainActivity)getActivity()).addFragment(fragment);
                 break;
             case R.id.show_players_btn:
-                PlayerListFragment playerListFragment = new PlayerListFragment();
-                Bundle b = new Bundle();
-                b.putString("value", "current");
-                playerListFragment.setArguments(b);
-                ((MainActivity)getActivity()).addFragment(playerListFragment);
+                ((MainActivity)getActivity()).addFragment(new PlayerListFragment());
                 break;
         }
     }
