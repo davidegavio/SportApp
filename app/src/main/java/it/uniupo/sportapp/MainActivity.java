@@ -42,6 +42,7 @@ import it.uniupo.sportapp.fragments.RoomFragment;
 import it.uniupo.sportapp.fragments.SeasonDetailFragment;
 import it.uniupo.sportapp.fragments.TimePickerFragment;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity
                 case "matchDetail":
                     SeasonDetailFragment sFragment = new SeasonDetailFragment();
                     args = new Bundle();
+                    args.putString("key", Singleton.getCurrentRoom().getRoomKey());
                     args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
                     sFragment.setArguments(args);
                     addFragment(sFragment);
@@ -164,22 +166,6 @@ public class MainActivity extends AppCompatActivity
                 writeNewUserIfNeeded();
             }
         }
-    }
-
-    private void addChatListeners() {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentPlayer().getPlayerKey()).child("playerRooms");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot d : dataSnapshot.getChildren()){
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override

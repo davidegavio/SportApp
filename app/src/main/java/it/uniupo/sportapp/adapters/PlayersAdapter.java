@@ -73,9 +73,9 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(PlayersAdapter.ViewHolder holder, int position) {
-        final Player tempPlayer = mPlayers.get(position);
+        final Player tempPlayer = mFilteredPlayers.get(position);
         tempPlayer.setPlayerRooms(new ArrayList<String>());
-        if(!mPlayers.isEmpty()) {
+        if(!mFilteredPlayers.isEmpty()) {
             final TextView nameTextView = holder.nameTv;
             nameTextView.setText(tempPlayer.getPlayerName());
             TextView mailTextView = holder.mailTv;
@@ -100,7 +100,7 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return mPlayers.size();
+        return mFilteredPlayers.size();
     }
 
     @Override
@@ -115,7 +115,7 @@ public class PlayersAdapter extends RecyclerView.Adapter<PlayersAdapter.ViewHold
                 } else{
                     ArrayList<Player> filteredList = new ArrayList<>();
                     for(Player player : mPlayers){
-                        if(player.getPlayerName().toLowerCase().contains(charString) || player.getPlayerMail().toLowerCase().contains(charString))
+                        if(player.getPlayerName().toLowerCase().contains(charString))
                             filteredList.add(player);
                     }
                     mFilteredPlayers = filteredList;
