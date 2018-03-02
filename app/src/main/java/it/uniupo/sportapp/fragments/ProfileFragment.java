@@ -251,10 +251,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                         EditText editDescription = editview.findViewById(R.id.description_dialog);
                         EditText editEmail = editview.findViewById(R.id.email_dialog);
                         editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
-                        fillFields(currentPlayer);
+                        fillFields(Singleton.getCurrentPlayer());
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("users").child(uid).setValue(currentPlayer);
+                        mDatabase.child("users").child(uid).setValue(Singleton.getCurrentPlayer());
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
