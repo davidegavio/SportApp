@@ -20,21 +20,24 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:src="@mipmap/ic_launcher"
+            android:layout_above="@id/btn_linear"
             app:civ_border_width="2dp"
             app:civ_border_color="@color/secondaryColor"
             android:background="@color/primaryLightColor"
             />
 
         <LinearLayout
+            android:id="@+id/btn_linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@id/profile_image">
+            android:gravity="bottom"
+            android:layout_alignParentBottom="true">
 
             <Button
                 android:id="@+id/rooms_btn"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/teams24"
                 android:text="Your rooms"
@@ -50,7 +53,7 @@
             <Button
                 android:id="@+id/new_room_btn"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/teams24"
                 android:text="Create new room"
