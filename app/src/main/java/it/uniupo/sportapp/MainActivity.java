@@ -204,9 +204,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_football:
                 Log.i(TAG, "Football pressed");
                 break;
-            case R.id.nav_settings:
-                Log.i(TAG, "Settings pressed");
-                break;
             case R.id.nav_about:
                 Log.i(TAG, "About pressed");
                 addFragment(new AboutFragment());

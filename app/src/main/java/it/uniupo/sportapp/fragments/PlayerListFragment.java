@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +45,7 @@ public class PlayerListFragment extends Fragment {
     private ArrayList<Player> allPlayers,availablePlayers;
     private PlayersAdapter mAdapter;
     private Boolean showCurrentPlayers;
+    private TextView emptyView;
 
 
     public PlayerListFragment() {
@@ -58,7 +60,7 @@ public class PlayerListFragment extends Fragment {
         }
         allPlayers = new ArrayList<>();
         availablePlayers = new ArrayList<>();
-        FirebaseDatabase.getInstance().getReference().child("users")
+        FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentRoom().getRoomKey()).child("activePlayers")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -92,8 +94,11 @@ public class PlayerListFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        final RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
+        rvPlayers.setVisibility(View.GONE);
+        emptyView = view.findViewById(R.id.empty_view);
+        emptyView.setVisibility(View.VISIBLE);
         getAvailablePlayers();
         mAdapter = new PlayersAdapter(availablePlayers, getContext());
         rvPlayers.setAdapter(mAdapter);
@@ -105,9 +110,18 @@ public class PlayerListFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 getAvailablePlayers();
                 mAdapter.notifyDataSetChanged();
+                if (availablePlayers.size() == 0) {
+                    rvPlayers.setVisibility(View.GONE);
+                    emptyView = view.findViewById(R.id.empty_view);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    rvPlayers.setVisibility(View.VISIBLE);
+                    emptyView = view.findViewById(R.id.empty_view);
+                    emptyView.setVisibility(View.GONE);
+                }
             }
 
-            @Override
+                @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }

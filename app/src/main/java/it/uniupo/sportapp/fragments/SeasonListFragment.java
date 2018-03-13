@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +42,7 @@ public class SeasonListFragment extends Fragment {
     private LinearLayoutManager mLayoutManager;
     private SeasonsAdapter mAdapter;
     private String mParam;
+    private TextView emptyView;
 
     public SeasonListFragment() {
         // Required empty public constructor
@@ -57,21 +59,32 @@ public class SeasonListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         Log.d("onCreateView", "Here");
-        // Inflate the layout for this fragment
         mRecyclerView = (RecyclerView) view.findViewById(R.id.seasons_rv);
+        if(Singleton.getCurrentRoom().getExistingSeasons().size()==0){
+            mRecyclerView.setVisibility(View.GONE);
+            emptyView = view.findViewById(R.id.empty_view);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mRecyclerView.setVisibility(View.VISIBLE);
+            emptyView = view.findViewById(R.id.empty_view);
+            emptyView.setVisibility(View.GONE);
+            // Inflate the layout for this fragment
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.seasons_rv);
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            mRecyclerView.setHasFixedSize(true);
 
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
-        mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext(), mParam);
-        Log.d("seasonListFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
-        mRecyclerView.setAdapter(mAdapter);
+            // use a linear layout manager
+            mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+            mAdapter = new SeasonsAdapter(Singleton.getCurrentRoom().getExistingSeasons(), getContext(), mParam);
+            Log.d("seasonListFragment", Singleton.getCurrentRoom().getExistingSeasons().toString());
+            mRecyclerView.setAdapter(mAdapter);
+        }
     }
 
     @Override

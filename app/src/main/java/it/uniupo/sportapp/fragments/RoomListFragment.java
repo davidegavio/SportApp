@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +48,7 @@ public class RoomListFragment extends Fragment {
     private ArrayList<Room> mRooms;
     RoomsAdapter mAdapter;
     private String mParam;
+    private TextView emptyView;
 
     //private OnFragmentInteractionListener mListener;
 
@@ -104,11 +106,21 @@ public class RoomListFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvRooms = view.findViewById(R.id.roomsRv);
-        mAdapter = new RoomsAdapter(mRooms, getContext());
-        rvRooms.setAdapter(mAdapter);
-        rvRooms.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvRooms.setItemAnimator(new DefaultItemAnimator());
-        rvRooms.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        if(Singleton.getCurrentPlayer().getPlayerRooms().size()==0){
+            rvRooms.setVisibility(View.GONE);
+            emptyView = view.findViewById(R.id.empty_view);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            rvRooms.setVisibility(View.VISIBLE);
+            emptyView = view.findViewById(R.id.empty_view);
+            emptyView.setVisibility(View.GONE);
+            mAdapter = new RoomsAdapter(mRooms, getContext());
+            rvRooms.setAdapter(mAdapter);
+            rvRooms.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvRooms.setItemAnimator(new DefaultItemAnimator());
+            rvRooms.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        }
 
     }
 

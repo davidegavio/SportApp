@@ -242,14 +242,17 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View editview = inflater.inflate(R.layout.edit_dialog, null);
+        final EditText editName = editview.findViewById(R.id.name_dialog);
+        editName.setText(Singleton.getCurrentPlayer().getPlayerName());
+        final EditText editDescription = editview.findViewById(R.id.description_dialog);
+        editDescription.setText(Singleton.getCurrentPlayer().getPlayerDescription());
+        final EditText editEmail = editview.findViewById(R.id.email_dialog);
+        editEmail.setText(Singleton.getCurrentPlayer().getPlayerMail());
         builder.setView(editview)
                 // Add action buttons
                 .setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        EditText editName = editview.findViewById(R.id.name_dialog);
-                        EditText editDescription = editview.findViewById(R.id.description_dialog);
-                        EditText editEmail = editview.findViewById(R.id.email_dialog);
                         editLoggedUser(editName.getText().toString(), editDescription.getText().toString(), editEmail.getText().toString());
                         fillFields(Singleton.getCurrentPlayer());
                         DatabaseReference mDatabase;

@@ -14,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +45,7 @@ public class AddPlayerListFragment extends Fragment {
     private ArrayList<Player> allPlayers,availablePlayers;
     private PlayersAddAdapter mAdapter;
     private Boolean showCurrentPlayers;
+    private TextView emptyView;
 
 
     public AddPlayerListFragment() {
@@ -94,26 +97,41 @@ public class AddPlayerListFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
+        final RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
+        rvPlayers.setVisibility(View.GONE);
+        emptyView = view.findViewById(R.id.empty_view);
+        emptyView.setVisibility(View.VISIBLE);
         getAvailablePlayers();
-        mAdapter = new PlayersAddAdapter(availablePlayers, getContext());
-        rvPlayers.setAdapter(mAdapter);
-        rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvPlayers.setItemAnimator(new DefaultItemAnimator());
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                getAvailablePlayers();
-                mAdapter.notifyDataSetChanged();
-            }
+        Log.d("Av", String.valueOf(availablePlayers.size()));
+            mAdapter = new PlayersAddAdapter(availablePlayers, getContext());
+            rvPlayers.setAdapter(mAdapter);
+            rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvPlayers.setItemAnimator(new DefaultItemAnimator());
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
+            ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    getAvailablePlayers();
+                    mAdapter.notifyDataSetChanged();
+                    if(availablePlayers.size()==0) {
+                        rvPlayers.setVisibility(View.GONE);
+                        emptyView = view.findViewById(R.id.empty_view);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }
+                    else{
+                        rvPlayers.setVisibility(View.VISIBLE);
+                        emptyView = view.findViewById(R.id.empty_view);
+                        emptyView.setVisibility(View.GONE);
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
 
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
     }
 
     @Override

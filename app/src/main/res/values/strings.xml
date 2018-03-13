@@ -26,6 +26,10 @@
     <string name="delete_profile">Delete profile</string>
     <string name="search_hint">Search players</string>
     <string name="app_label">SportApp</string>
+    <string name="no_data_available">No data available</string>
+    <string name="no_players_available">No players available</string>
+    <string name="no_rooms_available">No rooms available</string>
+    <string name="no_seasons_available">No seasons available</string>
 
 
 </resources>
