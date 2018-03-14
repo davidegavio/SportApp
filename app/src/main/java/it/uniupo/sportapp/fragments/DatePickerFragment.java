@@ -3,6 +3,7 @@ package it.uniupo.sportapp.fragments;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.icu.util.Calendar;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class DatePickerFragment extends DialogFragment
 
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(getContext(), this, year, month, day);
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -41,6 +42,13 @@ public class DatePickerFragment extends DialogFragment
         Intent localIntent = new Intent("date_set");
         localIntent.putExtra("date", date);
         localBroadcastManager.sendBroadcast(localIntent);
+    }
 
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        Intent localIntent = new Intent("error");
+        localBroadcastManager.sendBroadcast(localIntent);
     }
 }

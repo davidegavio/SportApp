@@ -42,23 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/match_day"
-        android:layout_toEndOf="@+id/intro_day"
-        android:layout_above="@+id/intro_end" />
+        android:layout_toEndOf="@+id/intro_day" />
 
-    <TextView
-        android:id="@+id/intro_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/intro_start"
-        android:text="End time: "
-        android:textColor="@color/primaryTextColor"/>
-
-    <TextView
-        android:id="@+id/match_end_hour"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/intro_end"
-        android:layout_alignBottom="@+id/intro_end"
-        android:layout_toEndOf="@+id/intro_start" />
 
 </RelativeLayout>

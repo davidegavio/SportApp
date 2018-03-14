@@ -1,5 +1,7 @@
 package it.uniupo.sportapp.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -98,6 +100,12 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             });
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
             Singleton.setCurrentSeason(currentSeason);
+            SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("fragmentSession", "seasonDetailed");
+            editor.putString("roomKey", mRoomKey);
+            editor.putString("season", mSeasonKey);
+            editor.apply();
             Singleton.setCurrentFragment("seasonDetailed");
         }
     }

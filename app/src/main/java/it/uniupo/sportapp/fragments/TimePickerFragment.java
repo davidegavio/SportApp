@@ -3,11 +3,13 @@ package it.uniupo.sportapp.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -25,8 +27,9 @@ public class TimePickerFragment extends DialogFragment
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
-        // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
+        // Create a new instance of TimePickerDialog and return
+
+        return new TimePickerDialog(getContext(), this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
@@ -39,4 +42,13 @@ public class TimePickerFragment extends DialogFragment
         localIntent.putExtra("time", time);
         localBroadcastManager.sendBroadcast(localIntent);
     }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        Intent localIntent = new Intent("error");
+        localBroadcastManager.sendBroadcast(localIntent);
+    }
+
 }

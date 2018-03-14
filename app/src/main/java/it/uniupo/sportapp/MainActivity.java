@@ -1,6 +1,8 @@
 package it.uniupo.sportapp;
 
 import android.app.DialogFragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -38,6 +40,7 @@ import java.util.Arrays;
 
 import it.uniupo.sportapp.fragments.AboutFragment;
 import it.uniupo.sportapp.fragments.DatePickerFragment;
+import it.uniupo.sportapp.fragments.MatchDetailFragment;
 import it.uniupo.sportapp.fragments.ProfileFragment;
 import it.uniupo.sportapp.fragments.RoomFragment;
 import it.uniupo.sportapp.fragments.SeasonDetailFragment;
@@ -174,7 +177,6 @@ public class MainActivity extends AppCompatActivity
             if(resultCode == RESULT_OK){
                 initViews();
                 isAuthenticated = true;
-                //addChatListeners();
                 writeNewUserIfNeeded();
             }
         }
@@ -255,6 +257,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
                 Singleton.setCurrentPlayer(loggedPlayer);
+                restoreSession();
                 addFragment(new ProfileFragment());
             }
 
@@ -331,4 +334,41 @@ public class MainActivity extends AppCompatActivity
         DialogFragment newFragment = new DatePickerFragment();
         newFragment.show(getFragmentManager(), "datePicker");
     }
+
+    public void restoreSession(){
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String fragmentSession = sharedPref.getString("fragmentSession", "");
+        String roomKey = sharedPref.getString("roomKey", "");
+        String seasonIndex = sharedPref.getString("seasonIndex", "");
+        String matchIndex = sharedPref.getString("matchIndex", "");
+        String roomIndex = sharedPref.getString("roomIndex", "");
+        switch (fragmentSession){
+            /*case "room":
+                RoomFragment fragment = new RoomFragment();
+                Bundle args = new Bundle();
+                args.putString("key", roomKey);
+                args.putString("index", roomIndex);
+                fragment.setArguments(args);
+                addFragment(fragment);
+                break;*/
+            case "seasonDetailed":
+                SeasonDetailFragment sFragment = new SeasonDetailFragment();
+                Bundle args = new Bundle();
+                args.putString("key", roomKey);
+                args.putString("season", seasonIndex);
+                sFragment.setArguments(args);
+                addFragment(sFragment);
+                break;
+            case "matchDetailed":
+                MatchDetailFragment matchDetailFragment = new MatchDetailFragment();
+                args = new Bundle();
+                args.putString("key", roomKey);
+                args.putString("season", seasonIndex);
+                args.putString("match", matchIndex);
+                matchDetailFragment.setArguments(args);
+                addFragment(matchDetailFragment);
+                break;
+        }
+    }
+
 }

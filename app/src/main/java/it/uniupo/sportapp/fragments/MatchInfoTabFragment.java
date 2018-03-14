@@ -247,12 +247,34 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     goalsTextView.setText(intent.getStringExtra("goal"));
                     Log.d("tv", goalsTextView.getText().toString());
                 }
+                else if(intent.getAction().equals("error")){
+                    // 1. Instantiate an AlertDialog.Builder with its constructor
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Warning!")
+                            .setMessage("You will be redirected to Season view due to an error occurred in match creation!")
+                            .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    SeasonDetailFragment fragment = new SeasonDetailFragment();
+                    Bundle args = new Bundle();
+                    args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));
+                    args.putString("key", roomIndex);
+                    fragment.setArguments(args);
+                    ((MainActivity)getContext()).addFragment(fragment);
+                }
             }
         };
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("teams_set"));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("goals_set"));
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("error"));
 
     }
 

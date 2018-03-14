@@ -233,6 +233,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
         Log.d(TAG, "Url "+FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl());
         if(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()!=null)
             Picasso.with(getContext()).load(FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl()).into(profileIv);
+
     }
     
     private void showEditDialog(){

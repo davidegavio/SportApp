@@ -1,7 +1,9 @@
 package it.uniupo.sportapp.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
@@ -36,6 +38,7 @@ import it.uniupo.sportapp.Utility;
 import it.uniupo.sportapp.adapters.PlayersAdapter;
 import it.uniupo.sportapp.adapters.PlayersAddAdapter;
 import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Room;
 import it.uniupo.sportapp.models.Season;
 
 /**
@@ -72,6 +75,12 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
         ref.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("fragmentSession", "room");
+        editor.putString("roomKey", mParam1);
+        editor.putString("roomIndex", String.valueOf(mParam2));
+        editor.apply();
         Singleton.setCurrentFragment("room");
     }
 

@@ -1,6 +1,8 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
@@ -31,7 +33,9 @@ public class MatchDetailFragment extends Fragment{
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "index";
     private static final String ARG_PARAM2 = "season";
+    private static final String ARG_PARAM3 = "room";
     private String matchIndex, seasonIndex;
+    private String roomKey;
 
 
     public MatchDetailFragment() {
@@ -44,8 +48,16 @@ public class MatchDetailFragment extends Fragment{
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
+            roomKey = getArguments().getString(ARG_PARAM3);
             Log.d("mDet", seasonIndex );
         }
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("fragmentSession", "matchDetailed");
+        editor.putString("roomKey", roomKey);
+        editor.putString("seasonIndex", seasonIndex);
+        editor.putString("matchIndex", matchIndex);
+        editor.apply();
         Singleton.setCurrentFragment("matchDetail");
     }
 

@@ -46,7 +46,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
             super(itemView);
             dayTv = itemView.findViewById(R.id.match_day);
             startHourTv = itemView.findViewById(R.id.match_start_hour);
-            endHourTv = itemView.findViewById(R.id.match_end_hour);
+            //endHourTv = itemView.findViewById(R.id.match_end_hour);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
