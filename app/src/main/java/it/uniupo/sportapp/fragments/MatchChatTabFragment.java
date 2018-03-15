@@ -42,7 +42,7 @@ import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
  */
 public class MatchChatTabFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "index";
+    private static final String ARG_PARAM1 = "match";
     private static final String ARG_PARAM2 = "season";
 
     private String matchIndex, seasonIndex;

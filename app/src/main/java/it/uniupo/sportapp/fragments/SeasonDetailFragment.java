@@ -52,6 +52,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
     private LinearLayoutManager mLayoutManager;
     private MatchesAdapter mAdapter;
     private ArrayList<Player> seasonPlayers;
+    private Context context;
 
     private TextView seasonNameTv;
 
@@ -72,6 +73,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context=getContext();
         if (getArguments() != null) {
             mSeasonKey = getArguments().getString(ARG_KEY);
             mRoomKey = getArguments().getString(ARG_ROOM);
@@ -80,7 +82,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             Log.i("onCreateSeason", "Here");
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(mSeasonKey).child("seasonMatches");
             Log.i("onCreate", Singleton.getCurrentRoom().getRoomKey());
-            Log.i("onCreate", mRoomKey);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -156,7 +157,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 Bundle b = new Bundle();
                 b.putString("season", mSeasonKey);
                 b.putString("room", mRoomKey);
-                b.putString("index", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
+                b.putString("match", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));
                 fragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(fragment);
             }

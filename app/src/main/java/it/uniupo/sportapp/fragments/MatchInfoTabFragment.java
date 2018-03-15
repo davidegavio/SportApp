@@ -1,6 +1,7 @@
 package it.uniupo.sportapp.fragments;
 
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -45,7 +46,7 @@ import it.uniupo.sportapp.models.Team;
  */
 public class MatchInfoTabFragment extends Fragment implements Button.OnClickListener{
 
-    private static final String ARG_PARAM1 = "index";
+    private static final String ARG_PARAM1 = "match";
     private static final String ARG_PARAM2 = "season";
 
     private String matchDate, matchTime, matchIndex, seasonIndex, goalsList;
@@ -56,6 +57,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
     private int matchResult;
     private String roomIndex;
+    private Activity mActivity;
 
     @Override
     public void onResume() {
@@ -64,6 +66,12 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     public MatchInfoTabFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivity = (Activity) context;
     }
 
     @Override
@@ -85,11 +93,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         return inflater.inflate(R.layout.fragment_match_info_tab, container, false);
     }
 
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        registerListener();
         if(Singleton.getCurrentMatch().getTeamA()!=null&&Singleton.getCurrentMatch().getTeamB()!=null) {
             if (Singleton.getCurrentMatch().getTeamA().getTeamPlayers() == null && Singleton.getCurrentMatch().getTeamB().getTeamPlayers() == null){
                 Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
@@ -152,9 +157,9 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 Log.d("result:", String.valueOf(matchResult));
             }
         }
-
-
+        registerListener();
     }
+
 
     @Override
     public void onClick(View view) {
@@ -189,7 +194,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
 
     private void editResult() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
@@ -249,7 +254,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 }
                 else if(intent.getAction().equals("error")){
                     // 1. Instantiate an AlertDialog.Builder with its constructor
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
                     builder.setTitle("Warning!")
                             .setMessage("You will be redirected to Season view due to an error occurred in match creation!")
                             .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -270,11 +275,11 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 }
             }
         };
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("date_set"));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("time_set"));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("teams_set"));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("goals_set"));
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(listener, new IntentFilter("error"));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(listener, new IntentFilter("date_set"));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(listener, new IntentFilter("time_set"));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(listener, new IntentFilter("teams_set"));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(listener, new IntentFilter("goals_set"));
+        LocalBroadcastManager.getInstance(mActivity).registerReceiver(listener, new IntentFilter("error"));
 
     }
 

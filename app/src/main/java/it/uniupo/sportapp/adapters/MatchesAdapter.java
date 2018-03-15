@@ -54,7 +54,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                     Log.d("MatchIndex", String.valueOf(mMatches.get(getAdapterPosition())));
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
-                    b.putString("index", String.valueOf(getAdapterPosition()));
+                    b.putString("match", String.valueOf(getAdapterPosition()));
                     b.putString("season", seasonIndex);
                     fragment.setArguments(b);
                     ((MainActivity)getmContext()).addFragment(fragment);

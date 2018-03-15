@@ -87,7 +87,7 @@ public class MatchDetailFragment extends Fragment{
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         Bundle b = new Bundle();
-        b.putString("index", matchIndex);
+        b.putString("match", matchIndex);
         b.putString("season", seasonIndex);
         MatchInfoTabFragment matchInfoTabFragment = new MatchInfoTabFragment();
         matchInfoTabFragment.setArguments(b);
