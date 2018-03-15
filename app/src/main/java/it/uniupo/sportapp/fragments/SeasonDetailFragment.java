@@ -103,8 +103,8 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("fragmentSession", "seasonDetailed");
-            editor.putString("roomKey", mRoomKey);
-            editor.putString("season", mSeasonKey);
+            editor.putString("roomKey", Singleton.getCurrentRoom().getRoomKey());
+            editor.putString("seasonIndex", mSeasonKey);
             editor.apply();
             Singleton.setCurrentFragment("seasonDetailed");
         }

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,10 +22,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentTransaction fragmentTransaction;
     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
     private boolean isAuthenticated = false;
+    private String roomKey, roomIndex, seasonIndex, matchIndex, fragmentSession;
 
 
 
@@ -257,7 +261,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
                 Singleton.setCurrentPlayer(loggedPlayer);
-                restoreSession();
+                initRoom();
                 addFragment(new ProfileFragment());
             }
 
@@ -266,6 +270,30 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    private void initRoom() {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        fragmentSession = sharedPref.getString("fragmentSession", "");
+        roomKey = sharedPref.getString("roomKey", "");
+        seasonIndex = sharedPref.getString("seasonIndex", "");
+        matchIndex = sharedPref.getString("matchIndex", "");
+        roomIndex = sharedPref.getString("roomIndex", "");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomKey);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Room room = dataSnapshot.getValue(Room.class);
+                Singleton.setCurrentRoom(room);
+                restoreSession();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
@@ -336,24 +364,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void restoreSession(){
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        String fragmentSession = sharedPref.getString("fragmentSession", "");
-        String roomKey = sharedPref.getString("roomKey", "");
-        String seasonIndex = sharedPref.getString("seasonIndex", "");
-        String matchIndex = sharedPref.getString("matchIndex", "");
-        String roomIndex = sharedPref.getString("roomIndex", "");
+        Toast.makeText(getApplicationContext(), "Taking you where you left last time...", Toast.LENGTH_SHORT).show();
         switch (fragmentSession){
-            /*case "room":
+            case "room":
                 RoomFragment fragment = new RoomFragment();
                 Bundle args = new Bundle();
                 args.putString("key", roomKey);
                 args.putString("index", roomIndex);
                 fragment.setArguments(args);
                 addFragment(fragment);
-                break;*/
+                break;
             case "seasonDetailed":
                 SeasonDetailFragment sFragment = new SeasonDetailFragment();
-                Bundle args = new Bundle();
+                args = new Bundle();
                 args.putString("key", roomKey);
                 args.putString("season", seasonIndex);
                 sFragment.setArguments(args);

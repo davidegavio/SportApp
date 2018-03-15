@@ -31,9 +31,9 @@ import it.uniupo.sportapp.Singleton;
 public class MatchDetailFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "index";
+    private static final String ARG_PARAM1 = "match";
     private static final String ARG_PARAM2 = "season";
-    private static final String ARG_PARAM3 = "room";
+    private static final String ARG_PARAM3 = "key";
     private String matchIndex, seasonIndex;
     private String roomKey;
 
@@ -51,14 +51,14 @@ public class MatchDetailFragment extends Fragment{
             roomKey = getArguments().getString(ARG_PARAM3);
             Log.d("mDet", seasonIndex );
         }
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        /*SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString("fragmentSession", "matchDetailed");
-        editor.putString("roomKey", roomKey);
+        editor.putString("roomKey", Singleton.getCurrentRoom().getRoomKey());
         editor.putString("seasonIndex", seasonIndex);
         editor.putString("matchIndex", matchIndex);
         editor.apply();
-        Singleton.setCurrentFragment("matchDetail");
+        Singleton.setCurrentFragment("matchDetail");*/
     }
 
     @Override
