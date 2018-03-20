@@ -60,8 +60,7 @@ public class PlayerListFragment extends Fragment {
         }
         allPlayers = new ArrayList<>();
         availablePlayers = new ArrayList<>();
-        FirebaseDatabase.getInstance().getReference().child(Singleton.getCurrentRoom().getRoomKey()).child("activePlayers")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -89,7 +88,7 @@ public class PlayerListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -109,6 +108,8 @@ public class PlayerListFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 getAvailablePlayers();
+                Log.d("Av", String.valueOf(availablePlayers));
+                Log.d("All", String.valueOf(allPlayers));
                 mAdapter.notifyDataSetChanged();
                 if (availablePlayers.size() == 0) {
                     rvPlayers.setVisibility(View.GONE);
@@ -141,7 +142,7 @@ public class PlayerListFragment extends Fragment {
     private void getAvailablePlayers(){
         availablePlayers.clear();
         for(Player p : allPlayers){
-            if(!Singleton.getCurrentRoom().getActivePlayers().contains(p.getPlayerKey()))
+            if(Singleton.getCurrentRoom().getActivePlayers().contains(p.getPlayerKey()))
                 availablePlayers.add(p);
         }
     }
