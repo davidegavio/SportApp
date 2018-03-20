@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
-import android.widget.Toast;
-
 import java.util.Calendar;
 
 /**
