@@ -51,6 +51,7 @@ public class EditTeamsFragment extends Fragment {
         if(getArguments()!=null){
             matchIndex = getArguments().getString("index");
             seasonIndex = getArguments().getString("season");
+            Singleton.setCurrentSeason(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)));
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -98,10 +99,9 @@ public class EditTeamsFragment extends Fragment {
                 ArrayList<Player> temp = Singleton.getCurrentMatch().getTeamA().getTeamPlayers();
                 temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
                 for(Player p : temp) {
-                    Log.d("ex", String.valueOf(Singleton.getCurrentSeason()));
-                    Log.d("ex", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()));
-                    Log.d("ex", p.getPlayerKey());
-                    Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
+                    if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())!=null)
+                        Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
+
                 }
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());

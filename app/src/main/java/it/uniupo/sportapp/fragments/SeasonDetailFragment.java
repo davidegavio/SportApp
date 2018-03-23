@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
@@ -100,9 +101,14 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 }
             });
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
+            if(currentSeason.getSeasonPlayerPresencesChart()==null)
+                currentSeason.setSeasonPlayerPresencesChart(new HashMap<String, String>());
+            if(currentSeason.getSeasonPlayerGoalsChart()==null)
+                currentSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
             Singleton.setCurrentSeason(currentSeason);
             SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("userToRestore", Singleton.getCurrentPlayer().getPlayerKey());
             editor.putString("fragmentSession", "seasonDetailed");
             editor.putString("roomKey", Singleton.getCurrentRoom().getRoomKey());
             editor.putString("seasonIndex", mSeasonKey);

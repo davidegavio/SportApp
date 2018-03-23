@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private FragmentTransaction fragmentTransaction;
     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
     private boolean isAuthenticated = false;
-    private String roomKey, roomIndex, seasonIndex, matchIndex, fragmentSession;
+    private String roomKey, roomIndex, seasonIndex, matchIndex, fragmentSession, userToRestore;
 
 
 
@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity
 
     private void initRoom() {
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        userToRestore = sharedPref.getString("userToRestore", "");
         fragmentSession = sharedPref.getString("fragmentSession", "");
         roomKey = sharedPref.getString("roomKey", "");
         seasonIndex = sharedPref.getString("seasonIndex", "");
@@ -285,7 +286,8 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Room room = dataSnapshot.getValue(Room.class);
                 Singleton.setCurrentRoom(room);
-                restoreSession();
+                if(Singleton.getCurrentPlayer().getPlayerKey().equals(userToRestore))
+                    restoreSession();
             }
 
             @Override

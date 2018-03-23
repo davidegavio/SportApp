@@ -6,7 +6,7 @@
         <menu>
             <item
                 android:id="@+id/nav_football"
-                android:icon="@drawable/ic_menu_manage"
+                android:icon="@drawable/ball_24"
                 android:title="@string/nav_football" />
         </menu>
     </item>
@@ -16,11 +16,11 @@
         <menu>
             <item
                 android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_info_black_24dp"
                 android:title="@string/nav_about" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@mipmap/ic_launcher"
+                android:icon="@drawable/logout_24"
                 android:title="@string/nav_logout"/>
         </menu>
     </item>

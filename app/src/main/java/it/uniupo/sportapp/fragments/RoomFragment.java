@@ -77,6 +77,7 @@ public class RoomFragment extends Fragment implements View.OnClickListener{
         ref.child("users").child(FirebaseAuth.getInstance().getUid()).child("playerRooms").child(String.valueOf(mParam2)).setValue(Singleton.getCurrentRoom().getRoomKey());
         SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("userToRestore", Singleton.getCurrentPlayer().getPlayerKey());
         editor.putString("fragmentSession", "room");
         editor.putString("roomKey", mParam1);
         editor.putString("roomIndex", String.valueOf(mParam2));
