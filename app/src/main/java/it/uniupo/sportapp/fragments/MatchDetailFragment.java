@@ -37,7 +37,7 @@ public class MatchDetailFragment extends Fragment{
     private static final String ARG_PARAM1 = "match";
     private static final String ARG_PARAM2 = "season";
     private static final String ARG_PARAM3 = "key";
-    private String matchIndex, seasonIndex;
+    private String matchIndex, seasonIndex, pickers;
     private String roomKey;
 
 
@@ -52,16 +52,9 @@ public class MatchDetailFragment extends Fragment{
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
             roomKey = getArguments().getString(ARG_PARAM3);
+            pickers = getArguments().getString("pickers");
             Log.d("mDet", seasonIndex );
         }
-        /*SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("fragmentSession", "matchDetailed");
-        editor.putString("roomKey", Singleton.getCurrentRoom().getRoomKey());
-        editor.putString("seasonIndex", seasonIndex);
-        editor.putString("matchIndex", matchIndex);
-        editor.apply();
-        Singleton.setCurrentFragment("matchDetail");*/
     }
 
     @Override
@@ -91,6 +84,7 @@ public class MatchDetailFragment extends Fragment{
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         Log.d("MDF", matchIndex);
         Bundle b = new Bundle();
+        b.putString("pickers", pickers);
         b.putString("match", matchIndex);
         b.putString("season", seasonIndex);
         MatchInfoTabFragment matchInfoTabFragment = new MatchInfoTabFragment();

@@ -78,13 +78,17 @@ public class TeamsAdapter extends RecyclerView.Adapter<TeamsAdapter.ViewHolder>{
                 switch (i){
                     case R.id.radio_btn_a:
                         Singleton.getCurrentMatch().getTeamA().getTeamPlayers().add(tempPlayer);
-                        if(Singleton.getCurrentMatch().getTeamB().getTeamPlayers().contains(tempPlayer))
-                            Singleton.getCurrentMatch().getTeamB().getTeamPlayers().remove(tempPlayer);
+                        for(Player p : Singleton.getCurrentMatch().getTeamB().getTeamPlayers()){
+                            if(p.getPlayerKey().equals(tempPlayer.getPlayerKey()))
+                                Singleton.getCurrentMatch().getTeamB().getTeamPlayers().remove(tempPlayer);
+                        }
                         break;
                     case R.id.radio_btn_b:
                         Singleton.getCurrentMatch().getTeamB().getTeamPlayers().add(tempPlayer);
-                        if(Singleton.getCurrentMatch().getTeamA().getTeamPlayers().contains(tempPlayer))
-                            Singleton.getCurrentMatch().getTeamA().getTeamPlayers().remove(tempPlayer);
+                        for(Player p : Singleton.getCurrentMatch().getTeamA().getTeamPlayers()){
+                            if(p.getPlayerKey().equals(tempPlayer.getPlayerKey()))
+                                Singleton.getCurrentMatch().getTeamA().getTeamPlayers().remove(tempPlayer);
+                        }
                         break;
                 }
             }

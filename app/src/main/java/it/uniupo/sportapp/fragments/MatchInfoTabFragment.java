@@ -56,7 +56,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     private LinearLayoutManager mLayoutManager;
     private TeamsMatchInfoAdapter teamAPlayers, teamBPlayers;
     private int matchResult;
-    private String roomIndex;
+    private String roomIndex, pickers;
     private Activity mActivity;
 
     @Override
@@ -82,6 +82,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             seasonIndex = getArguments().getString(ARG_PARAM2);
             roomIndex = getArguments().getString("index");
             goalsList = getArguments().getString("goal");
+            pickers = getArguments().getString("pickers");
         }
         Log.d("MITF", matchIndex);
     }
@@ -136,7 +137,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editGoalsButton.setOnClickListener(this);
 
         }
-        if(Singleton.getCurrentMatch().getMatchDay()==null && Singleton.getCurrentMatch().getStartTime()==null){
+        if(pickers.equals("true")){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You are invited to choose day and time of your match in the dialogs that will be displayed")
                     .setTitle("Warning!")

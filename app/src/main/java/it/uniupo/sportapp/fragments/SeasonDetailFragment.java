@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import it.uniupo.sportapp.MainActivity;
@@ -151,6 +152,13 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             public void onClick(View view) {
                 //createNewMatch();
                 Match newMatch = new Match();
+                int year = 0, month = 0, day = 0;
+                Calendar c = Calendar.getInstance();
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+                String date = String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);
+                newMatch.setMatchDay(date);
                 currentSeason.getSeasonMatches().add(newMatch);
                 Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(mSeasonKey)).setSeasonMatches(currentSeason.getSeasonMatches());
                 mAdapter.notifyDataSetChanged();
@@ -161,6 +169,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 Singleton.setCurrentSeason(currentSeason);
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
+                b.putString("pickers", "true");
                 b.putString("season", mSeasonKey);
                 b.putString("room", mRoomKey);
                 b.putString("match", String.valueOf(Singleton.getCurrentSeason().getSeasonMatches().size()-1));

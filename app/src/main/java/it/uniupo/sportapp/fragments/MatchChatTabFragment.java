@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -92,27 +93,13 @@ public class MatchChatTabFragment extends Fragment {
         Log.d("MCTF", matchIndex);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
-        ref.addChildEventListener(new ChildEventListener() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("datasnapshot", dataSnapshot.toString());
+                notifyUser("Last message sent in match number: "+matchIndex+" is: "+Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
                 mAdapter.notifyDataSetChanged();
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
             }
 
             @Override
@@ -136,14 +123,14 @@ public class MatchChatTabFragment extends Fragment {
 
     }
 
-    private void notifyUser(ChatMessage chatMessage) {
+    private void notifyUser(String chatMessage) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getContext())
                         .setSmallIcon(R.drawable.teams48)
                         .setDefaults(DEFAULT_VIBRATE)
                         .setPriority(DEFAULT_ALL)
                         .setContentTitle(getString(R.string.app_name))
-                        .setContentText(chatMessage.getMessageText());
+                        .setContentText(chatMessage);
         Intent resultIntent = new Intent(getContext(), MainActivity.class);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(getContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT

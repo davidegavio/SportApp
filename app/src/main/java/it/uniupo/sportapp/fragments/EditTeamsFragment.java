@@ -105,9 +105,11 @@ public class EditTeamsFragment extends Fragment {
 
                 }
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(matchIndex), Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
+                b.putString("pickers", "false");
                 b.putString("season", seasonIndex);
                 b.putString("match", matchIndex);
                 fragment.setArguments(b);

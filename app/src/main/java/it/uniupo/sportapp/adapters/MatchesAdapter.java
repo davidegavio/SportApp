@@ -10,8 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
@@ -41,11 +46,14 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView dayTv, startHourTv, endHourTv;
+        public ImageView statusBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
             dayTv = itemView.findViewById(R.id.match_day);
             startHourTv = itemView.findViewById(R.id.match_start_hour);
+            statusBar = itemView.findViewById(R.id.statusBar);
+
             //endHourTv = itemView.findViewById(R.id.match_end_hour);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -54,6 +62,7 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
                     Log.d("MatchIndex", String.valueOf(mMatches.get(getAdapterPosition())));
                     MatchDetailFragment fragment = new MatchDetailFragment();
                     Bundle b = new Bundle();
+                    b.putString("pickers", "false");
                     b.putString("match", String.valueOf(getAdapterPosition()));
                     b.putString("season", seasonIndex);
                     fragment.setArguments(b);
@@ -96,7 +105,23 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
         TextView startHourTextView = holder.startHourTv;
         startHourTextView.setText(tempMatch.getStartTime());
         TextView endHourTextView = holder.endHourTv;
+        ImageView statusBarImageView = holder.statusBar;
+        statusBarImageView.setImageResource(checkTime(tempMatch));
+    }
 
+    private int checkTime(Match tempMatch) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
+        try {
+            Date date = simpleDateFormat.parse(tempMatch.getMatchDay());
+            Date currentDate = Calendar.getInstance().getTime();
+            if(currentDate.after(date))
+                return R.drawable.greenline;
+            else
+                return R.drawable.yellowline;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override

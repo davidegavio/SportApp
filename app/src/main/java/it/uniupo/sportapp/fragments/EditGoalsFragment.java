@@ -88,6 +88,7 @@ public class EditGoalsFragment extends Fragment{
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
+                b.putString("pickers", "false");
                 b.putString("season", seasonIndex);
                 b.putString("index", matchIndex);
                 b.putString("goal",  Singleton.getGoalsString());
