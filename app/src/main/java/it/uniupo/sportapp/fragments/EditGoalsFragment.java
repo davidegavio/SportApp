@@ -14,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,10 @@ public class EditGoalsFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvGoalsA = view.findViewById(R.id.goals_a_rv);
+        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch()));
+        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch().getTeamA()));
+        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch().getTeamA().getTeamPlayers()));
+
         adapterA = new GoalsAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), matchResult, getContext());
         rvGoalsA.setAdapter(adapterA);
         rvGoalsA.setLayoutManager(new LinearLayoutManager(getContext()));

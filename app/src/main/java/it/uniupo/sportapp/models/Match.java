@@ -1,7 +1,6 @@
 package it.uniupo.sportapp.models;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by dgavio on 16/10/17.

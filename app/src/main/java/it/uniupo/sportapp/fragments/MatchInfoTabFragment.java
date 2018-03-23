@@ -83,6 +83,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             roomIndex = getArguments().getString("index");
             goalsList = getArguments().getString("goal");
         }
+        Log.d("MITF", matchIndex);
     }
 
     @Override
@@ -133,6 +134,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editTeamsButton.setOnClickListener(this);
             editResultButton.setOnClickListener(this);
             editGoalsButton.setOnClickListener(this);
+
         }
         if(Singleton.getCurrentMatch().getMatchDay()==null && Singleton.getCurrentMatch().getStartTime()==null){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -167,7 +169,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             case R.id.edit_teams_btn:
                 EditTeamsFragment editTeamsFragment = new EditTeamsFragment();
                 Bundle b = new Bundle();
-                b.putString("index", matchIndex);
+                b.putString("match", matchIndex);
                 b.putString("season", seasonIndex);
                 editTeamsFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(editTeamsFragment);
@@ -183,7 +185,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 EditGoalsFragment editGoalsFragment = new EditGoalsFragment();
                 b = new Bundle();
                 b.putInt("result", matchResult);
-                b.putString("index", matchIndex);
+                b.putString("match", matchIndex);
                 b.putString("season", seasonIndex);
                 editGoalsFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(editGoalsFragment);

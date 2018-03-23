@@ -49,7 +49,7 @@ public class EditTeamsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         allPlayers = new ArrayList<>();
         if(getArguments()!=null){
-            matchIndex = getArguments().getString("index");
+            matchIndex = getArguments().getString("match");
             seasonIndex = getArguments().getString("season");
             Singleton.setCurrentSeason(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)));
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users");
@@ -93,11 +93,12 @@ public class EditTeamsFragment extends Fragment {
         saveTeamsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("teamA", Singleton.getCurrentMatch().getTeamA().getTeamPlayers().toString());
-                Log.d("teamB", Singleton.getCurrentMatch().getTeamB().getTeamPlayers().toString());
+                Log.d("teamA", String.valueOf(Singleton.getCurrentMatch().getTeamA().getTeamPlayers().size()));
+                Log.d("teamB", String.valueOf(Singleton.getCurrentMatch().getTeamB().getTeamPlayers().size()));
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ArrayList<Player> temp = Singleton.getCurrentMatch().getTeamA().getTeamPlayers();
-                temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
+                for(Player p : Singleton.getCurrentMatch().getTeamB().getTeamPlayers())
+                    temp.add(p);
                 for(Player p : temp) {
                     if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())!=null)
                         Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
@@ -108,11 +109,10 @@ public class EditTeamsFragment extends Fragment {
                 MatchDetailFragment fragment = new MatchDetailFragment();
                 Bundle b = new Bundle();
                 b.putString("season", seasonIndex);
-                b.putString("index", matchIndex);
+                b.putString("match", matchIndex);
                 fragment.setArguments(b);
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
                 Intent localIntent = new Intent("teams_set");
-                //localIntent.putExtra("date", date);
                 localBroadcastManager.sendBroadcast(localIntent);
                 ((MainActivity)getActivity()).addFragment(fragment);
             }

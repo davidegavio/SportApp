@@ -18,6 +18,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,12 +83,13 @@ public class MatchDetailFragment extends Fragment{
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.match_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        Log.d("MDF", matchIndex);
         Bundle b = new Bundle();
         b.putString("match", matchIndex);
         b.putString("season", seasonIndex);
@@ -136,6 +140,15 @@ public class MatchDetailFragment extends Fragment{
             case R.id.action_profile:
                 ((MainActivity)getActivity()).addFragment(new ProfileFragment());
                 return true;
+            case R.id.action_delete_match:
+                SeasonDetailFragment sFragment = new SeasonDetailFragment();
+                Bundle args = new Bundle();
+                args.putString("key", roomKey);
+                args.putString("season", seasonIndex);
+                sFragment.setArguments(args);
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+                mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).removeValue();
+                ((MainActivity)getActivity()).addFragment(sFragment);
             default: return super.onOptionsItemSelected(item);
         }
     }
