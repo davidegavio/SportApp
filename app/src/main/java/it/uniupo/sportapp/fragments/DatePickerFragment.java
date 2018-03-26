@@ -8,6 +8,7 @@ import android.content.Intent;
 import java.util.Calendar;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.DatePicker;
 
 /**
@@ -25,12 +26,13 @@ public class DatePickerFragment extends DialogFragment
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
         day = c.get(Calendar.DAY_OF_MONTH);
+        Log.d("DPF", String.valueOf(month));
         // Create a new instance of DatePickerDialog and return it
         return new DatePickerDialog(getContext(), this, year, month, day);
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String date = String.valueOf(day)+"/"+String.valueOf(month)+"/"+String.valueOf(year);
+        String date = String.valueOf(day)+"/"+String.valueOf(month+1)+"/"+String.valueOf(year);
         // Do something with the date chosen by the user
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         Intent localIntent = new Intent("date_set");

@@ -97,7 +97,7 @@ public class MatchChatTabFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("datasnapshot", dataSnapshot.toString());
-                notifyUser("Last message sent in match number: "+matchIndex+" is: "+Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
+                //notifyUser("Last message sent in match number: "+matchIndex+" is: "+Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()).getMessageText());
                 mAdapter.notifyDataSetChanged();
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
             }
@@ -129,12 +129,10 @@ public class MatchChatTabFragment extends Fragment {
                         .setSmallIcon(R.drawable.teams48)
                         .setDefaults(DEFAULT_VIBRATE)
                         .setPriority(DEFAULT_ALL)
-                        .setContentTitle(getString(R.string.app_name))
+                        .setContentTitle("SportApp")
                         .setContentText(chatMessage);
         Intent resultIntent = new Intent(getContext(), MainActivity.class);
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(getContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT
-                );
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(getContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(001, mBuilder.build());

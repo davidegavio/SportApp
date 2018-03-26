@@ -104,7 +104,6 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
         dayTextView.setText(tempMatch.getMatchDay());
         TextView startHourTextView = holder.startHourTv;
         startHourTextView.setText(tempMatch.getStartTime());
-        TextView endHourTextView = holder.endHourTv;
         ImageView statusBarImageView = holder.statusBar;
         statusBarImageView.setImageResource(checkTime(tempMatch));
     }
@@ -112,8 +111,11 @@ public class MatchesAdapter extends RecyclerView.Adapter<MatchesAdapter.ViewHold
     private int checkTime(Match tempMatch) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
         try {
+
             Date date = simpleDateFormat.parse(tempMatch.getMatchDay());
             Date currentDate = Calendar.getInstance().getTime();
+            Log.d("date", String.valueOf(date));
+            Log.d("currentDate", String.valueOf(currentDate));
             if(currentDate.after(date))
                 return R.drawable.greenline;
             else
