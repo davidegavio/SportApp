@@ -1,7 +1,11 @@
 package it.uniupo.sportapp;
 
 import android.app.DialogFragment;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -13,6 +17,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -50,6 +56,9 @@ import it.uniupo.sportapp.fragments.SeasonDetailFragment;
 import it.uniupo.sportapp.fragments.TimePickerFragment;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Room;
+
+import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
+import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProfileFragment.OnFragmentInteractionListener {
@@ -178,10 +187,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == RC_SIGN_IN){
-            if(resultCode == RESULT_OK){
+            if(resultCode == RESULT_OK) {
                 initViews();
                 isAuthenticated = true;
                 writeNewUserIfNeeded();
+                BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        if (intent.getAction().equals("message")) {
+                            String message = intent.getStringExtra("message");
+                            notifyUser(message);
+                        }
+                    }
+                };
+                LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("message"));
             }
         }
     }
@@ -394,6 +413,23 @@ public class MainActivity extends AppCompatActivity
                 addFragment(matchDetailFragment);
                 break;
         }
+    }
+    private void notifyUser(String chatMessage) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.teams48)
+                        .setDefaults(DEFAULT_VIBRATE)
+                        .setPriority(DEFAULT_ALL)
+                        .setContentTitle("SportApp")
+                        .setContentText(chatMessage);
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(001, mBuilder.build());
+        Log.d("c", "C");
+
+
     }
 
 }

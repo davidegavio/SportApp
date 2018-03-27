@@ -247,6 +247,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     emptyView.setVisibility(View.INVISIBLE);
                     teamARecyclerView.setVisibility(View.VISIBLE);
                     teamBRecyclerView.setVisibility(View.VISIBLE);
+                    teamAPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
+                    teamBPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
                     teamAPlayers.notifyDataSetChanged();
                     teamBPlayers.notifyDataSetChanged();
                 }

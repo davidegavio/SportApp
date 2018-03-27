@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +51,7 @@ public class MatchChatTabFragment extends Fragment {
     private String matchIndex, seasonIndex;
     private RecyclerView rvMessages;
     private ChatAdapter mAdapter;
+    private boolean firstOpen= false;
 
 
     public MatchChatTabFragment() {
@@ -89,17 +91,44 @@ public class MatchChatTabFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         final EditText input = view.findViewById(R.id.input);
+        firstOpen=true;
         initializeFirebaseAndList(view);
         Log.d("MCTF", matchIndex);
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Log.d("datasnapshot", dataSnapshot.toString());
-                //notifyUser("Last message sent in match number: "+matchIndex+" is: "+Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()).getMessageText());
+                if(firstOpen){
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                Intent localIntent = new Intent("message");
+                localIntent.putExtra("message", Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
+                localBroadcastManager.sendBroadcast(localIntent);
+                }
                 mAdapter.notifyDataSetChanged();
                 rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("datasnapshot", dataSnapshot.toString());
+                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                Intent localIntent = new Intent("message");
+                localIntent.putExtra("message", Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
+                localBroadcastManager.sendBroadcast(localIntent);
+                mAdapter.notifyDataSetChanged();
+                rvMessages.scrollToPosition(Singleton.getCurrentMatch().getChatMessages().size()-1);
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -116,28 +145,13 @@ public class MatchChatTabFragment extends Fragment {
                 Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
                 Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
-                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
+                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
                 input.setText("");
+                mAdapter.notifyDataSetChanged();
             }
         });
-
+        firstOpen=false;
     }
 
-    private void notifyUser(String chatMessage) {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(getContext())
-                        .setSmallIcon(R.drawable.teams48)
-                        .setDefaults(DEFAULT_VIBRATE)
-                        .setPriority(DEFAULT_ALL)
-                        .setContentTitle("SportApp")
-                        .setContentText(chatMessage);
-        Intent resultIntent = new Intent(getContext(), MainActivity.class);
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(getContext(), 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(001, mBuilder.build());
-        Log.d("c", "C");
 
-
-    }
 }

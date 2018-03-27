@@ -3,6 +3,7 @@ package it.uniupo.sportapp.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,11 +26,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.TeamsAdapter;
+import it.uniupo.sportapp.models.ChatMessage;
+import it.uniupo.sportapp.models.Match;
 import it.uniupo.sportapp.models.Player;
 import it.uniupo.sportapp.models.Team;
 
@@ -107,16 +113,29 @@ public class EditTeamsFragment extends Fragment {
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(matchIndex), Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
-                MatchDetailFragment fragment = new MatchDetailFragment();
-                Bundle b = new Bundle();
-                b.putString("pickers", "false");
-                b.putString("season", seasonIndex);
-                b.putString("match", matchIndex);
-                fragment.setArguments(b);
-                LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-                Intent localIntent = new Intent("teams_set");
-                localBroadcastManager.sendBroadcast(localIntent);
-                ((MainActivity)getActivity()).addFragment(fragment);
+                String convocation = "Convocazioni:\n";
+                for(Player p : temp)
+                    convocation += p.getPlayerName()+"\n";
+                ChatMessage chatMessage = new ChatMessage(convocation.trim(), Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid());
+                Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
+                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages").child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(chatMessage).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        MatchDetailFragment fragment = new MatchDetailFragment();
+                        Bundle b = new Bundle();
+                        b.putString("pickers", "false");
+                        b.putString("season", seasonIndex);
+                        b.putString("match", matchIndex);
+                        fragment.setArguments(b);
+                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                        Intent localIntent = new Intent("teams_set");
+                        localBroadcastManager.sendBroadcast(localIntent);
+                        localIntent = new Intent("message");
+                        localIntent.putExtra("message", "Teams set! Check them out");
+                        localBroadcastManager.sendBroadcast(localIntent);
+                        ((MainActivity)getActivity()).addFragment(fragment);
+                    }
+                });
             }
         });
     }
