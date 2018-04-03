@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import it.uniupo.sportapp.R;
@@ -37,6 +38,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             goalsSpnr = itemView.findViewById(R.id.spinner_goals);
             goalsATv = itemView.findViewById(R.id.goals_a_list);
             goalsBTv = itemView.findViewById(R.id.goals_b_list);
+            if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()==null)
+                Singleton.getCurrentSeason().setSeasonPlayerGoalsChart(new HashMap<String, String>());
+            if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()==null)
+                Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
         }
     }
 
@@ -63,7 +68,10 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final String[] goals = {""};
         final Player tempPlayer = mPlayers.get(position);
-        Log.d("Goal", Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
+        if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())==null){
+            Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), "0");
+        }
+        HashMap hashMap = Singleton.getCurrentSeason().getSeasonPlayerGoalsChart();
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempPlayer.getPlayerName());
         TextView mailTextView = holder.mailTv;
@@ -72,13 +80,14 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(mContext, R.array.spinner_goals, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         goalsSpinner.setAdapter(adapter);
-        goalsSpinner.setSelection(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())));
+        //goalsSpinner.setSelection(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())));
         goalsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
                 if(goalsNumber!=0 && matchResult>0 && goalsNumber<matchResult) {
                     Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
+                    Log.d("Z", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()));
                     int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
                     n+=goalsNumber;
                     matchResult-=n;

@@ -421,7 +421,9 @@ public class MainActivity extends AppCompatActivity
                         .setDefaults(DEFAULT_VIBRATE)
                         .setPriority(DEFAULT_ALL)
                         .setContentTitle("SportApp")
-                        .setContentText(chatMessage);
+                        .setContentText(chatMessage)
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(chatMessage));
         Intent resultIntent = new Intent(this, MainActivity.class);
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);

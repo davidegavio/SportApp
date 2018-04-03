@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 import it.uniupo.sportapp.MainActivity;
@@ -35,6 +36,10 @@ public class SeasonsAdapter extends RecyclerView.Adapter<SeasonsAdapter.ViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()==null)
+                        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
+                    if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()==null)
+                        Singleton.getCurrentSeason().setSeasonPlayerGoalsChart(new HashMap<String, String>());
                     SeasonDetailFragment fragment = new SeasonDetailFragment();
                     Bundle args = new Bundle();
                     args.putString("season", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().size()-1));

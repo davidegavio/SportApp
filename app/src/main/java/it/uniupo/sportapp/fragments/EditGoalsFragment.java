@@ -20,13 +20,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.GoalsAdapter;
+import it.uniupo.sportapp.models.Player;
+import it.uniupo.sportapp.models.Season;
+import it.uniupo.sportapp.models.Team;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +44,7 @@ public class EditGoalsFragment extends Fragment{
 
 
     private Button saveGoalsButton;
-    private String matchIndex, seasonIndex, goalsList;
+    private String matchIndex, seasonIndex, roomIndex;
     private GoalsAdapter adapterA, adapterB;
     private int matchResult;
 
@@ -49,9 +57,22 @@ public class EditGoalsFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            matchIndex = getArguments().getString("index");
+            matchIndex = getArguments().getString("match");
             seasonIndex = getArguments().getString("season");
             matchResult = getArguments().getInt("result");
+            roomIndex = getArguments().getString("room");
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex);
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Singleton.setCurrentSeason(dataSnapshot.getValue(Season.class));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
     }
@@ -83,6 +104,8 @@ public class EditGoalsFragment extends Fragment{
         saveGoalsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("A", seasonIndex);
+                Log.d("A", matchIndex);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
@@ -90,7 +113,7 @@ public class EditGoalsFragment extends Fragment{
                 Bundle b = new Bundle();
                 b.putString("pickers", "false");
                 b.putString("season", seasonIndex);
-                b.putString("index", matchIndex);
+                b.putString("match", matchIndex);
                 b.putString("goal",  Singleton.getGoalsString());
                 fragment.setArguments(b);
                 LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());

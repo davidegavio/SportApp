@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
@@ -84,7 +85,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             goalsList = getArguments().getString("goal");
             pickers = getArguments().getString("pickers");
         }
-        Log.d("MITF", matchIndex);
     }
 
     @Override
@@ -97,14 +97,19 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        if(Singleton.getCurrentMatch().getTeamA()!=null&&Singleton.getCurrentMatch().getTeamB()!=null) {
+        if(Singleton.getCurrentMatch().getTeamA()!=null && Singleton.getCurrentMatch().getTeamB()!=null) {
             if (Singleton.getCurrentMatch().getTeamA().getTeamPlayers() == null && Singleton.getCurrentMatch().getTeamB().getTeamPlayers() == null){
                 Singleton.getCurrentMatch().getTeamA().setTeamPlayers(new ArrayList<Player>());
                 Singleton.getCurrentMatch().getTeamB().setTeamPlayers(new ArrayList<Player>());
+
             }
             teamAPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), getContext());
             teamBPlayers = new TeamsMatchInfoAdapter(Singleton.getCurrentMatch().getTeamB().getTeamPlayers(), getContext());
         }
+        if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()==null)
+            Singleton.getCurrentSeason().setSeasonPlayerGoalsChart(new HashMap<String, String>());
+        if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()==null)
+            Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
         teamARecyclerView = view.findViewById(R.id.team_a_rv);
         teamARecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -168,6 +173,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.edit_teams_btn:
+                Team team = Singleton.getCurrentMatch().getTeamA();
                 EditTeamsFragment editTeamsFragment = new EditTeamsFragment();
                 Bundle b = new Bundle();
                 b.putString("match", matchIndex);
@@ -185,6 +191,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             case R.id.edit_goals_btn:
                 EditGoalsFragment editGoalsFragment = new EditGoalsFragment();
                 b = new Bundle();
+                b.putString("room", roomIndex);
                 b.putInt("result", matchResult);
                 b.putString("match", matchIndex);
                 b.putString("season", seasonIndex);
@@ -243,7 +250,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     createMatch();
                 }
                 else if(intent.getAction().equals("teams_set")){
-                    Log.d("TP", Singleton.getCurrentMatch().getTeamA().getTeamPlayers().toString());
+                    Team team = Singleton.getCurrentMatch().getTeamA();
                     emptyView.setVisibility(View.INVISIBLE);
                     teamARecyclerView.setVisibility(View.VISIBLE);
                     teamBRecyclerView.setVisibility(View.VISIBLE);

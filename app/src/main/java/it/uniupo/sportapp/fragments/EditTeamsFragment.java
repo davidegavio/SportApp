@@ -53,6 +53,7 @@ public class EditTeamsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Team team = Singleton.getCurrentMatch().getTeamA();
         allPlayers = new ArrayList<>();
         if(getArguments()!=null){
             matchIndex = getArguments().getString("match");
@@ -66,6 +67,7 @@ public class EditTeamsFragment extends Fragment {
                         Player p = dataSnapshot.child(k).getValue(Player.class);
                         allPlayers.add(p);
                         mAdapter.notifyDataSetChanged();
+                        Team team = Singleton.getCurrentMatch().getTeamA();
                     }
                 }
 
@@ -99,17 +101,17 @@ public class EditTeamsFragment extends Fragment {
         saveTeamsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("teamA", String.valueOf(Singleton.getCurrentMatch().getTeamA().getTeamPlayers().size()));
-                Log.d("teamB", String.valueOf(Singleton.getCurrentMatch().getTeamB().getTeamPlayers().size()));
+                Team team = Singleton.getCurrentMatch().getTeamA();
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                ArrayList<Player> temp = Singleton.getCurrentMatch().getTeamA().getTeamPlayers();
-                for(Player p : Singleton.getCurrentMatch().getTeamB().getTeamPlayers())
-                    temp.add(p);
+                ArrayList<Player> temp = new ArrayList<>();
+                temp.addAll(Singleton.getCurrentMatch().getTeamA().getTeamPlayers());
+                temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
                 for(Player p : temp) {
                     if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())!=null)
                         Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
 
                 }
+                team = Singleton.getCurrentMatch().getTeamA();
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(matchIndex), Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
