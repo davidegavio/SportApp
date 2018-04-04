@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -191,6 +192,8 @@ public class MainActivity extends AppCompatActivity
                 initViews();
                 isAuthenticated = true;
                 writeNewUserIfNeeded();
+
+
                 BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
@@ -203,6 +206,36 @@ public class MainActivity extends AppCompatActivity
                 LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("message"));
             }
         }
+    }
+
+    private void registerNotification() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(loggedPlayer.getPlayerKey()).child("messageToNotify");
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                notifyUser(dataSnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -280,6 +313,7 @@ public class MainActivity extends AppCompatActivity
                     Log.d(TAG, "Name: "+loggedPlayer.getPlayerName()+" "+"Description: "+loggedPlayer.getPlayerDescription()+" "+"Email: "+loggedPlayer.getPlayerMail());
                 }
                 Singleton.setCurrentPlayer(loggedPlayer);
+                registerNotification();
                 initRoom();
                 addFragment(new ProfileFragment());
             }

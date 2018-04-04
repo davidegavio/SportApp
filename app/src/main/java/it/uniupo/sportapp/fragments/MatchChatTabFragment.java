@@ -34,6 +34,7 @@ import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.ChatAdapter;
 import it.uniupo.sportapp.models.ChatMessage;
+import it.uniupo.sportapp.models.Player;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static android.support.v4.app.NotificationCompat.DEFAULT_ALL;
@@ -48,7 +49,7 @@ public class MatchChatTabFragment extends Fragment {
     private static final String ARG_PARAM1 = "match";
     private static final String ARG_PARAM2 = "season";
 
-    private String matchIndex, seasonIndex;
+    private String matchIndex, seasonIndex, roomKey;
     private RecyclerView rvMessages;
     private ChatAdapter mAdapter;
     private boolean firstOpen= false;
@@ -64,6 +65,7 @@ public class MatchChatTabFragment extends Fragment {
         if (getArguments() != null) {
             matchIndex = getArguments().getString(ARG_PARAM1);
             seasonIndex = getArguments().getString(ARG_PARAM2);
+            roomKey = getArguments().getString("room");
         }
     }
 
@@ -141,11 +143,20 @@ public class MatchChatTabFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ChatMessage chatMessage = new ChatMessage(input.getText().toString(),
+                        Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid());
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
-                Singleton.getCurrentMatch().getChatMessages().add(new ChatMessage(input.getText().toString(),
-                        Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid()));
+                Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
                 Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
+                for(Player player : Singleton.getCurrentMatch().getTeamA().getTeamPlayers()){
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(player.getPlayerKey()).child("messageToNotify");
+                    databaseReference.push().setValue(chatMessage.getMessageText());
+                }
+                for(Player player : Singleton.getCurrentMatch().getTeamB().getTeamPlayers()){
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(player.getPlayerKey()).child("messageToNotify");
+                    databaseReference.push().setValue(chatMessage.getMessageText());
+                }
                 input.setText("");
                 mAdapter.notifyDataSetChanged();
             }

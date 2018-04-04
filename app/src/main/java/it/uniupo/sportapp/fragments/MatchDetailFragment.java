@@ -87,6 +87,7 @@ public class MatchDetailFragment extends Fragment{
         b.putString("pickers", pickers);
         b.putString("match", matchIndex);
         b.putString("season", seasonIndex);
+        b.putString("room", roomKey);
         MatchInfoTabFragment matchInfoTabFragment = new MatchInfoTabFragment();
         matchInfoTabFragment.setArguments(b);
         MatchChatTabFragment matchChatTabFragment = new MatchChatTabFragment();
