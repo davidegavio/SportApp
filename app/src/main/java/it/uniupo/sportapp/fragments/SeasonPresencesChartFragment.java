@@ -2,6 +2,7 @@ package it.uniupo.sportapp.fragments;
 
 
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -47,6 +48,7 @@ public class SeasonPresencesChartFragment extends Fragment {
     private String seasonIndex, roomIndex;
     private PresencesChartAdapter presencesChartAdapter;
     private Season season;
+    private ArrayList<String> presencesArrayList;
 
 
     public SeasonPresencesChartFragment() {
@@ -73,13 +75,18 @@ public class SeasonPresencesChartFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        createChart(view);
-        Log.d("Chart", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().values()));
-
-
+        presencesArrayList = new ArrayList<>();
+        presencesChartAdapter = new PresencesChartAdapter(presencesArrayList, getContext());
+        RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
+        rvPlayers.setAdapter(presencesChartAdapter);
+        rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvPlayers.setItemAnimator(new DefaultItemAnimator());
+        rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        createChart();
+        presencesChartAdapter.notifyDataSetChanged();
     }
 
-    private void createChart(final View v) {
+    private void createChart() {
         Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).child("seasonMatches");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -92,17 +99,22 @@ public class SeasonPresencesChartFragment extends Fragment {
                             Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), "1");
                         else{
                             int n= Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey()));
-                            n+=1;
-                            Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(player.getPlayerKey(), String.valueOf(n));
+                            n=n+1;
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), String.valueOf(n));
                             }
                         }
+                    for(Player player : match.getTeamB().getTeamPlayers()){
+                        if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey())==null)
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), "1");
+                        else{
+                            int n= Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey()));
+                            n=n+1;
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), String.valueOf(n));
+                        }
                     }
-                RecyclerView rvPlayers = v.findViewById(R.id.players_rv);
-                presencesChartAdapter = new PresencesChartAdapter(getArrayListFromMap(), getContext());
-                rvPlayers.setAdapter(presencesChartAdapter);
-                rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
-                rvPlayers.setItemAnimator(new DefaultItemAnimator());
-                rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+                    }
+                getArrayListFromMap();
+                presencesChartAdapter.notifyDataSetChanged();
                 }
 
             @Override
@@ -110,10 +122,10 @@ public class SeasonPresencesChartFragment extends Fragment {
 
             }
         });
-
+        presencesChartAdapter.notifyDataSetChanged();
     }
 
-    private ArrayList<String> getArrayListFromMap() {
+    private void getArrayListFromMap() {
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().entrySet()) {
@@ -123,13 +135,12 @@ public class SeasonPresencesChartFragment extends Fragment {
         Collections.reverse(integerArrayList);
         for(int i : integerArrayList) {
             for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().entrySet()) {
-                if(i==(Integer.parseInt(entry.getValue()))&&!stringArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
-                    stringArrayList.add(entry.getKey() + "-" + entry.getValue());
+                if(i==(Integer.parseInt(entry.getValue()))&&!presencesArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
+                    presencesArrayList.add(entry.getKey() + "-" + entry.getValue());
                 }
             }
         }
-        Log.d("Presences", String.valueOf(stringArrayList));
-        return stringArrayList;
+        presencesChartAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -137,7 +148,5 @@ public class SeasonPresencesChartFragment extends Fragment {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
-
-
 
 }

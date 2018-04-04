@@ -1,6 +1,7 @@
 package it.uniupo.sportapp.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by dgavio on 16/10/17.
@@ -14,6 +15,7 @@ public class Match {
     private String endTime;
     private ArrayList<ChatMessage> chatMessages;
     private String matchResult;
+    private HashMap<String, String> playerGoals;
 
     public Match() {
     }
@@ -82,4 +84,11 @@ public class Match {
         this.matchResult = matchResult;
     }
 
+    public HashMap<String, String> getPlayerGoals() {
+        return playerGoals;
+    }
+
+    public void setPlayerGoals(HashMap<String, String> playerGoals) {
+        this.playerGoals = playerGoals;
+    }
 }

@@ -78,8 +78,6 @@ public class SeasonAverageChartFragment extends Fragment {
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
             float n = Float.parseFloat(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(entry.getKey()).replace(",","."));
             float l = Float.parseFloat(entry.getValue().replace(",","."));
-            Log.d("n", String.valueOf(n));
-            Log.d("l", String.valueOf(l));
             if(l!=0 && n!=0) {
                 Log.d("l/n", String.valueOf(l/n));
                 stringArrayList.add(entry.getKey() + "-" + String.format("%.2f", (l/n)));

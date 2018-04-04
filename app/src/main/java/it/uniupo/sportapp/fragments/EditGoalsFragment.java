@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
@@ -61,6 +62,7 @@ public class EditGoalsFragment extends Fragment{
             seasonIndex = getArguments().getString("season");
             matchResult = getArguments().getInt("result");
             roomIndex = getArguments().getString("room");
+            Singleton.getCurrentMatch().setPlayerGoals(new HashMap<String, String>());
             DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex);
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -87,10 +89,6 @@ public class EditGoalsFragment extends Fragment{
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvGoalsA = view.findViewById(R.id.goals_a_rv);
-        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch()));
-        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch().getTeamA()));
-        Log.d("EGF", String.valueOf(Singleton.getCurrentMatch().getTeamA().getTeamPlayers()));
-
         adapterA = new GoalsAdapter(Singleton.getCurrentMatch().getTeamA().getTeamPlayers(), matchResult, getContext());
         rvGoalsA.setAdapter(adapterA);
         rvGoalsA.setLayoutManager(new LinearLayoutManager(getContext()));

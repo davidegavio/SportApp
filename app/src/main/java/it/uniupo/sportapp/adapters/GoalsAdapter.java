@@ -12,6 +12,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,9 +71,9 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final String[] goals = {""};
         final Player tempPlayer = mPlayers.get(position);
-        if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())==null){
-            Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), "0");
-        }
+        //if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey())==null){
+            //Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), "0");
+        //}
         HashMap hashMap = Singleton.getCurrentSeason().getSeasonPlayerGoalsChart();
         TextView nameTextView = holder.nameTv;
         nameTextView.setText(tempPlayer.getPlayerName());
@@ -87,11 +90,11 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
                 if(goalsNumber!=0 && matchResult>0 && goalsNumber<matchResult) {
                     Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
-                    Log.d("Z", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()));
-                    int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
-                    n+=goalsNumber;
-                    matchResult-=n;
-                    Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
+                    //int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
+                    //n+=goalsNumber;
+                    //matchResult-=n;
+                    Singleton.getCurrentMatch().getPlayerGoals().put(tempPlayer.getPlayerKey(), String.valueOf(goalsNumber));
+                    //Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
                 }
                 else{
                     Toast.makeText(mContext, "There's an error in your goals count", Toast.LENGTH_LONG).show();

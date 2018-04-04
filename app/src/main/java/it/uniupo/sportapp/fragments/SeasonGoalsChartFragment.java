@@ -15,13 +15,22 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.GoalsChartAdapter;
+import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,9 +43,10 @@ public class SeasonGoalsChartFragment extends Fragment {
     private static final String ARG_PARAM2 = "type";
 
     // TODO: Rename and change types of parameters
-    private String seasonIndex;
+    private String seasonIndex, roomIndex;
     private String chartType;
     private GoalsChartAdapter goalsChartAdapter;
+    private ArrayList<String> goalArrayList;
 
 
     public SeasonGoalsChartFragment() {
@@ -49,6 +59,7 @@ public class SeasonGoalsChartFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             seasonIndex = getArguments().getString(ARG_PARAM1);
+            roomIndex = getArguments().getString("key");
             chartType = getArguments().getString(ARG_PARAM2);
         }
         Singleton.setCurrentFragment("chart");
@@ -64,15 +75,44 @@ public class SeasonGoalsChartFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        goalArrayList = new ArrayList<>();
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        goalsChartAdapter = new GoalsChartAdapter(getArrayListFromMap(), getContext());
+        goalsChartAdapter = new GoalsChartAdapter(goalArrayList, getContext());
         rvPlayers.setAdapter(goalsChartAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
         rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        createChart();
     }
 
-    private ArrayList<String> getArrayListFromMap() {
+    private void createChart() {
+        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).child("seasonMatches");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                    Match match = dataSnapshot1.getValue(Match.class);
+                    for(Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()){
+                        int n = 0;
+                        n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                        n = Integer.parseInt(n + entry.getValue());
+                        Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                    }
+                }
+                getArrayListFromMap();
+                goalsChartAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        goalsChartAdapter.notifyDataSetChanged();
+    }
+
+    private void getArrayListFromMap() {
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
@@ -82,13 +122,12 @@ public class SeasonGoalsChartFragment extends Fragment {
         Collections.reverse(integerArrayList);
         for(int i : integerArrayList) {
             for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
-                if(i==(Integer.parseInt(entry.getValue()))&&!stringArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
-                    stringArrayList.add(entry.getKey() + "-" + entry.getValue());
+                if(i==(Integer.parseInt(entry.getValue()))&&!goalArrayList.contains(entry.getKey() + "-" + entry.getValue())) {
+                    goalArrayList.add(entry.getKey() + "-" + entry.getValue());
                 }
             }
         }
-        Log.d("Goals", String.valueOf(stringArrayList));
-        return stringArrayList;
+        Log.d("Goals", String.valueOf(goalArrayList));
     }
 
     @Override

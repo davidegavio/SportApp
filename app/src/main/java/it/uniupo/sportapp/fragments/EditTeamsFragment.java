@@ -106,15 +106,9 @@ public class EditTeamsFragment extends Fragment {
                 ArrayList<Player> temp = new ArrayList<>();
                 temp.addAll(Singleton.getCurrentMatch().getTeamA().getTeamPlayers());
                 temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
-                for(Player p : temp) {
-                    if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())!=null)
-                        Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(p.getPlayerKey(), String.valueOf(Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(p.getPlayerKey())) + 1));
-
-                }
-                team = Singleton.getCurrentMatch().getTeamA();
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(matchIndex), Singleton.getCurrentMatch());
-                ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
+                //ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 String convocation = "Convocazioni:\n";
                 for(Player p : temp)
                     convocation += p.getPlayerName()+"\n";

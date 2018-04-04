@@ -15,7 +15,7 @@ public class Player {
     private String playerMail;
     private boolean isGoalkeeper;
     private String playerImageUid;
-    private ArrayList<String> playerRooms;
+    private ArrayList<String> playerRooms, messagesToNotify;
     @Exclude
     private String playerKey;
 
@@ -25,6 +25,7 @@ public class Player {
         this.playerMail = playerMail;
         this.isGoalkeeper = isGoalkeeper;
         this.playerRooms = playerRooms;
+        this.messagesToNotify = new ArrayList<>();
     }
 
     public Player(String playerName, String playerDescription, String playerMail, boolean isGoalkeeper) {
@@ -33,6 +34,7 @@ public class Player {
         this.playerMail = playerMail;
         this.isGoalkeeper = isGoalkeeper;
         this.playerRooms = new ArrayList<>();
+        this.messagesToNotify = new ArrayList<>();
     }
 
     public Player() {
@@ -44,6 +46,14 @@ public class Player {
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
+    }
+
+    public ArrayList<String> getMessagesToNotify() {
+        return messagesToNotify;
+    }
+
+    public void setMessagesToNotify(ArrayList<String> messagesToNotify) {
+        this.messagesToNotify = messagesToNotify;
     }
 
     public String getPlayerDescription() {

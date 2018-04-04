@@ -142,6 +142,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editGoalsButton.setOnClickListener(this);
 
         }
+        goalsTextView.setText(Singleton.getGoalsString());
         if(pickers.equals("true")){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("You are invited to choose day and time of your match in the dialogs that will be displayed")
@@ -173,7 +174,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.edit_teams_btn:
-                Team team = Singleton.getCurrentMatch().getTeamA();
                 EditTeamsFragment editTeamsFragment = new EditTeamsFragment();
                 Bundle b = new Bundle();
                 b.putString("match", matchIndex);

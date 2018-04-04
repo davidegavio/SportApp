@@ -102,10 +102,6 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 }
             });
             mAdapter = new MatchesAdapter(currentSeason.getSeasonMatches(), mSeasonKey, getContext());
-            if(currentSeason.getSeasonPlayerPresencesChart()==null)
-                currentSeason.setSeasonPlayerPresencesChart(new HashMap<String, String>());
-            if(currentSeason.getSeasonPlayerGoalsChart()==null)
-                currentSeason.setSeasonPlayerGoalsChart(new HashMap<String, String>());
             Singleton.setCurrentSeason(currentSeason);
             SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
@@ -197,11 +193,13 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
                 SeasonGoalsChartFragment seasonGoalsChartFragment = new SeasonGoalsChartFragment();
                 Bundle b = new Bundle();
                 b.putString("season", mSeasonKey);
+                b.putString("key", mRoomKey);
                 b.putString("type", "goals");
                 seasonGoalsChartFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(seasonGoalsChartFragment);
                 return true;
             case R.id.action_presences_chart:
+                Log.d("te", String.valueOf(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().values().size()));
                 SeasonPresencesChartFragment presencesChartFragment = new SeasonPresencesChartFragment();
                 b = new Bundle();
                 b.putString("season", mSeasonKey);
