@@ -148,7 +148,7 @@ public class MatchChatTabFragment extends Fragment {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
                 Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
                 Log.d("m", String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()));
-                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1).getMessageText());
+                ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
                 for(Player player : Singleton.getCurrentMatch().getTeamA().getTeamPlayers()){
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(player.getPlayerKey()).child("messageToNotify");
                     databaseReference.push().setValue(chatMessage.getMessageText());
