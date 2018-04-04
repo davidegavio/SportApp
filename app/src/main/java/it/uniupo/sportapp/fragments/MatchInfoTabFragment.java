@@ -261,7 +261,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 }
                 else if(intent.getAction().equals("goals_set")){
                     Log.d("int", intent.getStringExtra("goal"));
-                    goalsTextView.setText(intent.getStringExtra("goal"));
+
+                    goalsTextView.setText(Singleton.getGoalsString());
                     Log.d("tv", goalsTextView.getText().toString());
                 }
                 else if(intent.getAction().equals("error")){

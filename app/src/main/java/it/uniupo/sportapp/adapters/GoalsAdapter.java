@@ -88,7 +88,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
-                if(goalsNumber!=0 && matchResult>0 && goalsNumber<matchResult) {
+                if(goalsNumber!=0 && matchResult>0 && goalsNumber<=matchResult) {
                     Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
                     //int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
                     //n+=goalsNumber;

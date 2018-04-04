@@ -72,6 +72,7 @@ public class MatchDetailFragment extends Fragment{
         setupViewPager(viewPager);
         TabLayout tabLayout = view.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        Singleton.setCurrentFragment("matchDetail");
     }
 
     @Override

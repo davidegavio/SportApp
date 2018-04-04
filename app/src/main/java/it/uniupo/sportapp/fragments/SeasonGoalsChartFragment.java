@@ -83,6 +83,7 @@ public class SeasonGoalsChartFragment extends Fragment {
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
         rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
         createChart();
+        goalsChartAdapter.notifyDataSetChanged();
     }
 
     private void createChart() {
@@ -95,8 +96,8 @@ public class SeasonGoalsChartFragment extends Fragment {
                     Match match = dataSnapshot1.getValue(Match.class);
                     for(Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()){
                         int n = 0;
-                        n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
-                        n = Integer.parseInt(n + entry.getValue());
+                        //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                        n = n + Integer.parseInt(entry.getValue());
                         Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
                     }
                 }
@@ -128,6 +129,7 @@ public class SeasonGoalsChartFragment extends Fragment {
             }
         }
         Log.d("Goals", String.valueOf(goalArrayList));
+        goalsChartAdapter.notifyDataSetChanged();
     }
 
     @Override

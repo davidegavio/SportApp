@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     DatabaseReference userRef = FirebaseDatabase.getInstance().getReference(USERS_TABLE);
     private boolean isAuthenticated = false;
     private String roomKey, roomIndex, seasonIndex, matchIndex, fragmentSession, userToRestore;
+    private boolean firstOpen = true;
 
 
 
@@ -192,18 +193,6 @@ public class MainActivity extends AppCompatActivity
                 initViews();
                 isAuthenticated = true;
                 writeNewUserIfNeeded();
-
-
-                BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        if (intent.getAction().equals("message")) {
-                            String message = intent.getStringExtra("message");
-                            notifyUser(message);
-                        }
-                    }
-                };
-                LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("message"));
             }
         }
     }
@@ -213,7 +202,9 @@ public class MainActivity extends AppCompatActivity
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                notifyUser(dataSnapshot.getValue(String.class));
+                if(!firstOpen)
+                    notifyUser(dataSnapshot.getValue(String.class));
+
             }
 
             @Override
@@ -358,6 +349,7 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.your_placeholder, fragment);
         fragmentTransaction.commit();
+        firstOpen = false;
     }
 
     private void initViews(){

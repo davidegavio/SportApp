@@ -102,8 +102,6 @@ public class EditGoalsFragment extends Fragment{
         saveGoalsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("A", seasonIndex);
-                Log.d("A", matchIndex);
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
