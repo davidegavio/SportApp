@@ -41,6 +41,13 @@ public class DatePickerFragment extends DialogFragment
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getFragmentManager(),"timePicker");
+    }
+
+    @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());

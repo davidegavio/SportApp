@@ -2,6 +2,8 @@ package it.uniupo.sportapp.fragments;
 
 
 import android.app.Activity;
+
+import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -150,7 +152,8 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            ((MainActivity)getActivity()).showDatePickerDialog();
+                            DialogFragment newFragment = new DatePickerFragment();
+                            newFragment.show(getActivity().getFragmentManager(), "datePicker");
                             dialogInterface.dismiss();
                         }
                     });
@@ -241,7 +244,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     Log.d("date", intent.getStringExtra("date"));
                     matchDate = intent.getStringExtra("date");
                     matchDayTextView.setText(matchDate);
-                    ((MainActivity)getActivity()).showTimePickerDialog();
                 }
                 else if(intent.getAction().equals("time_set")){
                     Log.d("time", intent.getStringExtra("time"));
@@ -250,7 +252,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                     createMatch();
                 }
                 else if(intent.getAction().equals("teams_set")){
-                    Team team = Singleton.getCurrentMatch().getTeamA();
                     emptyView.setVisibility(View.INVISIBLE);
                     teamARecyclerView.setVisibility(View.VISIBLE);
                     teamBRecyclerView.setVisibility(View.VISIBLE);

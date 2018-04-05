@@ -46,7 +46,7 @@ public class TimePickerFragment extends DialogFragment
         super.onCancel(dialog);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         Intent localIntent = new Intent("error");
-        localBroadcastManager.sendBroadcast(localIntent);
+        //localBroadcastManager.sendBroadcast(localIntent);
     }
 
 }
