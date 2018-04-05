@@ -211,6 +211,7 @@ public class SeasonDetailFragment extends android.support.v4.app.Fragment {
             case R.id.action_average_chart:
                 SeasonAverageChartFragment seasonAverageChartFragment = new SeasonAverageChartFragment();
                 b = new Bundle();
+                b.putString("room", mRoomKey);
                 b.putString("season", mSeasonKey);
                 b.putString("key", mRoomKey);
                 b.putString("type", "average");

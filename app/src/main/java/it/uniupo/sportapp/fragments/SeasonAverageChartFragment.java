@@ -16,15 +16,25 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.AverageChartAdapter;
+import it.uniupo.sportapp.adapters.GoalsChartAdapter;
+import it.uniupo.sportapp.models.Match;
+import it.uniupo.sportapp.models.Player;
 
 public class SeasonAverageChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -34,8 +44,10 @@ public class SeasonAverageChartFragment extends Fragment {
     AverageChartAdapter averageChartAdapter;
 
     // TODO: Rename and change types of parameters
-    private String seasonIndex;
+    private String seasonIndex, roomKey;
     private String chartType;
+    private GoalsChartAdapter goalsChartAdapter;
+    private ArrayList<String> averageArrayList;
 
     public SeasonAverageChartFragment() {
         // Required empty public constructor
@@ -48,6 +60,7 @@ public class SeasonAverageChartFragment extends Fragment {
         if (getArguments() != null) {
             seasonIndex = getArguments().getString(ARG_PARAM1);
             chartType = getArguments().getString(ARG_PARAM2);
+            roomKey = getArguments().getString("room");
         }
         Singleton.setCurrentFragment("chart");
     }
@@ -63,14 +76,82 @@ public class SeasonAverageChartFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         RecyclerView rvPlayers = view.findViewById(R.id.players_rv);
-        averageChartAdapter = new AverageChartAdapter(getArrayListFromMap(), getContext());
+        averageArrayList = new ArrayList<>();
+        averageChartAdapter = new AverageChartAdapter(averageArrayList, getContext());
         rvPlayers.setAdapter(averageChartAdapter);
         rvPlayers.setLayoutManager(new LinearLayoutManager(getContext()));
         rvPlayers.setItemAnimator(new DefaultItemAnimator());
         rvPlayers.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        createGoalsChart();
     }
 
-    private ArrayList<String> getArrayListFromMap() {
+    private void createGoalsChart() {
+        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomKey).child("existingSeasons").child(seasonIndex).child("seasonMatches");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                    Match match = dataSnapshot1.getValue(Match.class);
+                    if(match.getPlayerGoals()!=null) {
+                        for (Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()) {
+                            int n = 0;
+                            //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            n = n + Integer.parseInt(entry.getValue());
+                            Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                        }
+                        createPresencesChart();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void createPresencesChart() {
+        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomKey).child("existingSeasons").child(seasonIndex).child("seasonMatches");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                    Match match = dataSnapshot1.getValue(Match.class);
+                    for(Player player : match.getTeamA().getTeamPlayers()){
+                        if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey())==null)
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), "1");
+                        else{
+                            int n= Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey()));
+                            n=n+1;
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), String.valueOf(n));
+                        }
+                    }
+                    for(Player player : match.getTeamB().getTeamPlayers()){
+                        if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey())==null)
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), "1");
+                        else{
+                            int n= Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(player.getPlayerKey()));
+                            n=n+1;
+                            Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().put(player.getPlayerKey(), String.valueOf(n));
+                        }
+                    }
+                }
+                getArrayListFromMap();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void getArrayListFromMap() {
         //goal/partite
         ArrayList<String> stringArrayList = new ArrayList<>();
         ArrayList<Integer> integerArrayList = new ArrayList<>();
@@ -80,13 +161,13 @@ public class SeasonAverageChartFragment extends Fragment {
             float l = Float.parseFloat(entry.getValue().replace(",","."));
             if(l!=0 && n!=0) {
                 Log.d("l/n", String.valueOf(l/n));
-                stringArrayList.add(entry.getKey() + "-" + String.format("%.2f", (l/n)));
+                averageArrayList.add(entry.getKey() + "-" + String.format("%.2f", (l/n)));
             }
             else{
-                stringArrayList.add(entry.getKey() + "-0");
+                averageArrayList.add(entry.getKey() + "-0");
             }
         }
-        Collections.sort(stringArrayList, new Comparator<String>() {
+        Collections.sort(averageArrayList, new Comparator<String>() {
             @Override
             public int compare(String s, String t1) {
                 if (Float.parseFloat(s.split("-")[1].replace(",", "."))< Float.parseFloat(t1.split("-")[1].replace(",", ".")))
@@ -96,9 +177,9 @@ public class SeasonAverageChartFragment extends Fragment {
                 return 0;
             }
         });
-        Collections.reverse(stringArrayList);
-        Log.d("Average", String.valueOf(stringArrayList));
-        return stringArrayList;
+        Collections.reverse(averageArrayList);
+        Log.d("Average", String.valueOf(averageArrayList));
+        averageChartAdapter.notifyDataSetChanged();
     }
 
     @Override

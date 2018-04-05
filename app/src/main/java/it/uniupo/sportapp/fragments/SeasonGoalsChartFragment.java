@@ -44,7 +44,6 @@ public class SeasonGoalsChartFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String seasonIndex, roomIndex;
-    private String chartType;
     private GoalsChartAdapter goalsChartAdapter;
     private ArrayList<String> goalArrayList;
 
@@ -60,7 +59,6 @@ public class SeasonGoalsChartFragment extends Fragment {
         if (getArguments() != null) {
             seasonIndex = getArguments().getString(ARG_PARAM1);
             roomIndex = getArguments().getString("key");
-            chartType = getArguments().getString(ARG_PARAM2);
         }
         Singleton.setCurrentFragment("chart");
     }
@@ -94,11 +92,13 @@ public class SeasonGoalsChartFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
                     Match match = dataSnapshot1.getValue(Match.class);
-                    for(Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()){
-                        int n = 0;
-                        //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
-                        n = n + Integer.parseInt(entry.getValue());
-                        Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                    if(match.getPlayerGoals()!=null) {
+                        for (Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()) {
+                            int n = 0;
+                            //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            n = n + Integer.parseInt(entry.getValue());
+                            Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                        }
                     }
                 }
                 getArrayListFromMap();
