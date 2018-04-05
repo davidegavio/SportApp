@@ -163,7 +163,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener{
                                 RoomFragment fragment = new RoomFragment();
                                 Bundle args = new Bundle();
                                 args.putString("key", newRoom.getRoomKey());
-                                args.putInt("index", n);
+                                //args.putInt("index", n);
                                 fragment.setArguments(args);
                                 Singleton.setCurrentRoom(newRoom);
                                 ((MainActivity)getActivity()).addFragment(fragment);
