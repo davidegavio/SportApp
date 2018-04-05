@@ -40,13 +40,10 @@ public class SeasonAverageChartFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "season";
-    private static final String ARG_PARAM2 = "type";
     AverageChartAdapter averageChartAdapter;
 
     // TODO: Rename and change types of parameters
     private String seasonIndex, roomKey;
-    private String chartType;
-    private GoalsChartAdapter goalsChartAdapter;
     private ArrayList<String> averageArrayList;
 
     public SeasonAverageChartFragment() {
@@ -59,7 +56,6 @@ public class SeasonAverageChartFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             seasonIndex = getArguments().getString(ARG_PARAM1);
-            chartType = getArguments().getString(ARG_PARAM2);
             roomKey = getArguments().getString("room");
         }
         Singleton.setCurrentFragment("chart");
@@ -153,14 +149,10 @@ public class SeasonAverageChartFragment extends Fragment {
 
     private void getArrayListFromMap() {
         //goal/partite
-        ArrayList<String> stringArrayList = new ArrayList<>();
-        ArrayList<Integer> integerArrayList = new ArrayList<>();
-
         for(Map.Entry<String, String> entry : Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().entrySet()) {
             float n = Float.parseFloat(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart().get(entry.getKey()).replace(",","."));
             float l = Float.parseFloat(entry.getValue().replace(",","."));
             if(l!=0 && n!=0) {
-                Log.d("l/n", String.valueOf(l/n));
                 averageArrayList.add(entry.getKey() + "-" + String.format("%.2f", (l/n)));
             }
             else{
@@ -178,7 +170,6 @@ public class SeasonAverageChartFragment extends Fragment {
             }
         });
         Collections.reverse(averageArrayList);
-        Log.d("Average", String.valueOf(averageArrayList));
         averageChartAdapter.notifyDataSetChanged();
     }
 
