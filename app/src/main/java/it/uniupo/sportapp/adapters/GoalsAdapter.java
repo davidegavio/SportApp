@@ -41,6 +41,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             goalsSpnr = itemView.findViewById(R.id.spinner_goals);
             goalsATv = itemView.findViewById(R.id.goals_a_list);
             goalsBTv = itemView.findViewById(R.id.goals_b_list);
+            if(Singleton.getCurrentMatch().getPlayerGoals()==null)
+                Singleton.getCurrentMatch().setPlayerGoals(new HashMap<String, String>());
             if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()==null)
                 Singleton.getCurrentSeason().setSeasonPlayerGoalsChart(new HashMap<String, String>());
             if(Singleton.getCurrentSeason().getSeasonPlayerPresencesChart()==null)
@@ -88,13 +90,16 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int goalsNumber = Integer.parseInt(adapterView.getItemAtPosition(i).toString());
-                if(goalsNumber!=0 && matchResult>0 && goalsNumber<=matchResult) {
-                    Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
+                if(matchResult>=0 && goalsNumber<=matchResult) {
+                    if(goalsNumber>0)
+                        Singleton.setGoalsString(Singleton.getGoalsString().concat(tempPlayer.getPlayerName() + "(" + goalsNumber + ")"));
                     //int n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(tempPlayer.getPlayerKey()));
                     //n+=goalsNumber;
                     //matchResult-=n;
-                    Singleton.getCurrentMatch().getPlayerGoals().put(tempPlayer.getPlayerKey(), String.valueOf(goalsNumber));
-                    //Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
+                    if(goalsNumber>0)
+                        Singleton.getCurrentMatch().getPlayerGoals().put(tempPlayer.getPlayerKey(), String.valueOf(goalsNumber));
+                    else
+                        Singleton.getCurrentMatch().getPlayerGoals().put(tempPlayer.getPlayerKey(), "0");                    //Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(tempPlayer.getPlayerKey(), String.valueOf(n));
                 }
                 else{
                     Toast.makeText(mContext, "There's an error in your goals count", Toast.LENGTH_LONG).show();

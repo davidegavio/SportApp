@@ -143,16 +143,16 @@ public class MatchChatTabFragment extends Fragment {
                 Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
                 for(Player player : Singleton.getCurrentMatch().getTeamA().getTeamPlayers()){
-                    if(!Singleton.getCurrentPlayer().getPlayerKey().equals(chatMessage.getMessageUserKey())) {
+                    //if(!Singleton.getCurrentPlayer().getPlayerKey().equals(chatMessage.getMessageUserKey())) {
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(player.getPlayerKey()).child("messageToNotify");
                         databaseReference.push().setValue(chatMessage.getMessageText());
-                    }
+                    //}
                 }
                 for(Player player : Singleton.getCurrentMatch().getTeamB().getTeamPlayers()){
-                    if(!Singleton.getCurrentPlayer().getPlayerKey().equals(chatMessage.getMessageUserKey())) {
+                    //if(!Singleton.getCurrentPlayer().getPlayerKey().equals(chatMessage.getMessageUserKey())) {
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(player.getPlayerKey()).child("messageToNotify");
                         databaseReference.push().setValue(chatMessage.getMessageText());
-                    }
+                    //}
                 }
                 input.setText("");
                 mAdapter.notifyDataSetChanged();

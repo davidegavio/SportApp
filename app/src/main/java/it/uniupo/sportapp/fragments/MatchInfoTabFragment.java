@@ -223,6 +223,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                         homeResultTextView.setText(homeEt.getText());
                         awayResultTextView.setText(awayEt.getText());
                         Singleton.getCurrentMatch().setMatchResult(homeResultTextView.getText()+"-"+awayResultTextView.getText());
+                        Log.d("createMatch", matchIndex);
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
                         mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
@@ -236,7 +237,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
     }
 
     private void registerListener(){
-        BroadcastReceiver listener = new BroadcastReceiver() {
+        final BroadcastReceiver listener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d("intent", intent.getAction());
@@ -302,7 +303,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         Singleton.getCurrentMatch().setStartTime(matchTime);
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size())).setValue(Singleton.getCurrentMatch());
 
     }
 

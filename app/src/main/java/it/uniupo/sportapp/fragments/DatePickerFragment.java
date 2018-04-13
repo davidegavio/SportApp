@@ -18,8 +18,12 @@ import android.widget.DatePicker;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    String matchIndex="";
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if(getArguments()!=null)
+            matchIndex = getArguments().getString("match");
         // Use the current date as the default date in the picker
         int year = 0, month = 0, day = 0;
         Calendar c = Calendar.getInstance();
@@ -43,6 +47,8 @@ public class DatePickerFragment extends DialogFragment
     @Override
     public void onDetach() {
         super.onDetach();
+        Bundle b = new Bundle();
+        b.putString("match", matchIndex);
         DialogFragment newFragment = new TimePickerFragment();
         newFragment.show(getFragmentManager(),"timePicker");
     }

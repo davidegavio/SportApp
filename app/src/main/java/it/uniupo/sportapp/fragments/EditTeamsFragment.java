@@ -111,7 +111,13 @@ public class EditTeamsFragment extends Fragment {
                 //ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 String convocation = "Convocazioni:\n";
                 for(Player p : temp)
-                    convocation += p.getPlayerName()+"\n";
+                    convocation += p.getPlayerName() + "\n";
+                ChatMessage autoChatMessage = new ChatMessage(convocation, Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid());
+
+                for(Player p : temp){
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(p.getPlayerKey()).child("messageToNotify");
+                    databaseReference.push().setValue(autoChatMessage.getMessageText());
+                }
                 ChatMessage chatMessage = new ChatMessage(convocation.trim(), Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid());
                 Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages").child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(chatMessage).addOnCompleteListener(new OnCompleteListener<Void>() {
