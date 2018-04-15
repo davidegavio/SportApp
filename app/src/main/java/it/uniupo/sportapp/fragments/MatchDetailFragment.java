@@ -143,7 +143,7 @@ public class MatchDetailFragment extends Fragment{
                 args.putString("season", seasonIndex);
                 sFragment.setArguments(args);
                 DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-                mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).removeValue();
+                mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size())).removeValue();
                 ((MainActivity)getActivity()).addFragment(sFragment);
             default: return super.onOptionsItemSelected(item);
         }

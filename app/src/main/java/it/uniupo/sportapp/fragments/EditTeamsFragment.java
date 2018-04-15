@@ -107,7 +107,7 @@ public class EditTeamsFragment extends Fragment {
                 temp.addAll(Singleton.getCurrentMatch().getTeamA().getTeamPlayers());
                 temp.addAll(Singleton.getCurrentMatch().getTeamB().getTeamPlayers());
                 ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
-                Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(matchIndex), Singleton.getCurrentMatch());
+                Singleton.getCurrentSeason().getSeasonMatches().set(Integer.parseInt(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1)), Singleton.getCurrentMatch());
                 //ref.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).setValue(Singleton.getCurrentSeason());
                 String convocation = "Convocazioni:\n";
                 for(Player p : temp)

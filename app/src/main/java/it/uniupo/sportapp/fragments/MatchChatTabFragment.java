@@ -97,7 +97,7 @@ public class MatchChatTabFragment extends Fragment {
         initializeFirebaseAndList(view);
         Log.d("MCTF", matchIndex);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1)).child("chatMessages");
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -139,7 +139,7 @@ public class MatchChatTabFragment extends Fragment {
             public void onClick(View view) {
                 ChatMessage chatMessage = new ChatMessage(input.getText().toString(),
                         Singleton.getCurrentPlayer().getPlayerKey(), Singleton.getCurrentPlayer().getPlayerName(), Singleton.getCurrentPlayer().getPlayerImageUid());
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).child("chatMessages");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1)).child("chatMessages");
                 Singleton.getCurrentMatch().getChatMessages().add(chatMessage);
                 ref.child(String.valueOf(Singleton.getCurrentMatch().getChatMessages().size()-1)).setValue(Singleton.getCurrentMatch().getChatMessages().get(Singleton.getCurrentMatch().getChatMessages().size()-1));
                 for(Player player : Singleton.getCurrentMatch().getTeamA().getTeamPlayers()){

@@ -46,6 +46,7 @@ public class SeasonGoalsChartFragment extends Fragment {
     private String seasonIndex, roomIndex;
     private GoalsChartAdapter goalsChartAdapter;
     private ArrayList<String> goalArrayList;
+    private int n = 0;
 
 
     public SeasonGoalsChartFragment() {
@@ -60,6 +61,7 @@ public class SeasonGoalsChartFragment extends Fragment {
             seasonIndex = getArguments().getString(ARG_PARAM1);
             roomIndex = getArguments().getString("key");
         }
+        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
         Singleton.setCurrentFragment("chart");
     }
 
@@ -85,7 +87,8 @@ public class SeasonGoalsChartFragment extends Fragment {
     }
 
     private void createChart() {
-        Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
+
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomIndex).child("existingSeasons").child(seasonIndex).child("seasonMatches");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -94,11 +97,15 @@ public class SeasonGoalsChartFragment extends Fragment {
                     Match match = dataSnapshot1.getValue(Match.class);
                     if(match.getPlayerGoals()!=null) {
                         for (Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()) {
-                            int n = 0;
-                            //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            Log.d("n", String.valueOf(n));
+                            Log.d("entry", entry.getValue());
                             n = n + Integer.parseInt(entry.getValue());
+                            Log.d("n", String.valueOf(n));
                             Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                            Log.d("chart", Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
                         }
+
                     }
                 }
                 getArrayListFromMap();

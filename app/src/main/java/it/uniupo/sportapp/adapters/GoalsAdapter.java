@@ -41,6 +41,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.ViewHolder> 
             goalsSpnr = itemView.findViewById(R.id.spinner_goals);
             goalsATv = itemView.findViewById(R.id.goals_a_list);
             goalsBTv = itemView.findViewById(R.id.goals_b_list);
+            Singleton.setGoalsString("");
             if(Singleton.getCurrentMatch().getPlayerGoals()==null)
                 Singleton.getCurrentMatch().setPlayerGoals(new HashMap<String, String>());
             if(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart()==null)

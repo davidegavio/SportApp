@@ -142,7 +142,6 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             editTeamsButton.setOnClickListener(this);
             editResultButton.setOnClickListener(this);
             editGoalsButton.setOnClickListener(this);
-
         }
         goalsTextView.setText(Singleton.getGoalsString());
         if(pickers.equals("true")){
@@ -179,7 +178,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
             case R.id.edit_teams_btn:
                 EditTeamsFragment editTeamsFragment = new EditTeamsFragment();
                 Bundle b = new Bundle();
-                b.putString("match", matchIndex);
+                b.putString("match", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1));
                 b.putString("season", seasonIndex);
                 editTeamsFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(editTeamsFragment);
@@ -196,7 +195,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                 b = new Bundle();
                 b.putString("room", roomIndex);
                 b.putInt("result", matchResult);
-                b.putString("match", matchIndex);
+                b.putString("match", String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1));
                 b.putString("season", seasonIndex);
                 editGoalsFragment.setArguments(b);
                 ((MainActivity)getActivity()).addFragment(editGoalsFragment);
@@ -226,7 +225,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
                         Log.d("createMatch", matchIndex);
                         DatabaseReference mDatabase;
                         mDatabase = FirebaseDatabase.getInstance().getReference();
-                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(matchIndex).setValue(Singleton.getCurrentMatch());
+                        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1)).setValue(Singleton.getCurrentMatch());
                     }
                 })
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
@@ -303,7 +302,7 @@ public class MatchInfoTabFragment extends Fragment implements Button.OnClickList
         Singleton.getCurrentMatch().setStartTime(matchTime);
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size())).setValue(Singleton.getCurrentMatch());
+        mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).child("existingSeasons").child(seasonIndex).child("seasonMatches").child(String.valueOf(Singleton.getCurrentRoom().getExistingSeasons().get(Integer.parseInt(seasonIndex)).getSeasonMatches().size()-1)).setValue(Singleton.getCurrentMatch());
 
     }
 

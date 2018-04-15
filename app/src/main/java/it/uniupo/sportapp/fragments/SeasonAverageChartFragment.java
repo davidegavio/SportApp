@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,6 +30,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import it.uniupo.sportapp.MainActivity;
 import it.uniupo.sportapp.R;
 import it.uniupo.sportapp.Singleton;
 import it.uniupo.sportapp.adapters.AverageChartAdapter;
@@ -45,6 +47,7 @@ public class SeasonAverageChartFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String seasonIndex, roomKey;
     private ArrayList<String> averageArrayList;
+    private int n;
 
     public SeasonAverageChartFragment() {
         // Required empty public constructor
@@ -81,6 +84,17 @@ public class SeasonAverageChartFragment extends Fragment {
         createGoalsChart();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_profile:
+                ((MainActivity) getActivity()).addFragment(new ProfileFragment());
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void createGoalsChart() {
         Singleton.getCurrentSeason().setSeasonPlayerPresencesChart(new HashMap<String, String>());
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("rooms").child(roomKey).child("existingSeasons").child(seasonIndex).child("seasonMatches");
@@ -91,10 +105,13 @@ public class SeasonAverageChartFragment extends Fragment {
                     Match match = dataSnapshot1.getValue(Match.class);
                     if(match.getPlayerGoals()!=null) {
                         for (Map.Entry<String, String> entry : match.getPlayerGoals().entrySet()) {
-                            int n = 0;
-                            //n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            n = Integer.parseInt(Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
+                            Log.d("n", String.valueOf(n));
+                            Log.d("entry", entry.getValue());
                             n = n + Integer.parseInt(entry.getValue());
+                            Log.d("n", String.valueOf(n));
                             Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().put(entry.getKey(), String.valueOf(n));
+                            Log.d("chart", Singleton.getCurrentSeason().getSeasonPlayerGoalsChart().get(entry.getKey()));
                         }
                         createPresencesChart();
                     }
@@ -178,5 +195,7 @@ public class SeasonAverageChartFragment extends Fragment {
         inflater.inflate(R.menu.main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+
 
 }
