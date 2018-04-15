@@ -84,6 +84,8 @@ public class PlayersAddAdapter extends RecyclerView.Adapter<PlayersAddAdapter.Vi
                     Singleton.getCurrentRoom().getActivePlayers().add(tempPlayer.getPlayerKey());
                     mDatabase.child("rooms").child(Singleton.getCurrentRoom().getRoomKey()).setValue(Singleton.getCurrentRoom());
                     mDatabase.child("users").child(tempPlayer.getPlayerKey()).setValue(tempPlayer);
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(tempPlayer.getPlayerKey()).child("messageToNotify");
+                    databaseReference.push().setValue("You have been added to "+Singleton.getCurrentRoom().getRoomName()+" !");
                     Toast.makeText(getContext(), tempPlayer.getPlayerName()+" added!", Toast.LENGTH_SHORT).show();
                     Log.d("K", "K: "+"rooms/"+Singleton.getCurrentRoom().getRoomKey());
                 }
